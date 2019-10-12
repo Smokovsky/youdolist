@@ -1,0 +1,39 @@
+.categoryWrapper{
+	display: inline-block;
+	width: 330px;
+	height: 100%;
+    margin-right: 4px;
+    vertical-align: top;
+}
+.categoryContent{
+    display: flex;
+    flex-flow: column;
+    max-height: 100%;
+    padding: 5px;
+    white-space: normal;
+    border-radius: 0.25rem;
+    background: #DDD;
+}
+.categoryHeader{
+    display: flex;
+    position: relative;
+    flex: 0 0 auto;
+    flex-flow: column;
+    padding: 3px;
+}
+.categoryTitle{
+    max-width: calc(100% - 30px);
+}
+button.categoryMenuBtn{
+    position: absolute;
+    width: 25px;
+    padding: 0;
+    right: 3px;
+    top: 2px;
+    vertical-align: top;
+    background: #EEE;
+}
+.categoryHeader h2{
+    font-size: 1.1rem;
+    color: #111;
+}
