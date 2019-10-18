@@ -5,7 +5,7 @@
                 <div class="categoryTitle">
                     <h2>{{ category.name }}</h2>
                 </div>
-                <button class="btn categoryMenuBtn">
+                <button class="btn categoryMenuBtn" (click)="onClickCategoryOptions(category)">
                     <i class="fa fa-edit"></i>
                 </button>
             </div>
@@ -14,6 +14,9 @@
                     <app-task [tasks]="category.taskList"></app-task>
                 </div> 
             </ng-container>
+            <a class="addNewTask" (click)="onClickAddNewTask()">
+                <i class="fa fa-plus"><p> Add new task</p></i>
+            </a>
         </div>
     </div>
 </ng-container>

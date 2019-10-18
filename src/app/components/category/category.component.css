@@ -2,17 +2,19 @@
 	display: inline-block;
 	width: 330px;
 	height: 100%;
-    margin-right: 4px;
+    margin-right: 10px;
     vertical-align: top;
 }
 .categoryContent{
     display: flex;
     flex-flow: column;
     max-height: 100%;
-    padding: 5px;
+    padding: 3px;
     white-space: normal;
     border-radius: 0.25rem;
     background: #DDD;
+    -webkit-box-shadow: 0 4px 5px 0px rgba(0,0,0,0.32); 
+    box-shadow: 0 4px 5px 0px rgba(0,0,0,0.32);
 }
 .categoryHeader{
     display: flex;
@@ -36,4 +38,58 @@ button.categoryMenuBtn{
 .categoryHeader h2{
     font-size: 1.1rem;
     color: #111;
+}
+.taskList{
+    flex: 1 1 auto;
+    flex-flow: column;
+    padding: 0 4px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-bottom: 6px;
+}
+.addNewTask{
+    display: flex;
+    flex: 0 1;
+    text-align: center;
+    margin: -3px;
+    margin-top: 1px;
+    padding: 6px 5px 8px 5px;
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+.addNewTask:hover{
+    background: #EAEAEA;
+    cursor: pointer; 
+}
+.fa{
+    color: #444;
+    margin: auto;
+}
+.addNewTask:hover .fa{
+    color: #666;
+}
+.fa p{
+    display: inline;
+    font-family: 'Roboto';
+    font-size: 0.9em;
+    color: #4A4A4A;
+}
+.addNewTask:hover .fa p{
+    color: #777;
+}
+
+.taskList::-webkit-scrollbar {
+    width: 8px;
+}
+.taskList::-webkit-scrollbar-track {
+    border-radius: 0.25rem;
+    box-shadow: inset 0 0 2px #666; 
+    background: #DDD;
+}
+.taskList::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #444; 
+}
+.taskList::-webkit-scrollbar-thumb:hover {
+    background: #555; 
 }

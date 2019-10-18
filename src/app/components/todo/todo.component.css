@@ -3,3 +3,15 @@ ul{
     margin: 0;
     list-style: none;
 }
+input[type=checkbox]{
+    vertical-align: text-bottom;
+}
+p{
+    display: inline;
+}
+.active{
+    text-decoration: line-through;
+}
+.done{
+    text-decoration: none;
+}

@@ -15,4 +15,10 @@ export class TaskComponent implements OnInit {
   ngOnInit() {
   }
 
+  onClickTaskDone(task){
+    console.log('Task "' + task.name + '" done button clicked!');
+  }
+  onClickTaskSettings(task){
+    console.log('Task "' + task.name + '" settings button clicked!');
+  }
 }

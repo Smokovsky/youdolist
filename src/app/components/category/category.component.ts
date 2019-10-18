@@ -12,6 +12,13 @@ export class CategoryComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  onClickCategoryOptions(category) {
+    console.log('Category "' + category.name + '" options clicked!');
   }
+  onClickAddNewTask() {
+    console.log('Add new task clicked!');
+  }
+
 }

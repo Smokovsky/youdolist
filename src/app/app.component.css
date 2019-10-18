@@ -1,7 +1,5 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
-
 body{
-	font-size: 18px;
+    font-size: 18px;
 }
 .appBackground{
 	height: calc(100vh - 40px);
@@ -17,10 +15,6 @@ body{
     background: #282828;
     color: #FFF;
 }
-
-    
-/* Font styles */
-
 .navbar h1{
     padding-top: 7px;
     font-size: 30px;

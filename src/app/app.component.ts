@@ -17,9 +17,13 @@ export class AppComponent {
                       Array<Todo>(
                         new Todo('duży pokój'),
                         new Todo('kuchnia'))),
-                    new Task('Wynieść śmieci'))),
+                    new Task('Wynieść śmieci'),
+                    new Task('Pozmywać naczynia')
+                    )),
 
                   new Category('Praca', new Array<Task>(new Task('Napisać raport', 'raport generalny z delegacji',
-                  Array<Todo>(new Todo('podsumować wydatki'), new Todo('podpisać papiery'), new Todo('podpisać listy')))))
+                  Array<Todo>(new Todo('podsumować wydatki'), new Todo('podpisać papiery'), new Todo('podpisać listy'))))),
+
+                  new Category('Empty')
                 ];
 }

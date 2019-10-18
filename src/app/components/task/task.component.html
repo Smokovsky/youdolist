@@ -10,7 +10,8 @@
             <app-todo [todos]="task.todoList"></app-todo>
         </div>
         <div class="taskControls">
-            <button class="btn taskDoneBtn"><i class="fa fa-check"></i></button>
+            <button class="btn taskDoneBtn" (click)="onClickTaskDone(task)"><i class="fa fa-check"></i></button>
+            <button class="btn taskSettingsBtn" (click)="onClickTaskSettings(task)"><i class="fa fa-cog"></i></button>
         </div>
     </div>
 </ng-container>
