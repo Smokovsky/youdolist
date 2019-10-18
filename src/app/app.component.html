@@ -3,6 +3,8 @@
 </nav>
 
 <div class="container-fluid appBackground">
-    <app-category></app-category>
+    <ng-container>
+        <app-category [categories]="categoryList"></app-category>
+    </ng-container>
 </div>
 <router-outlet></router-outlet>

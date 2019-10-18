@@ -1,18 +1,16 @@
-<div class="task">
-    <div class="taskName">
-        <h3>Example task</h3>
+<ng-container *ngFor="let task of tasks">
+    <div class="task">
+        <div class="taskName">
+            <h3>{{ task.name }}</h3>
+        </div>
+        <div class="taskDescription">
+            <p>{{ task. description }}</p>
+        </div>
+        <div class="todoList">
+            <app-todo [todos]="task.todoList"></app-todo>
+        </div>
+        <div class="taskControls">
+            <button class="btn taskDoneBtn"><i class="fa fa-check"></i></button>
+        </div>
     </div>
-    <div class="taskDescription">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-    </div>
-    <div class="todoList">
-        <ul>
-            <li><input type="checkbox" name="" value=""> Example todo 1</li>
-            <li><input type="checkbox" name="" value=""> Example todo 2</li>
-            <li><input type="checkbox" name="" value=""> Example todo 3</li>
-        </ul>
-    </div>
-    <div class="taskControls">
-        <button class="btn taskDoneBtn"><i class="fa fa-check"></i></button>
-    </div>
-</div>
+</ng-container>

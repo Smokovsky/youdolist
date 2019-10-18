@@ -1,15 +1,19 @@
-<div class="categoryWrapper rounded">
+<ng-container *ngFor="let category of categories">
+    <div class="categoryWrapper rounded">
         <div class="categoryContent">
             <div class="categoryHeader">
                 <div class="categoryTitle">
-                    <h2>Example category</h2>
+                    <h2>{{ category.name }}</h2>
                 </div>
                 <button class="btn categoryMenuBtn">
                     <i class="fa fa-edit"></i>
                 </button>
             </div>
-            <div class="taskList">
-                <app-task></app-task>
-            </div> 
+            <ng-container *ngIf="category.taskList?.length > 0">
+                <div class="taskList">
+                    <app-task [tasks]="category.taskList"></app-task>
+                </div> 
+            </ng-container>
         </div>
     </div>
+</ng-container>
