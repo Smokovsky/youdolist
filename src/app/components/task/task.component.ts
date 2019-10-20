@@ -1,4 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { EditTaskComponent } from '../edit-task/edit-task.component';
+import { MatDialog } from '@angular/material/dialog';
+import { Task } from 'src/app/models/task.model';
 
 @Component({
   selector: 'app-task',
@@ -8,17 +11,27 @@ import { Component, OnInit, Input } from '@angular/core';
 export class TaskComponent implements OnInit {
 
   @Input()
-  tasks;
+  tasks: Array<Task>;
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit() {
   }
 
-  onClickTaskDone(task){
+  onClickTaskSettings(task: Task): void {
+    const dialogRef = this.dialog.open(EditTaskComponent, {
+      data: { task }
+    });
+    dialogRef.afterClosed().subscribe(data => {
+    });
+  }
+
+  onClickTaskDone(task: Task) {
     console.log('Task "' + task.name + '" done button clicked!');
   }
-  onClickTaskSettings(task){
-    console.log('Task "' + task.name + '" settings button clicked!');
+
+  onClickTaskDelete(index: number) {
+    this.tasks.splice(index, 1);
   }
+
 }

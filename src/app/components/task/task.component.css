@@ -26,28 +26,37 @@
 .taskControls{
     position: relative;
     min-height: 30px;
+    margin-top: 6px;
 }
 button{
     float: right;
     width: 40px;
     padding: 0;
     right: 0;
-    margin-left: 2px;
-    font-size: 1.3rem;
-    line-height: 1.8rem;
-    color: #FFF;    
+    height: 30px;
+    margin-left: 3px;
+    font-size: 1.15rem;
+    color: #FFF; 
+    -webkit-box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
+    box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3);   
 }
 .taskDoneBtn{
-    background: #4acd00;
+    background: #47a214;
+}
+.taskDoneBtn:hover{
+    color: #c7e7b7;
 }
 .taskSettingsBtn{
     background: #e0c009;
 }
-.taskDoneBtn:hover{
-    color: #d9eccf;
-}
 .taskSettingsBtn:hover{
-    color: #fff8cd;
+    color: #eef0b4;
+}
+.taskDeleteBtn{
+    background: #cf202b;
+}
+.taskDeleteBtn:hover{
+    color: #e1acb0;
 }
 .taskName h3{
     margin: 0;
@@ -60,4 +69,7 @@ button{
     font-size: 0.9rem;
     line-height: 1rem;
     color: #444;
+}
+.fa{
+    vertical-align: baseline;
 }

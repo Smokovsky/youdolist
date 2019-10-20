@@ -13,17 +13,25 @@ export class AppComponent {
 
   /* Example data */
   categoryList = [new Category('Obowiązki domowe', new Array<Task>(
-                    new Task('Pozamiatać', 'tylko dokładnie!',
-                      Array<Todo>(
+                    new Task('Pozamiatać dom',
+                      new Array<Todo>(
                         new Todo('duży pokój'),
-                        new Todo('kuchnia'))),
-                    new Task('Wynieść śmieci'),
-                    new Task('Pozmywać naczynia')
-                    )),
-
-                  new Category('Praca', new Array<Task>(new Task('Napisać raport', 'raport generalny z delegacji',
-                  Array<Todo>(new Todo('podsumować wydatki'), new Todo('podpisać papiery'), new Todo('podpisać listy'))))),
-
-                  new Category('Empty')
+                        new Todo('kuchnia'),
+                        new Todo('łazienka')),
+                          'Byle dokładnie!'),
+                    new Task('Zapłacić rachunki',
+                      new Array<Todo>(
+                        new Todo('czynsz'),
+                        new Todo('internet'))),
+                    new Task('Wynieść śmieci', new Array<Todo>()))),
+                  new Category('Praca', new Array<Task>(
+                    new Task('Napisać raport',
+                      Array<Todo>(
+                        new Todo('zgromadzić paragony'),
+                        new Todo('podsumować wydatki'),
+                        new Todo('porozmawiać z Bartkiem'),
+                        new Todo('podpisać dokumenty')),
+                          'Raport z delegacji w Chorwacji 27/10/19'
+                        )))
                 ];
 }

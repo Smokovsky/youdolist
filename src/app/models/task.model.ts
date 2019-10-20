@@ -6,10 +6,10 @@ export class Task {
     todoList?: Array<Todo>;
     isDone: boolean;
 
-    constructor(name: string, description?: string, todoList?: Array<Todo>){
+    constructor(name: string, todoList: Array<Todo>, description?: string) {
         this.name = name;
-        this.description = description;
         this.todoList = todoList;
+        this.description = description;
         this.isDone = false;
     }
 }

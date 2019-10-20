@@ -6,17 +6,39 @@
                     <h2>{{ category.name }}</h2>
                 </div>
                 <button class="btn categoryMenuBtn" (click)="onClickCategoryOptions(category)">
-                    <i class="fa fa-edit"></i>
+                    <i class="fa fa-cogs"></i>
                 </button>
             </div>
-            <ng-container *ngIf="category.taskList?.length > 0">
-                <div class="taskList">
-                    <app-task [tasks]="category.taskList"></app-task>
-                </div> 
-            </ng-container>
-            <a class="addNewTask" (click)="onClickAddNewTask()">
-                <i class="fa fa-plus"><p> Add new task</p></i>
+            <div class="taskList">
+                <app-task [tasks]="category.taskList"></app-task>
+            </div> 
+            <a class="addNewTask" (click)="onClickAddNewTask(category)">
+                <i class="fa fa-plus"><p>Add new task</p></i>
             </a>
         </div>
     </div>
 </ng-container>
+<div class="categoryWrapper newCategoryWrapper rounded">
+    <ng-template [ngIf]="!newCategoryFieldActive" #newCategoryButton>
+        <a class="categoryContent newCategoryContent" (click)="onClickAddNewCategory()">
+            <div class="categoryHeader">
+                <div class="newCategoryTitle">
+                    <i class="fa fa-plus"><p>Add new category</p></i>
+                </div>
+            </div>
+        </a>
+    </ng-template>
+    <ng-template [ngIf]="newCategoryFieldActive" #newCategoryField>
+        <div class="categoryContent" (click)="onClickAddNewCategory()">
+            <div class="newCategoryHeader">
+                <div class="input-group">
+                    <input class="form-control width100 newCategoryName" type="text" [(ngModel)]="newCategoryName">
+                    <span class="input-group-btn">
+                        <button class="btn" (click)="onClickSubmitNewCategory()"><i class="fa fa-check"></i></button>
+                        <button class="btn" (click)="onClickCancelNewCategory()"><i class="fa fa-times"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</div>

@@ -1,3 +1,4 @@
 <ul *ngFor="let todo of todos">
-    <li><input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(todo)"> <p [className]="todo.isDone ? 'active' : 'done'"> {{ todo.name }}</p></li>
+    <li><input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(todo)"> 
+    <p [className]="todo.isDone ? 'active' : 'done'">{{ todo.name }}</p></li>
 </ul>

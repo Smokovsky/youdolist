@@ -1,6 +1,6 @@
 .categoryWrapper{
 	display: inline-block;
-	width: 330px;
+	width: 280px;
 	height: 100%;
     margin-right: 10px;
     vertical-align: top;
@@ -26,6 +26,10 @@
 .categoryTitle{
     max-width: calc(100% - 30px);
 }
+.newCategoryTitle{
+    text-align: center;
+    display: inline;
+}
 button.categoryMenuBtn{
     position: absolute;
     width: 25px;
@@ -34,6 +38,8 @@ button.categoryMenuBtn{
     top: 2px;
     vertical-align: top;
     background: #EEE;
+    -webkit-box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
+    box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
 }
 .categoryHeader h2{
     font-size: 1.1rem;
@@ -57,25 +63,48 @@ button.categoryMenuBtn{
     border-bottom-left-radius: 0.25rem;
     border-bottom-right-radius: 0.25rem;
 }
-.addNewTask:hover{
-    background: #EAEAEA;
-    cursor: pointer; 
-}
 .fa{
     color: #444;
     margin: auto;
 }
-.addNewTask:hover .fa{
-    color: #666;
-}
 .fa p{
     display: inline;
+    margin-left: 4px;
     font-family: 'Roboto';
     font-size: 0.9em;
     color: #4A4A4A;
 }
-.addNewTask:hover .fa p{
+.addNewTask:hover,
+a.newCategoryContent:hover{
+    background: #EAEAEA;
+    cursor: pointer; 
+}
+.addNewTask:hover .fa,
+.newCategoryContent:hover .fa{
+    color: #666;
+}
+.addNewTask:hover .fa p,
+.newCategoryContent:hover .fa p{
     color: #777;
+}
+.newCategoryHeader{
+    padding: 2px;
+}
+.newCategoryHeader button{
+    height: 21px;
+    width: 21px;
+    padding: 0;
+    margin: 0;
+    margin-left: 4px;
+}
+.newCategoryHeader .fa{
+    vertical-align: top;
+    padding: 0;
+}
+.newCategoryName{
+    height: 25px;
+    vertical-align: middle;
+    padding: 0 5px;
 }
 
 .taskList::-webkit-scrollbar {
