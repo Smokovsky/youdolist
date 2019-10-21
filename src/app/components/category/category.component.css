@@ -42,6 +42,7 @@ button.categoryMenuBtn{
     box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
 }
 .categoryHeader h2{
+    word-break: break-word;
     font-size: 1.1rem;
     color: #111;
 }
@@ -51,7 +52,6 @@ button.categoryMenuBtn{
     padding: 0 4px;
     overflow-x: hidden;
     overflow-y: auto;
-    margin-bottom: 6px;
 }
 .addNewTask{
     display: flex;
@@ -106,19 +106,17 @@ a.newCategoryContent:hover{
     vertical-align: middle;
     padding: 0 5px;
 }
+.pointer{
+    cursor: pointer;
+}
 
-.taskList::-webkit-scrollbar {
-    width: 8px;
+.ngbDropdown{
+    position: initial;
+
 }
-.taskList::-webkit-scrollbar-track {
-    border-radius: 0.25rem;
-    box-shadow: inset 0 0 2px #666; 
-    background: #DDD;
+.dropdown-toggle::after{
+    content: none;
 }
-.taskList::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background: #444; 
-}
-.taskList::-webkit-scrollbar-thumb:hover {
-    background: #555; 
+.ngbDropdownToggle{
+    background: #F5F5F5;
 }

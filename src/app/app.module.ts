@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { CategoryComponent } from './components/category/category.component';
 import { TaskComponent } from './components/task/task.component';
@@ -26,6 +27,7 @@ import { EditTaskComponent } from './components/edit-task/edit-task.component';
     FormsModule,
     BrowserAnimationsModule,
     MatDialogModule,
+    NgbModule
   ],
   entryComponents: [
     EditTaskComponent

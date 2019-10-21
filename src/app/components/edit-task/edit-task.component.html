@@ -8,11 +8,17 @@
         <textarea class="form-control" [(ngModel)]="taskDescription"></textarea>
     </div>
     <div class="form-group">
-        <label for="todoList">Todo todoList:</label>
-        <ul *ngFor="let todo of taskTodoList">
+        <label for="todoList">Todo list:</label>
+        <ul *ngFor="let todo of taskTodoList; let i = index">
             <li><input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(todo)">
-            <p [className]="todo.isDone ? 'active' : 'done'">{{ todo.name }}</p></li>
+            <p [className]="todo.isDone ? 'active' : 'done'">{{ todo.name }}</p><a class="deleteTodo" (click)="onClickDeleteTodo(i)"><i class="fa fa-times"></i></a></li>
         </ul>
+    </div>
+    <div class="input-group">
+        <input class="form-control width100 newTodoName" type="text" placeholder="Enter new todo" [(ngModel)]="newTodoName">
+        <span class="input-group-btn">
+            <button class="btn addNewTodo" (click)="onClickAddTodo()"><i class="fa fa-check"></i></button>
+        </span>
     </div>
 </mat-dialog-content>
 <mat-dialog-actions>

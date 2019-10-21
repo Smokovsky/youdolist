@@ -32,10 +32,6 @@ export class CategoryComponent implements OnInit {
     });
   }
 
-  onClickCategoryOptions(category) {
-    console.log('Category "' + category.name + '" options clicked!');
-  }
-
   onClickAddNewCategory() {
     this.newCategoryFieldActive = true;
   }
@@ -46,9 +42,13 @@ export class CategoryComponent implements OnInit {
     this.newCategoryName = '';
   }
 
-  onClickCancelNewCategory(){
+  onClickCancelNewCategory() {
     this.newCategoryFieldActive = false;
     this.newCategoryName = '';
+  }
+
+  onClickDeleteCategory(i: number) {
+    this.categories.splice(i);
   }
 
 }

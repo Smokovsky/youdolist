@@ -31,7 +31,7 @@ export class TaskComponent implements OnInit {
   }
 
   onClickTaskDelete(index: number) {
-    this.tasks.splice(index, 1);
+    this.tasks.splice(index);
   }
 
 }

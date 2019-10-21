@@ -14,6 +14,8 @@ export class EditTaskComponent implements OnInit {
   taskDescription: string;
   taskTodoList: Array<Todo>;
 
+  newTodoName: string;
+
   constructor(public dialogRef: MatDialogRef<EditTaskComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any) { }
 
@@ -31,6 +33,15 @@ export class EditTaskComponent implements OnInit {
 
   onTodoCheck(todo) {
     todo.isDone = !todo.isDone;
+  }
+
+  onClickAddTodo() {
+    this.task.todoList.push(new Todo(this.newTodoName));
+    this.newTodoName = '';
+  }
+
+  onClickDeleteTodo(i: number) {
+    this.task.todoList.splice(i);
   }
 
   onClickCancelButton() {

@@ -1,6 +1,9 @@
 .mat-dialog-actions{
     float: right;
 }
+input{
+    padding: 0 5px;
+}
 button{
     margin: 0 0 0 5px;
 }
@@ -13,13 +16,44 @@ input[type=checkbox]{
     margin-right: 3px;
     vertical-align: middle;
 }
+label[for=todoList]{
+    margin: 0;
+}
 p{
     padding: 0;
     display: inline;
+}
+.mat-dialog-content{
+    min-width: 300px;
+    padding: 0 20px 10px 20px;
 }
 .active{
     text-decoration: line-through;
 }
 .done{
     text-decoration: none;
+}
+.deleteTodo .fa{
+    color: #e70000;
+    margin-left: 5px;
+}
+input.newTodoName{
+    height: 25px;
+    margin-right: 5px;
+}
+.addNewTodo{
+    width: 19px;
+    height: 19px;
+    vertical-align: sub;
+}
+button.addNewTodo{
+    padding: 0;
+    margin: 0;
+}
+.addNewTodo .fa{
+    vertical-align: top;
+    color: #006e12;
+}
+.input-group{
+    vertical-align: middle;
 }

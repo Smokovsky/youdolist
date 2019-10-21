@@ -3,6 +3,9 @@ ul{
     margin: 0;
     list-style: none;
 }
+li{
+    word-break: break-word;
+}
 input[type=checkbox]{
     margin-right: 3px;
     vertical-align: text-bottom;
@@ -11,9 +14,6 @@ p{
     padding: 0;
     display: inline;
 }
-.active{
-    text-decoration: line-through;
-}
 .done{
-    text-decoration: none;
+    text-decoration: line-through;
 }

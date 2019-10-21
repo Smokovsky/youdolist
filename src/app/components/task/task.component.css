@@ -59,11 +59,13 @@ button{
     color: #e1acb0;
 }
 .taskName h3{
+    word-break: break-word;
     margin: 0;
     font-size: 1rem;
     color: #222;
 }
 .taskDescription p{
+    word-break: break-word;
     padding: 0;
     margin: 0;
     font-size: 0.9rem;
