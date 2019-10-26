@@ -1,21 +1,34 @@
-<ng-container *ngFor="let category of categories; let i = index">
+<ng-container *ngFor="let category of categoryList; let i = index">
     <div class="categoryWrapper rounded">
         <div class="categoryContent">
             <div class="categoryHeader">
-                <div class="categoryTitle">
-                    <h2>{{ category.name }}</h2>
-                </div>
-                <div ngbDropdown class="ngbDropdown">
-                    <button ngbDropdownToggle class="btn categoryMenuBtn" id="categoryOptions">
-                        <i class="fa fa-cogs"></i>
-                    </button>
-                    <div ngbDropdownMenu aria-labelledby="categoryOptions" class="ngbDropdownToggle">
-                        <button ngbDropdownItem (click)="onClickDeleteCategory(i)"><i class="fa fa-times"></i> Delete</button>
+                <ng-template [ngIf]="i != editCategoryIdActive" #categoryHeader>
+                    <div class="categoryTitle">
+                        <h2>{{ category.name }}</h2>
                     </div>
-                </div>
+                    <div ngbDropdown class="ngbDropdown">
+                        <button ngbDropdownToggle class="btn categoryMenuBtn" id="categoryOptions">
+                            <i class="fa fa-cogs"></i>
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="categoryOptions" class="ngbDropdownToggle">
+                            <button ngbDropdownItem (click)="onClickDeleteCategory(i)"><i class="fa fa-times"></i> Delete</button>
+                            <button ngbDropdownItem (click)="onClickEditCategory(i)"><i class="fa fa-edit"></i> Edit</button>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template [ngIf]="i == editCategoryIdActive" #newCategoryHeader>
+                    <div class="input-group editCategoryInput">
+                        <input #newCategoryNameField autofocus class="form-control width100 editCategoryName" value="{{ category.name }}" type="text" [(ngModel)]="tempNewCategoryName">
+                        <span class="input-group-btn editCategoryButtons">
+                            <button class="btn" (click)="onClickSubmitEditCategory(i)"><i class="fa fa-check"></i></button>
+                            <button class="btn" (click)="onClickCancelEditCategory(i)"><i class="fa fa-times"></i></button>
+                        </span>
+                    </div>
+                </ng-template>
             </div>
             <div class="taskList">
-                <app-task [tasks]="category.taskList"></app-task>
+                <app-task [taskList]="category.taskList"></app-task>
             </div> 
             <a class="addNewTask" (click)="onClickAddNewTask(category)">
                 <i class="fa fa-plus"><p>Add new task</p></i>
@@ -24,26 +37,8 @@
     </div>
 </ng-container>
 <div class="categoryWrapper newCategoryWrapper rounded">
-    <ng-template [ngIf]="!newCategoryFieldActive" #newCategoryButton>
-        <a class="categoryContent newCategoryContent" (click)="onClickAddNewCategory()">
-            <div class="categoryHeader">
-                <div class="newCategoryTitle">
-                    <i class="fa fa-plus"><p>Add new category</p></i>
-                </div>
-            </div>
-        </a>
-    </ng-template>
-    <ng-template [ngIf]="newCategoryFieldActive" #newCategoryField>
-        <div class="categoryContent" (click)="onClickAddNewCategory()">
-            <div class="newCategoryHeader">
-                <div class="input-group">
-                    <input class="form-control width100 newCategoryName" type="text" [(ngModel)]="newCategoryName">
-                    <span class="input-group-btn">
-                        <button class="btn" (click)="onClickSubmitNewCategory()"><i class="fa fa-check"></i></button>
-                        <button class="btn" (click)="onClickCancelNewCategory()"><i class="fa fa-times"></i></button>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </ng-template>
+    <app-new-category></app-new-category>
+</div>
+<div class="categoryWrapper newCategoryWrapper rounded">
+    <app-done-list></app-done-list>
 </div>

@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { EditTaskComponent } from '../edit-task/edit-task.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Task } from 'src/app/models/task.model';
+import { DoneTasksProviderService } from 'src/app/services/done-tasks-provider.service';
 
 @Component({
   selector: 'app-task',
@@ -11,9 +12,15 @@ import { Task } from 'src/app/models/task.model';
 export class TaskComponent implements OnInit {
 
   @Input()
-  tasks: Array<Task>;
+  taskList: Array<Task>;
+  doneTasksList: Array<Task>;
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog,
+              private doneTasksProviderService: DoneTasksProviderService) {
+                this.doneTasksProviderService.getDoneTasksObs().subscribe((doneTasks: Array<Task>) => {
+                  this.doneTasksList = doneTasks;
+               });
+              }
 
   ngOnInit() {
   }
@@ -22,16 +29,16 @@ export class TaskComponent implements OnInit {
     const dialogRef = this.dialog.open(EditTaskComponent, {
       data: { task }
     });
-    dialogRef.afterClosed().subscribe(data => {
-    });
+    dialogRef.afterClosed().subscribe(data => { });
   }
 
-  onClickTaskDone(task: Task) {
-    console.log('Task "' + task.name + '" done button clicked!');
+  onClickTaskDone(i: number) {
+    this.doneTasksProviderService.add(this.taskList[i]);
+    this.taskList.splice(i, 1);
   }
 
-  onClickTaskDelete(index: number) {
-    this.tasks.splice(index);
+  onClickTaskDelete(i: number) {
+    this.taskList.splice(i, 1);
   }
 
 }

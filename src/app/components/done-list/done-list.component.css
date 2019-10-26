@@ -10,9 +10,10 @@
     flex-flow: column;
     max-height: 100%;
     padding: 3px;
+    padding-bottom: 0;
     white-space: normal;
     border-radius: 0.25rem;
-    background: #DDD;
+    background: rgb(158, 209, 128);
     -webkit-box-shadow: 0 4px 5px 0px rgba(0,0,0,0.32); 
     box-shadow: 0 4px 5px 0px rgba(0,0,0,0.32);
 }
@@ -50,16 +51,6 @@ button.categoryMenuBtn{
     overflow-x: hidden;
     overflow-y: auto;
 }
-.addNewTask{
-    display: flex;
-    flex: 0 1;
-    text-align: center;
-    margin: -3px;
-    margin-top: 1px;
-    padding: 6px 5px 8px 5px;
-    border-bottom-left-radius: 0.25rem;
-    border-bottom-right-radius: 0.25rem;
-}
 .fa{
     color: #444;
     margin: auto;
@@ -70,16 +61,6 @@ button.categoryMenuBtn{
     font-family: 'Roboto';
     font-size: 0.9em;
     color: #4A4A4A;
-}
-.addNewTask:hover{
-    background: #EAEAEA;
-    cursor: pointer; 
-}
-.addNewTask:hover .fa{
-    color: #666;
-}
-.addNewTask:hover .fa p{
-    color: #777;
 }
 .editCategoryInput button{
     height: 21px;

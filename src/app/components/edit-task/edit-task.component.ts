@@ -13,16 +13,12 @@ export class EditTaskComponent implements OnInit {
   taskName: string ;
   taskDescription: string;
   taskTodoList: Array<Todo>;
-
   newTodoName: string;
 
   constructor(public dialogRef: MatDialogRef<EditTaskComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
-    /**
-     * In case of calling this component for creating new task
-     */
     if (!this.task) {
       this.task = new Task('', new Array<Todo>());
     }
@@ -31,7 +27,7 @@ export class EditTaskComponent implements OnInit {
     this.taskTodoList = this.task.todoList;
   }
 
-  onTodoCheck(todo) {
+  onTodoCheck(todo: Todo) {
     todo.isDone = !todo.isDone;
   }
 
@@ -41,7 +37,7 @@ export class EditTaskComponent implements OnInit {
   }
 
   onClickDeleteTodo(i: number) {
-    this.task.todoList.splice(i);
+    this.task.todoList.splice(i, 1);
   }
 
   onClickCancelButton() {

@@ -1,4 +1,4 @@
-<ng-container *ngFor="let task of tasks; let i = index">
+<ng-container *ngFor="let task of taskList; let i = index">
     <div class="task">
         <div class="taskName">
             <h3>{{ task.name }}</h3>
@@ -10,7 +10,7 @@
             <app-todo [todos]="task.todoList"></app-todo>
         </div>
         <div class="taskControls">
-            <button class="btn taskDoneBtn" (click)="onClickTaskDone(task)"><i class="fa fa-check"></i></button>
+            <button class="btn taskDoneBtn" (click)="onClickTaskDone(i)"><i class="fa fa-check"></i></button>
             <button class="btn taskDeleteBtn" (click)="onClickTaskDelete(i)"><i class="fa fa-trash"></i></button>
             <button class="btn taskSettingsBtn" (click)="onClickTaskSettings(task)"><i class="fa fa-cog"></i></button>
         </div>

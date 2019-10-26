@@ -1,0 +1,34 @@
+<div class="categoryWrapper rounded">
+    <div class="categoryContent">
+        <div class="categoryHeader">
+            
+            <ng-template [ngIf]="!editNameActive" #categoryHeader>
+                <div class="categoryTitle">
+                    <h2>{{ doneListName }}</h2>
+                </div>
+                <div ngbDropdown class="ngbDropdown">
+                    <button ngbDropdownToggle class="btn categoryMenuBtn" id="categoryOptions">
+                        <i class="fa fa-cogs"></i>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="categoryOptions" class="ngbDropdownToggle">
+                        <button ngbDropdownItem (click)="onClickEdit()"><i class="fa fa-edit"></i> Edit</button>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template [ngIf]="editNameActive" #newCategoryHeader>
+                <div class="input-group editCategoryInput">
+                    <input #newCategoryNameField autofocus class="form-control width100 editCategoryName" value="{{ doneListName }}" type="text" [(ngModel)]="tempNewDoneName">
+                    <span class="input-group-btn editCategoryButtons">
+                        <button class="btn" (click)="onClickSubmit()"><i class="fa fa-check"></i></button>
+                        <button class="btn" (click)="onClickCancel()"><i class="fa fa-times"></i></button>
+                    </span>
+                </div>
+            </ng-template>
+
+        </div>
+        <div class="taskList">
+            <app-task [taskList]="doneTaskList"></app-task>
+        </div> 
+    </div>
+</div>

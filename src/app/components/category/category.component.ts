@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskComponent } from '../edit-task/edit-task.component';
 import { Category } from 'src/app/models/category.model';
-import { Task } from 'src/app/models/task.model';
+import { CategoryProviderService } from 'src/app/services/category-provider.service';
 
 @Component({
   selector: 'app-category',
@@ -10,16 +10,19 @@ import { Task } from 'src/app/models/task.model';
   styleUrls: ['./category.component.css']
 })
 export class CategoryComponent implements OnInit {
+  categoryList: Array<Category>;
+  editCategoryName: string;
+  editCategoryIdActive = -1;
+  tempNewCategoryName: string;
 
-  @Input()
-  categories: Array<Category>;
+  constructor(public dialog: MatDialog,
+              private categoryProviderService: CategoryProviderService) {
+                this.categoryProviderService.getCategoryListObs().subscribe((categories: Array<Category>) => {
+                  this.categoryList = categories;
+                });
+  }
 
-  newCategoryFieldActive = false;
-  newCategoryName: string;
-
-  constructor(public dialog: MatDialog) { }
-
-  ngOnInit() {}
+  ngOnInit() {  }
 
   onClickAddNewTask(category: Category): void {
     const dialogRef = this.dialog.open(EditTaskComponent, {
@@ -32,23 +35,22 @@ export class CategoryComponent implements OnInit {
     });
   }
 
-  onClickAddNewCategory() {
-    this.newCategoryFieldActive = true;
-  }
-
-  onClickSubmitNewCategory() {
-    this.newCategoryFieldActive = false;
-    this.categories.push(new Category(this.newCategoryName, Array<Task>()));
-    this.newCategoryName = '';
-  }
-
-  onClickCancelNewCategory() {
-    this.newCategoryFieldActive = false;
-    this.newCategoryName = '';
-  }
-
   onClickDeleteCategory(i: number) {
-    this.categories.splice(i);
+    this.categoryProviderService.remove(i);
+  }
+
+  onClickEditCategory(i: number) {
+    this.tempNewCategoryName = this.categoryList[i].name;
+    this.editCategoryIdActive = i;
+  }
+
+  onClickSubmitEditCategory(i: number) {
+    this.categoryList[i].name = this.tempNewCategoryName;
+    this.editCategoryIdActive = -1;
+  }
+
+  onClickCancelEditCategory() {
+    this.editCategoryIdActive = -1;
   }
 
 }

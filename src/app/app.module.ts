@@ -12,6 +12,8 @@ import { CategoryComponent } from './components/category/category.component';
 import { TaskComponent } from './components/task/task.component';
 import { TodoComponent } from './components/todo/todo.component';
 import { EditTaskComponent } from './components/edit-task/edit-task.component';
+import { NewCategoryComponent } from './components/new-category/new-category.component';
+import { DoneListComponent } from './components/done-list/done-list.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { EditTaskComponent } from './components/edit-task/edit-task.component';
     CategoryComponent,
     TaskComponent,
     TodoComponent,
-    EditTaskComponent
+    EditTaskComponent,
+    NewCategoryComponent,
+    DoneListComponent
   ],
   imports: [
     BrowserModule,
