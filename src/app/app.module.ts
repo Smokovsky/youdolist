@@ -1,19 +1,22 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
-import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { AppComponent } from './app.component';
 import { CategoryComponent } from './components/category/category.component';
 import { TaskComponent } from './components/task/task.component';
 import { TodoComponent } from './components/todo/todo.component';
 import { EditTaskComponent } from './components/edit-task/edit-task.component';
 import { NewCategoryComponent } from './components/new-category/new-category.component';
 import { DoneListComponent } from './components/done-list/done-list.component';
+import { ConfirmationDialogComponent } from './components/shared/confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +26,8 @@ import { DoneListComponent } from './components/done-list/done-list.component';
     TodoComponent,
     EditTaskComponent,
     NewCategoryComponent,
-    DoneListComponent
+    DoneListComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -31,12 +35,17 @@ import { DoneListComponent } from './components/done-list/done-list.component';
     FormsModule,
     BrowserAnimationsModule,
     MatDialogModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     NgbModule
   ],
   entryComponents: [
-    EditTaskComponent
+    EditTaskComponent,
+    ConfirmationDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
+
 export class AppModule { }

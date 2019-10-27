@@ -5,12 +5,17 @@ export class Task {
     description?: string;
     todoList?: Array<Todo>;
     isDone: boolean;
+    creationDate: Date;
+    dueDate?: Date;
+    completitionDate?: Date;
 
-    constructor(name: string, todoList: Array<Todo>, description?: string) {
+    constructor(name: string, todoList: Array<Todo>, description?: string, dueDate?: Date) {
         this.name = name;
         this.todoList = todoList;
         this.description = description;
         this.isDone = false;
+        this.creationDate = new Date();
+        this.dueDate = dueDate;
     }
 }
 

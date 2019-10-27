@@ -13,7 +13,9 @@ export class EditTaskComponent implements OnInit {
   taskName: string ;
   taskDescription: string;
   taskTodoList: Array<Todo>;
+  taskDueDate?: Date;
   newTodoName: string;
+  datepicker: Date;
 
   constructor(public dialogRef: MatDialogRef<EditTaskComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any) { }
@@ -25,6 +27,7 @@ export class EditTaskComponent implements OnInit {
     this.taskName = this.task.name;
     this.taskDescription = this.task.description;
     this.taskTodoList = this.task.todoList;
+    this.taskDueDate = this.task.dueDate;
   }
 
   onTodoCheck(todo: Todo) {
@@ -40,6 +43,10 @@ export class EditTaskComponent implements OnInit {
     this.task.todoList.splice(i, 1);
   }
 
+  onClickCancelDueDate() {
+    this.taskDueDate = null;
+  }
+
   onClickCancelButton() {
     this.dialogRef.close();
     delete this.task;
@@ -49,6 +56,7 @@ export class EditTaskComponent implements OnInit {
     this.task.name = this.taskName;
     this.task.description = this.taskDescription;
     this.task.todoList = this.taskTodoList;
+    this.task.dueDate = this.taskDueDate;
     this.dialogRef.close(this.task);
   }
 

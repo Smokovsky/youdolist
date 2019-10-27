@@ -1,7 +1,8 @@
 .mat-dialog-actions{
     float: right;
 }
-input{
+input,
+textarea{
     padding: 0 5px;
 }
 button{
@@ -18,6 +19,11 @@ input[type=checkbox]{
 }
 label[for=todoList]{
     margin: 0;
+}
+label{
+    width: 100%;
+    margin-bottom: 0;
+    font-weight: bold;
 }
 p{
     padding: 0;
@@ -36,6 +42,7 @@ p{
 .deleteTodo .fa{
     color: #e70000;
     margin-left: 5px;
+    font-size: 1.2em;
 }
 input.newTodoName{
     height: 25px;
@@ -51,9 +58,31 @@ button.addNewTodo{
     margin: 0;
 }
 .addNewTodo .fa{
-    vertical-align: top;
+    vertical-align: initial;
     color: #006e12;
+    font-size: 1.5em;
 }
 .input-group{
     vertical-align: middle;
+}
+.form-group{
+    margin-bottom: 0.2rem;
+}
+.dueDate{
+    margin-top: 5px;
+}
+.cancelDueDate .fa{
+    color: #FF0000;
+    font-size: 1.5em;
+    margin: 0;
+    vertical-align: middle;
+}
+input.dueDateField{
+    height: 25px;
+    margin-right: 5px;
+}
+::ng-deep.mat-icon-button{
+    width: 25px!important;
+    height: 25px!important;
+    line-height: 25px!important;
 }

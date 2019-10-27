@@ -10,6 +10,15 @@
             <app-todo [todos]="task.todoList"></app-todo>
         </div>
         <div class="taskControls">
+            <div class="taskDate">
+                <p><i class="fa fa-hourglass-start"></i> {{ task.creationDate | date : 'dd/MM/y' }}</p>
+                <ng-container *ngIf="task.dueDate; else noDueDate">
+                    <p><i class="fa fa-hourglass-end"></i> {{ task.dueDate | date : 'dd/MM/y' }}</p>
+                </ng-container>
+                <ng-template #noDueDate>
+                        <p><i class="fa fa-hourglass-end"></i> &#8734;</p>
+                </ng-template>
+            </div>
             <button class="btn taskDoneBtn" (click)="onClickTaskDone(i)"><i class="fa fa-check"></i></button>
             <button class="btn taskDeleteBtn" (click)="onClickTaskDelete(i)"><i class="fa fa-trash"></i></button>
             <button class="btn taskSettingsBtn" (click)="onClickTaskSettings(task)"><i class="fa fa-cog"></i></button>

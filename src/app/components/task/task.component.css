@@ -26,7 +26,7 @@
 .taskControls{
     position: relative;
     min-height: 30px;
-    margin-top: 6px;
+    margin-top: 10px;
 }
 button{
     float: right;
@@ -71,6 +71,15 @@ button{
     font-size: 0.9rem;
     line-height: 1rem;
     color: #444;
+}
+.taskDate{
+    position: absolute;
+}
+.taskDate p{
+    margin: 0;
+    padding-left: 4px;
+    font-size: 0.65em;
+    color: #555;
 }
 .fa{
     vertical-align: baseline;
