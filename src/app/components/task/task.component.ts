@@ -23,19 +23,11 @@ export class TaskComponent implements OnInit {
                });
               }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
-  onClickTaskDelete(i: number): void {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '350px',
-      data: 'Are you sure you want to delete task? You won\'t be able to get it back'
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.taskList.splice(i, 1);
-      }
-    });
+  onClickTaskDone(i: number) {
+    this.doneTasksProviderService.add(this.taskList[i]);
+    this.taskList.splice(i, 1);
   }
 
   onClickTaskSettings(task: Task): void {
@@ -45,9 +37,16 @@ export class TaskComponent implements OnInit {
     dialogRef.afterClosed().subscribe(data => { });
   }
 
-  onClickTaskDone(i: number) {
-    this.doneTasksProviderService.add(this.taskList[i]);
-    this.taskList.splice(i, 1);
+  onClickTaskDelete(i: number): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: 'Are you sure you want to delete this task? You won\'t be able to get it back.'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.taskList.splice(i, 1);
+      }
+    });
   }
 
 }

@@ -24,12 +24,15 @@ export class CategoryProviderService {
             new Todo('duży pokój'),
             new Todo('kuchnia'),
             new Todo('łazienka')),
-              'Byle dokładnie!'),
+              'Byle dokładnie!',
+              new Date('Dec 20, 2019')),
         new Task('Zapłacić rachunki',
           new Array<Todo>(
             new Todo('czynsz'),
-            new Todo('internet'))),
-        new Task('Wynieść śmieci', new Array<Todo>()))),
+            new Todo('internet')),
+              '', new Date('Nov 10, 2019')),
+        new Task('Wynieść śmieci', new Array<Todo>()
+        ))),
       new Category('Praca', new Array<Task>(
         new Task('Napisać raport',
           Array<Todo>(
@@ -37,7 +40,8 @@ export class CategoryProviderService {
             new Todo('podsumować wydatki'),
             new Todo('porozmawiać z Bartkiem'),
             new Todo('podpisać dokumenty')),
-              'Raport z delegacji w Chorwacji 27/10/19'
+              'Raport z delegacji w Chorwacji 27/10/19',
+              new Date('Jan 1, 2020')
             )))
     );
     this.categoryListObs.next(this.categoryList);

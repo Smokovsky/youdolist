@@ -25,16 +25,30 @@ export class CategoryComponent implements OnInit {
 
   ngOnInit() {  }
 
-  onClickDeleteCategory(i: number) {
+  onClickDelete(i: number) {
   const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
-      data: 'Are you sure you want to delete this category with all tasks? You won\'t be able to get it back'
+      data: 'Are you sure you want to delete this category with all tasks? You won\'t be able to get it back.'
     });
   dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.categoryProviderService.remove(i);
       }
     });
+  }
+
+  onClickEdit(i: number) {
+    this.tempNewCategoryName = this.categoryList[i].name;
+    this.editCategoryIdActive = i;
+  }
+
+  onClickSubmitEdit(i: number) {
+    this.categoryList[i].name = this.tempNewCategoryName;
+    this.editCategoryIdActive = -1;
+  }
+
+  onClickCancelEdit() {
+    this.editCategoryIdActive = -1;
   }
 
   onClickAddNewTask(category: Category): void {
@@ -46,20 +60,6 @@ export class CategoryComponent implements OnInit {
         category.taskList.push(task);
       }
     });
-  }
-
-  onClickEditCategory(i: number) {
-    this.tempNewCategoryName = this.categoryList[i].name;
-    this.editCategoryIdActive = i;
-  }
-
-  onClickSubmitEditCategory(i: number) {
-    this.categoryList[i].name = this.tempNewCategoryName;
-    this.editCategoryIdActive = -1;
-  }
-
-  onClickCancelEditCategory() {
-    this.editCategoryIdActive = -1;
   }
 
 }

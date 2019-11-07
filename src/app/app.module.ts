@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { Routes, RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { CategoryComponent } from './components/category/category.component';
@@ -17,6 +18,14 @@ import { EditTaskComponent } from './components/edit-task/edit-task.component';
 import { NewCategoryComponent } from './components/new-category/new-category.component';
 import { DoneListComponent } from './components/done-list/done-list.component';
 import { ConfirmationDialogComponent } from './components/shared/confirmation-dialog/confirmation-dialog.component';
+import { BoardComponent } from './components/board/board.component';
+import { BoardsComponent } from './components/boards/boards.component';
+
+const routes: Routes = [
+  { path: '', redirectTo: '/board', pathMatch: 'full' },
+  { path: 'board', component: BoardComponent },
+  { path: 'boards', component: BoardsComponent }
+];
 
 @NgModule({
   declarations: [
@@ -27,9 +36,12 @@ import { ConfirmationDialogComponent } from './components/shared/confirmation-di
     EditTaskComponent,
     NewCategoryComponent,
     DoneListComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    BoardComponent,
+    BoardsComponent
   ],
   imports: [
+    RouterModule.forRoot(routes),
     BrowserModule,
     AppRoutingModule,
     FormsModule,

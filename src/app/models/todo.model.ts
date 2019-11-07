@@ -1,9 +1,9 @@
 export class Todo {
     name: string;
-    isDone: boolean;
+    isDone = false;
 
-    constructor(name: string) {
+    constructor(name: string, isDone?: boolean) {
         this.name = name;
-        this.isDone = false;
+        this.isDone = isDone;
     }
 }

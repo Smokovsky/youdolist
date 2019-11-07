@@ -11,18 +11,19 @@
                             <i class="fa fa-cogs"></i>
                         </button>
                         <div ngbDropdownMenu aria-labelledby="categoryOptions" class="ngbDropdownToggle">
-                            <button ngbDropdownItem (click)="onClickDeleteCategory(i)"><i class="fa fa-times"></i> Delete</button>
-                            <button ngbDropdownItem (click)="onClickEditCategory(i)"><i class="fa fa-edit"></i> Edit</button>
+                            <button ngbDropdownItem (click)="onClickDelete(i)"><i class="fa fa-times"></i> Delete</button>
+                            <button ngbDropdownItem (click)="onClickEdit(i)"><i class="fa fa-edit"></i> Edit</button>
                         </div>
                     </div>
                 </ng-template>
 
                 <ng-template [ngIf]="i == editCategoryIdActive" #newCategoryHeader>
                     <div class="input-group editCategoryInput">
-                        <input #newCategoryNameField autofocus class="form-control width100 editCategoryName" value="{{ category.name }}" type="text" [(ngModel)]="tempNewCategoryName">
+                        <input #newCategoryNameField autofocus class="form-control width100 editCategoryName" 
+                        value="{{ category.name }}" type="text" [(ngModel)]="tempNewCategoryName">
                         <span class="input-group-btn editCategoryButtons">
-                            <button class="btn" (click)="onClickSubmitEditCategory(i)"><i class="fa fa-check"></i></button>
-                            <button class="btn" (click)="onClickCancelEditCategory(i)"><i class="fa fa-times"></i></button>
+                            <button class="btn" (click)="onClickSubmitEdit(i)"><i class="fa fa-check"></i></button>
+                            <button class="btn" (click)="onClickCancelEdit(i)"><i class="fa fa-times"></i></button>
                         </span>
                     </div>
                 </ng-template>
