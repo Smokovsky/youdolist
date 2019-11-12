@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Category } from '../models/category.model';
-import { Task } from '../models/task.model';
-import { Todo } from '../models/todo.model';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { BoardsProviderService } from './boards-provider.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,40 +9,13 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class CategoryProviderService {
 
   categoryList: Array<Category>;
-  doneList: Array<Task>;
 
   categoryListObs = new BehaviorSubject<Array<Category>>(this.categoryList);
-  doneListObs = new BehaviorSubject<Array<Task>>(this.doneList);
 
-  constructor() {
-    /* Example data */
-    this.categoryList = new Array<Category>(
-      new Category('Obowiązki domowe', new Array<Task>(
-        new Task('Pozamiatać dom',
-          new Array<Todo>(
-            new Todo('duży pokój'),
-            new Todo('kuchnia'),
-            new Todo('łazienka')),
-              'Byle dokładnie!',
-              new Date('Dec 20, 2019')),
-        new Task('Zapłacić rachunki',
-          new Array<Todo>(
-            new Todo('czynsz'),
-            new Todo('internet')),
-              '', new Date('Nov 10, 2019')),
-        new Task('Wynieść śmieci', new Array<Todo>()
-        ))),
-      new Category('Praca', new Array<Task>(
-        new Task('Napisać raport',
-          Array<Todo>(
-            new Todo('zgromadzić paragony'),
-            new Todo('podsumować wydatki'),
-            new Todo('porozmawiać z Bartkiem'),
-            new Todo('podpisać dokumenty')),
-              'Raport z delegacji w Chorwacji 27/10/19',
-              new Date('Jan 1, 2020')
-            )))
-    );
+  constructor(private boardsProviderService: BoardsProviderService) {  }
+
+  setCategoryList(id: string) {
+    this.categoryList = this.boardsProviderService.getBoard(id).categories;
     this.categoryListObs.next(this.categoryList);
   }
 

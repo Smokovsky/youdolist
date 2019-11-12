@@ -3,8 +3,8 @@
         <div class="centerBoards">
             <h2>My boards</h2>
 
-            <ng-container *ngFor="let board of boards">
-                <div class="boardWrapper rounded" (click)="onClickBoard()">
+            <ng-container *ngFor="let board of boardList">
+                <div class="boardWrapper rounded" (click)="onClickBoard(board)">
                     <div class="boardContent">
                         <div class="boardIcon">
                             <div class="icon">
@@ -41,7 +41,7 @@
                         </div>
                     </div>
                     <div class="boardName">
-                        <h3>example board</h3>
+                        <h3>Doesn't work yet</h3>
                     </div>
                 </div>
             </div>

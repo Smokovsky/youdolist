@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Task } from '../models/task.model';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs';
-import { Todo } from '../models/todo.model';
+import { BoardsProviderService } from './boards-provider.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,16 +13,10 @@ export class DoneTasksProviderService {
 
   doneTasksObs = new BehaviorSubject<Array<Task>>(this.doneList);
 
-  constructor() {
-    /* Example data */
-    this.doneList = new Array<Task>(
-      new Task('Przykładowe wykonane zadanie',
-          new Array<Todo>(
-            new Todo('cośtam', true),
-            new Todo('i jeszcze coś', true)),
-              'z opisem...',
-              new Date('Dec 31, 2019'))
-    );
+  constructor(private boardsProviderService: BoardsProviderService) {  }
+
+  setDoneList(id: string){
+    this.doneList = this.boardsProviderService.getBoard(id).doneList;
     this.doneTasksObs.next(this.doneList);
   }
 
@@ -32,6 +26,7 @@ export class DoneTasksProviderService {
 
   add(task: Task) {
     this.doneList.push(task);
+    this.doneTasksObs.next(this.doneList);
   }
 
 }
