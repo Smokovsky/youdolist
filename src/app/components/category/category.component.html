@@ -2,6 +2,7 @@
     <div class="categoryWrapper rounded">
         <div class="categoryContent">
             <div class="categoryHeader">
+
                 <ng-template [ngIf]="i != editCategoryIdActive" #categoryHeader>
                     <div class="categoryTitle">
                         <h2>{{ category.name }}</h2>
@@ -27,6 +28,7 @@
                         </span>
                     </div>
                 </ng-template>
+
             </div>
             <div class="taskList">
                 <app-task [taskList]="category.taskList"></app-task>
@@ -37,6 +39,7 @@
         </div>
     </div>
 </ng-container>
+
 <div class="categoryWrapper newCategoryWrapper rounded">
     <app-new-category></app-new-category>
 </div>

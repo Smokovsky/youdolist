@@ -25,6 +25,7 @@ export class DoneTasksProviderService {
   }
 
   add(task: Task) {
+    task.completitionDate = new Date();
     this.doneList.push(task);
     this.doneTasksObs.next(this.doneList);
   }

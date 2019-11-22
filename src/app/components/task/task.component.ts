@@ -3,7 +3,6 @@ import { EditTaskComponent } from '../edit-task/edit-task.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Task } from 'src/app/models/task.model';
 import { DoneTasksProviderService } from 'src/app/services/done-tasks-provider.service';
-import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-task',
@@ -34,19 +33,23 @@ export class TaskComponent implements OnInit {
     const dialogRef = this.dialog.open(EditTaskComponent, {
       data: { task }
     });
-    dialogRef.afterClosed().subscribe(data => { });
-  }
-
-  onClickTaskDelete(i: number): void {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '350px',
-      data: 'Are you sure you want to delete this task? You won\'t be able to get it back.'
-    });
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.taskList.splice(i, 1);
+      if (result && result.action === 'delete') {
+        this.taskList.splice(this.taskList.indexOf(result.task), 1);
       }
     });
   }
+
+  // onClickTaskDelete(i: number): void {
+  //   const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+  //     width: '350px',
+  //     data: 'Are you sure you want to delete this task? You won\'t be able to get it back.'
+  //   });
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     if (result) {
+  //       this.taskList.splice(i, 1);
+  //     }
+  //   });
+  // }
 
 }

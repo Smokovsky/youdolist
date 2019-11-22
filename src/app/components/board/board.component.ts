@@ -12,9 +12,10 @@ import { DoneTasksProviderService } from 'src/app/services/done-tasks-provider.s
 })
 export class BoardComponent implements OnInit {
 
-  public boardId: string;
+  private boardId: string;
+  private userId: string;
   private boardList: Array<Board>;
-  private board: Board; // not very useful
+  private boardSet = false;
 
   constructor(private router: Router,
               private activatedRoute: ActivatedRoute,
@@ -27,15 +28,17 @@ export class BoardComponent implements OnInit {
               }
 
   ngOnInit() {
+    this.userId = 'XQAA';
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
+
     for (const board of this.boardList) {
-      if ( board.id === this.boardId ) {
-        this.board = board;
+      if ( board.id === this.boardId && (board.ownerId === this.userId || board.guestsId.includes(this.userId))) {
+        this.boardSet = true;
         this.categoryProviderService.setCategoryList(this.boardId);
         this.doneTasksProviderService.setDoneList(this.boardId);
       }
     }
-    if (!this.board) {
+    if (!this.boardSet) {
       this.router.navigate(['/not-found']);
     }
   }

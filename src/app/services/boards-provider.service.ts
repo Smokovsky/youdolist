@@ -24,46 +24,61 @@ export class BoardsProviderService {
 
   constructor() {
     /*  example data   */
-    this.id = 'xyz';
+    this.id = 'XYZZXY';
     this.name = 'Board one';
-    this.ownerId = 'abc';
+    this.ownerId = 'XQAA';
     this.guestsId = [];
     this.categoryList = new Array<Category>(
-      new Category('Obowiązki domowe', new Array<Task>(
-        new Task('Pozamiatać dom',
+      new Category('JXVQU', 'Obowiązki domowe', new Array<Task>(
+        new Task('JXVQU', 'Pozamiatać dom',
+        'XQAA',
           new Array<Todo>(
             new Todo('duży pokój'),
             new Todo('kuchnia'),
             new Todo('łazienka')),
-              'Byle dokładnie!',
-              new Date('Dec 20, 2019')),
-        new Task('Zapłacić rachunki',
+          500,
+          'Byle dokładnie!',
+          new Date('Dec 20, 2019')),
+        new Task('JXVQU', 'Zapłacić rachunki',
+        'XQAA',
           new Array<Todo>(
             new Todo('czynsz'),
             new Todo('internet')),
-              '', new Date('Nov 10, 2019')),
-        new Task('Wynieść śmieci', new Array<Todo>()
+          1000,
+          '',
+          new Date('Nov 10, 2019')),
+        new Task('JXVQU', 'Wynieść śmieci',
+        'XQAA',
+          new Array<Todo>(),
+          100
         ))),
-      new Category('Praca', new Array<Task>(
-        new Task('Napisać raport',
-          Array<Todo>(
+      new Category('FITEP', 'Praca', new Array<Task>(
+        new Task('FITEP', 'Napisać raport',
+        'XQAA',
+          new Array<Todo>(
             new Todo('zgromadzić paragony'),
             new Todo('podsumować wydatki'),
             new Todo('porozmawiać z Bartkiem'),
             new Todo('podpisać dokumenty')),
-              'Raport z delegacji w Chorwacji 27/10/19',
-              new Date('Jan 1, 2020')
+          2100,
+          'Raport z delegacji w Chorwacji 27/10/19',
+          new Date('Jan 1, 2020')
             )))
     );
     this.doneList = new Array<Task>(
-      new Task('Przykładowe wykonane zadanie',
+      new Task('FITEP', 'Przykładowe wykonane zadanie',
+      'XQAA',
           new Array<Todo>(
             new Todo('cośtam ten', true),
             new Todo('i jeszcze coś', true)),
-              'z opisem...',
-              new Date('Dec 31, 2019'))
+          300,
+          'z opisem...',
+          new Date('Dec 31, 2019'))
     );
     this.boardList.push(new Board(this.id, this.name, this.ownerId, this.guestsId, this.categoryList, this.doneList));
+    this.boardList.push(new Board('QUEEEB', 'Tablica znajomego', 'EEEE', Array<string>('XQAA'), this.categoryList, this.doneList));
+    this.boardList.push(new Board('ALIAXX', 'Tablica nieznajomego', 'FFFF', Array<string>('YAUE', 'IIGY'),
+                        this.categoryList, this.doneList));
     this.boardListObs.next(this.boardList);
   }
 

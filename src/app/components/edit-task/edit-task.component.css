@@ -44,6 +44,23 @@ p{
     margin-left: 5px;
     font-size: 1.2em;
 }
+.creationDetails{
+    padding-top: 25px;
+}
+.creationDetails p{
+    width: 100%;
+    font-size: 0.8em;
+    padding: 0 10px;
+    margin: 0;
+}
+.deleteTask{
+    text-align: center;
+    width: 100%;
+}
+.deleteTask button{
+    width: 100%;
+    padding: 0;
+}
 input.newTodoName{
     height: 25px;
     margin-right: 5px;
@@ -77,7 +94,10 @@ button.addNewTodo{
     margin: 0;
     vertical-align: middle;
 }
-input.dueDateField{
+input.dueDateField,
+input.pointsField,
+input.nameField
+{
     height: 25px;
     margin-right: 5px;
 }

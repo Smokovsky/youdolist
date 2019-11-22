@@ -20,8 +20,7 @@ export class NewCategoryComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   onClickAddNewCategory() {
     this.newCategoryFieldActive = true;
@@ -29,7 +28,7 @@ export class NewCategoryComponent implements OnInit {
 
   onClickSubmitNewCategory() {
     this.newCategoryFieldActive = false;
-    this.categoryProviderService.add(new Category(this.newCategoryName, Array<Task>()));
+    this.categoryProviderService.add(new Category('ID NOWEJ KATEGORII', this.newCategoryName, Array<Task>()));
     this.newCategoryName = '';
   }
 

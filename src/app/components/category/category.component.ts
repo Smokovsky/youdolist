@@ -55,9 +55,10 @@ export class CategoryComponent implements OnInit {
     const dialogRef = this.dialog.open(EditTaskComponent, {
       data: { }
     });
-    dialogRef.afterClosed().subscribe(task => {
-      if (task) {
-        category.taskList.push(task);
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.action === 'new') {
+        result.task.categoryId = category.id;
+        category.taskList.unshift(result.task);
       }
     });
   }

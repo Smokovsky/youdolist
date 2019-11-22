@@ -1,7 +1,7 @@
 <mat-dialog-content>
-    <div class="form-group">
+    <div class="form-group name">
         <label for="name">Task name:</label>
-        <input type="text" class="form-control" placeholder="Add name..." [(ngModel)]="taskName" cdkFocusInitial>
+        <input type="text" class="form-control nameField" placeholder="Add name..." [(ngModel)]="taskName" cdkFocusInitial>
     </div>
     <div class="form-group">
         <label for="description">Description:</label>
@@ -20,12 +20,25 @@
             <button class="btn addNewTodo" (click)="onClickAddTodo()"><i class="fa fa-check"></i></button>
         </span>
     </div>
+    <div class="input-group points">
+        <label for="points">Points:</label>
+        <input type="number" class="form-control pointsField" placeholder="Add points..." [(ngModel)]="taskPoints">
+    </div>
     <div class="input-group dueDate">
         <label for="dueDate">Due date:</label>
         <input class="form-control dueDateField" placeholder="Add due date..." [matDatepicker]="datepicker" [(ngModel)]="taskDueDate">
         <mat-datepicker-toggle [for]="datepicker"></mat-datepicker-toggle>
         <mat-datepicker #datepicker></mat-datepicker>
         <a class="cancelDueDate" (click)="onClickCancelDueDate()"><i class="fa fa-times"></i></a>
+    </div>
+    <div class="input-group creationDetails">
+        <p><i class="fa fa-hourglass-start"></i> Created: {{ taskCreationDate | date : 'dd/MM/y' }} by {{ taskAuthorId }}</p>
+        <ng-container *ngIf="taskEditorId">
+            <p><i class="fa fa-edit"></i> Edited: {{ taskEditDate | date : 'dd/MM/y' }} by {{ taskEditorId }}</p>
+        </ng-container>
+    </div>
+    <div class="input-group deleteTask" *ngIf="action!='new'">
+        <button class="btn btn-danger deleteBtn" (click)="onClickTaskDelete()"><i class="fa fa-trash"></i> Delete task</button>
     </div>
 </mat-dialog-content>
 

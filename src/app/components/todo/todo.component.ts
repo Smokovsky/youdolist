@@ -13,8 +13,7 @@ export class TodoComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   onTodoCheck(todo: Todo) {
     todo.isDone = !todo.isDone;
