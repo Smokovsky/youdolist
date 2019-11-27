@@ -12,7 +12,7 @@ export class CategoryProviderService {
 
   categoryListObs = new BehaviorSubject<Array<Category>>(this.categoryList);
 
-  constructor(private boardsProviderService: BoardsProviderService) {  }
+  constructor(private boardsProviderService: BoardsProviderService) {   }
 
   setCategoryList(id: string) {
     this.categoryList = this.boardsProviderService.getBoard(id).categories;

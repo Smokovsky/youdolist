@@ -76,9 +76,10 @@ export class BoardsProviderService {
           new Date('Dec 31, 2019'))
     );
     this.boardList.push(new Board(this.id, this.name, this.ownerId, this.guestsId, this.categoryList, this.doneList));
-    this.boardList.push(new Board('QUEEEB', 'Tablica znajomego', 'EEEE', Array<string>('XQAA'), this.categoryList, this.doneList));
+    this.boardList.push(new Board('QUEEEB', 'Tablica znajomego', 'EEEE', Array<string>('XQAA'),
+                        new Array<Category>(new Category('UAEAA', 'Kategoria znajomego')), new Array<Task>()));
     this.boardList.push(new Board('ALIAXX', 'Tablica nieznajomego', 'FFFF', Array<string>('YAUE', 'IIGY'),
-                        this.categoryList, this.doneList));
+                        new Array<Category>(), new Array<Task>()));
     this.boardListObs.next(this.boardList);
   }
 

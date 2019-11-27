@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BoardsProviderService } from 'src/app/services/boards-provider.service';
 import { Board } from 'src/app/models/board.model';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-boards',
@@ -15,7 +16,7 @@ export class BoardsComponent implements OnInit {
   userBoards = new Array<Board>();
   friendsBoards = new Array<Board>();
 
-  constructor(private router: Router, private boardsProviderService: BoardsProviderService) {
+  constructor(public dialog: MatDialog, private router: Router, private boardsProviderService: BoardsProviderService) {
     this.boardsProviderService.getBoardListObs().subscribe((boardList: Array<Board>) => {
       this.boardList = boardList;
     });

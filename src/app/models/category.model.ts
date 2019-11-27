@@ -6,8 +6,12 @@ export class Category {
     taskList: Array<Task>;
 
     constructor(id: string, name: string, taskList?: Array<Task>) {
-        this.id = id;
+        this.id = this.getRandomId();
         this.name = name;
         this.taskList = taskList;
+    }
+
+    getRandomId() {
+        return Math.floor((Math.random() * 99999) + 1).toString();
     }
 }

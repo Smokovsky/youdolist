@@ -20,8 +20,7 @@ export class DoneListComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   onClickEdit() {
     this.editNameActive = !this.editNameActive;

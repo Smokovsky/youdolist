@@ -43,13 +43,6 @@ button.categoryMenuBtn{
     font-size: 1.1rem;
     color: #111;
 }
-.taskList{
-    flex: 1 1 auto;
-    flex-flow: column;
-    padding: 0 4px;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
 .addNewTask{
     display: flex;
     flex: 0 1;
@@ -110,4 +103,11 @@ button.categoryMenuBtn{
 }
 .ngbDropdownToggle{
     background: #F5F5F5;
+}
+.tasksFlexWrap{
+    flex: 1 1 auto;
+    flex-flow: column;
+    padding: 0 4px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
