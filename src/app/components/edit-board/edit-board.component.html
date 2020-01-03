@@ -1,0 +1,11 @@
+<mat-dialog-content>
+    <div class="form-group name">
+        <label for="name">Task name:</label>
+        <input type="text" class="form-control nameField" placeholder="Add name..." [(ngModel)]="boardName" cdkFocusInitial>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button type="submit" class="btn btn-success" (click)="onClickSaveButton()">Save</button>
+    <button type="cancel" class="btn btn-danger" (click)="onClickCancelButton()">Cancel</button>
+</mat-dialog-actions>

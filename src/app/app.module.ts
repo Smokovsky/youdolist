@@ -21,6 +21,8 @@ import { ConfirmationDialogComponent } from './components/shared/confirmation-di
 import { BoardComponent } from './components/board/board.component';
 import { BoardsComponent } from './components/boards/boards.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { EditBoardComponent } from './components/edit-board/edit-board.component';
+import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
     ConfirmationDialogComponent,
     BoardComponent,
     BoardsComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    EditBoardComponent,
+    AccessDeniedComponent
   ],
   imports: [
     BrowserModule,
@@ -50,6 +54,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
   ],
   entryComponents: [
     EditTaskComponent,
+    EditBoardComponent,
     ConfirmationDialogComponent
   ],
   providers: [],

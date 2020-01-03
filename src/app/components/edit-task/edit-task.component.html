@@ -31,15 +31,17 @@
         <mat-datepicker #datepicker></mat-datepicker>
         <a class="cancelDueDate" (click)="onClickCancelDueDate()"><i class="fa fa-times"></i></a>
     </div>
-    <div class="input-group creationDetails">
-        <p><i class="fa fa-hourglass-start"></i> Created: {{ taskCreationDate | date : 'dd/MM/y' }} by {{ taskAuthorId }}</p>
-        <ng-container *ngIf="taskEditorId">
-            <p><i class="fa fa-edit"></i> Edited: {{ taskEditDate | date : 'dd/MM/y' }} by {{ taskEditorId }}</p>
-        </ng-container>
-    </div>
-    <div class="input-group deleteTask" *ngIf="action!='new'">
-        <button class="btn btn-danger deleteBtn" (click)="onClickTaskDelete()"><i class="fa fa-trash"></i> Delete task</button>
-    </div>
+    <ng-container *ngIf="action!='new'">
+        <div class="input-group creationDetails">
+            <p><i class="fa fa-hourglass-start"></i> Created: {{ taskCreationDate | date : 'dd/MM/y' }} by {{ taskAuthorId }}</p>
+            <ng-container *ngIf="taskEditorId">
+                <p><i class="fa fa-edit"></i> Edited: {{ taskEditDate | date : 'dd/MM/y' }} by {{ taskEditorId }}</p>
+            </ng-container>
+        </div>
+        <div class="input-group deleteTask">
+            <button class="btn btn-danger deleteBtn" (click)="onClickTaskDelete()"><i class="fa fa-trash"></i> Delete task</button>
+        </div>
+    </ng-container>
 </mat-dialog-content>
 
 <mat-dialog-actions>

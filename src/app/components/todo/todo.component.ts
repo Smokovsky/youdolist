@@ -15,7 +15,7 @@ export class TodoComponent implements OnInit {
 
   ngOnInit() { }
 
-  onTodoCheck(todo: Todo) {
+  onTodoCheck(todo: Todo): void {
     todo.isDone = !todo.isDone;
   }
 

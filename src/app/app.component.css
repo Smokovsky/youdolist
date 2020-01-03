@@ -1,13 +1,3 @@
 body{
     font-size: 18px;
 }
-.navbar-dark{
-    height: 40px;
-	flex-wrap: nowrap;
-    background: #282828;
-    color: #FFF;
-}
-.navbar h1{
-    font-size: 1.5em;
-    padding-top: 10px;
-}

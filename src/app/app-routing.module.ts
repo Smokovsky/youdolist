@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { BoardsComponent } from './components/boards/boards.component';
 import { BoardComponent } from './components/board/board.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
 
 
 const routes: Routes = [
@@ -10,6 +11,7 @@ const routes: Routes = [
   { path: 'boards', component: BoardsComponent },
   { path: 'board/:id', component: BoardComponent },
   { path: 'not-found', component: NotFoundComponent },
+  { path: 'access-denied', component: AccessDeniedComponent },
   { path: '**', component: NotFoundComponent }
 ];
 
@@ -20,4 +22,5 @@ const routes: Routes = [
 export class AppRoutingModule { }
 export const routingComponents = [BoardsComponent,
                                   BoardComponent,
-                                  NotFoundComponent];
+                                  NotFoundComponent,
+                                  AccessDeniedComponent];

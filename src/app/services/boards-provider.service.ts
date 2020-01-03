@@ -10,26 +10,18 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class BoardsProviderService {
 
-  boardList = Array<Board>();
+  private boardList = Array<Board>();
 
-  boardListObs = new BehaviorSubject<Array<Board>>(this.boardList);
+  private boardListObs = new BehaviorSubject<Array<Board>>(this.boardList);
 
   /*  example data   */
-  id: string;
-  name: string;
-  ownerId: string;
-  guestsId: Array<string>;
   categoryList: Array<Category>;
   doneList: Array<Task>;
 
   constructor() {
     /*  example data   */
-    this.id = 'XYZZXY';
-    this.name = 'Board one';
-    this.ownerId = 'XQAA';
-    this.guestsId = [];
     this.categoryList = new Array<Category>(
-      new Category('JXVQU', 'Obowiązki domowe', new Array<Task>(
+      new Category('Obowiązki domowe', new Array<Task>(
         new Task('JXVQU', 'Pozamiatać dom',
         'XQAA',
           new Array<Todo>(
@@ -52,7 +44,7 @@ export class BoardsProviderService {
           new Array<Todo>(),
           100
         ))),
-      new Category('FITEP', 'Praca', new Array<Task>(
+      new Category('Praca', new Array<Task>(
         new Task('FITEP', 'Napisać raport',
         'XQAA',
           new Array<Todo>(
@@ -75,20 +67,36 @@ export class BoardsProviderService {
           'z opisem...',
           new Date('Dec 31, 2019'))
     );
-    this.boardList.push(new Board(this.id, this.name, this.ownerId, this.guestsId, this.categoryList, this.doneList));
-    this.boardList.push(new Board('QUEEEB', 'Tablica znajomego', 'EEEE', Array<string>('XQAA'),
-                        new Array<Category>(new Category('UAEAA', 'Kategoria znajomego')), new Array<Task>()));
-    this.boardList.push(new Board('ALIAXX', 'Tablica nieznajomego', 'FFFF', Array<string>('YAUE', 'IIGY'),
+    this.boardList.push(new Board('XYZZXY', 'Board one', 'XQAA', new Array<string>(), this.categoryList, this.doneList));
+    this.boardList.push(new Board('QUEEEB', 'Tablica znajomego', 'EEEE', new Array<string>('XQAA'),
+                        new Array<Category>(new Category('Kategoria znajomego', new Array<Task>())), new Array<Task>()));
+    this.boardList.push(new Board('ALIAXX', 'Tablica nieznajomego', 'FFFF', new Array<string>('YAUE', 'IIGY'),
                         new Array<Category>(), new Array<Task>()));
+
     this.boardListObs.next(this.boardList);
   }
 
-  getBoard(id: string) {
+  getBoard(id: string): Board {
     for (const board of this.boardList) {
       if (board.id === id) {
         return board;
       }
     }
+  }
+
+  addBoard(board: Board): void {
+    this.boardList.push(board);
+    this.boardListObs.next(this.boardList);
+  }
+
+  deleteBoard(id: string): void {
+    this.boardList.forEach((item, index) => {
+      if (item.id === id) {
+        this.boardList.splice(index, 1);
+        console.log(index);
+      }
+    });
+    this.boardListObs.next(this.boardList);
   }
 
   getBoardListObs(): Observable<Array<Board>> {

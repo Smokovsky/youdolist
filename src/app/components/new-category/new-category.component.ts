@@ -22,17 +22,17 @@ export class NewCategoryComponent implements OnInit {
 
   ngOnInit() { }
 
-  onClickAddNewCategory() {
+  onClickAddNewCategory(): void {
     this.newCategoryFieldActive = true;
   }
 
-  onClickSubmitNewCategory() {
+  onClickSubmitNewCategory(): void {
     this.newCategoryFieldActive = false;
-    this.categoryProviderService.add(new Category('ID NOWEJ KATEGORII', this.newCategoryName, Array<Task>()));
+    this.categoryProviderService.add(new Category(this.newCategoryName, Array<Task>()));
     this.newCategoryName = '';
   }
 
-  onClickCancelNewCategory() {
+  onClickCancelNewCategory(): void {
     this.newCategoryFieldActive = false;
     this.newCategoryName = '';
   }

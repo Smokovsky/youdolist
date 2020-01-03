@@ -12,10 +12,12 @@ import { DoneTasksProviderService } from 'src/app/services/done-tasks-provider.s
 })
 export class BoardComponent implements OnInit {
 
-  private boardId: string;
-  private userId: string;
-  private boardList: Array<Board>;
-  private boardSet = false;
+  boardId: string;
+  userId: string;
+  boardList: Array<Board>;
+  boardExist = false;
+  boardAuth = false;
+  isAdmin = false;
 
   constructor(private router: Router,
               private activatedRoute: ActivatedRoute,
@@ -28,19 +30,36 @@ export class BoardComponent implements OnInit {
               }
 
   ngOnInit() {
+    // TODO: get userId from user service
     this.userId = 'XQAA';
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
 
     for (const board of this.boardList) {
-      if ( board.id === this.boardId && (board.ownerId === this.userId || board.guestsId.includes(this.userId))) {
-        this.boardSet = true;
-        this.categoryProviderService.setCategoryList(this.boardId);
-        this.doneTasksProviderService.setDoneList(this.boardId);
+      if ( board.id === this.boardId) {
+        this.boardExist = true;
+        if (board.ownerId === this.userId) {
+          this.isAdmin = true;
+          this.loadBoard();
+        } else if (board.guestsId.includes(this.userId)) {
+          this.loadBoard();
+        } else {
+          this.router.navigate(['/access-denied']);
+        }
       }
     }
-    if (!this.boardSet) {
+    if (!this.boardAuth) {
+      if (this.boardExist) {
+        this.router.navigate(['/access-denied']);
+      } else {
       this.router.navigate(['/not-found']);
+      }
     }
   }
 
+  loadBoard(): void {
+    this.boardAuth = true;
+    this.categoryProviderService.setCategoryList(this.boardId);
+    this.doneTasksProviderService.setDoneList(this.boardId);
+    // TODO: setRewardList();
+  }
 }

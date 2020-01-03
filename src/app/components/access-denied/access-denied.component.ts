@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-not-found',
-  templateUrl: './not-found.component.html',
-  styleUrls: ['./not-found.component.css']
+  selector: 'app-access-denied',
+  templateUrl: './access-denied.component.html',
+  styleUrls: ['./access-denied.component.css']
 })
-export class NotFoundComponent implements OnInit {
+export class AccessDeniedComponent implements OnInit {
 
   constructor(private router: Router) { }
 
@@ -15,4 +15,5 @@ export class NotFoundComponent implements OnInit {
   onClickBackBtn(): void {
     this.router.navigate(['/']);
   }
+
 }

@@ -1,8 +1,6 @@
-<div class="taskList" cdkDropList id="{{ 'cdk-drop-list-' + categoryId }}" [cdkDropListData]="taskList"
+<div class="taskList" cdkDropList id="{{ 'cdk-task-drop-list-' + categoryId }}" [cdkDropListData]="taskList"
 [cdkDropListConnectedTo]="categoryIds" (cdkDropListDropped)="onDrop($event)">
-
-    <div *ngFor="let task of taskList; let i = index" cdkDrag> 
-
+    <div *ngFor="let task of taskList; let i = index" cdkDrag [cdkDragStartDelay]="80"> 
         <div class="placeholder" *cdkDragPlaceholder></div>
         <div class="task">
             <div class="taskName">

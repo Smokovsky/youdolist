@@ -1,11 +1,24 @@
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <a href="/boards">YouDoList</a>
+</nav>
 <div class="container-fluid appBackground">
     <div class="boardsWrapper">
         <div class="centerBoards">
+            
             <h2>My boards</h2>
 
             <ng-container *ngFor="let board of userBoards">
-                <div class="boardWrapper rounded" (click)="onClickBoard(board)">
-                    <div class="boardContent">
+                <div class="boardWrapper rounded">
+                    <div ngbDropdown class="ngbDropdown">
+                        <button ngbDropdownToggle class="btn boardMenuBtn" id="boardOptions">
+                            <i class="fa fa-cogs"></i>
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="boardOptions" class="ngbDropdownToggle">
+                            <button ngbDropdownItem (click)="onClickDelete(board.id)"><i class="fa fa-times"></i> Delete</button>
+                            <button ngbDropdownItem (click)="onClickEdit(board)"><i class="fa fa-edit"></i> Edit</button>
+                        </div>
+                    </div>
+                    <div class="boardContent" (click)="onClickBoard(board)">
                         <div class="boardIcon">
                             <div class="icon">
                                 <i class="fa fa-align-justify"></i>

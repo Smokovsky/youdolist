@@ -8,13 +8,13 @@ import { BoardsProviderService } from './boards-provider.service';
 })
 export class CategoryProviderService {
 
-  categoryList: Array<Category>;
+  private categoryList: Array<Category>;
 
-  categoryListObs = new BehaviorSubject<Array<Category>>(this.categoryList);
+  private categoryListObs = new BehaviorSubject<Array<Category>>(this.categoryList);
 
   constructor(private boardsProviderService: BoardsProviderService) {   }
 
-  setCategoryList(id: string) {
+  setCategoryList(id: string): void {
     this.categoryList = this.boardsProviderService.getBoard(id).categories;
     this.categoryListObs.next(this.categoryList);
   }
@@ -23,12 +23,12 @@ export class CategoryProviderService {
     return this.categoryListObs.asObservable();
   }
 
-  add(category: Category) {
+  add(category: Category): void {
     this.categoryList.push(category);
     this.categoryListObs.next(this.categoryList);
   }
 
-  remove(i: number) {
+  remove(i: number): void {
     this.categoryList.splice(i, 1);
     this.categoryListObs.next(this.categoryList);
   }

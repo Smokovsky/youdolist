@@ -6,3 +6,15 @@
     white-space: nowrap;
     background: #FFF;
 }
+.navbar-dark{
+    height: 40px;
+	flex-wrap: nowrap;
+    background: #282828;
+    color: #FFF;
+}
+.navbar a{
+	font-size: 1.5em;
+    text-decoration: none;
+    font-weight: 500;
+	color: #FFF;
+}

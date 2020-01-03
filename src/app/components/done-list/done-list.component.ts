@@ -22,16 +22,16 @@ export class DoneListComponent implements OnInit {
 
   ngOnInit() { }
 
-  onClickEdit() {
+  onClickEdit(): void {
     this.editNameActive = !this.editNameActive;
   }
 
-  onClickSubmit() {
+  onClickSubmit(): void {
     this.doneListName = this.tempNewDoneName;
     this.editNameActive = false;
   }
 
-  onClickCancel() {
+  onClickCancel(): void {
     this.editNameActive = false;
     this.tempNewDoneName = this.doneListName;
   }

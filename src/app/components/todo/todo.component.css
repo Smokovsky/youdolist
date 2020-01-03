@@ -9,6 +9,7 @@ li{
 input[type=checkbox]{
     margin-right: 3px;
     vertical-align: text-bottom;
+    cursor: pointer;
 }
 p{
     padding: 0;

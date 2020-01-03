@@ -10,8 +10,8 @@ import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confi
   styleUrls: ['./edit-task.component.css']
 })
 export class EditTaskComponent implements OnInit {
+  // TODO: get userId from user service
   userId: string;
-  // categoryId: string;
 
   task?: Task = this.data.task;
   taskAuthorId: string;
@@ -38,7 +38,6 @@ export class EditTaskComponent implements OnInit {
       this.task = new Task('', '', this.userId, new Array<Todo>(), 0);
       this.action = 'new';
     }
-    // this.categoryId = this.task.categoryId;
     this.taskEditorId = this.task.lastEditorId;
     this.taskAuthorId = this.task.authorId;
     this.taskName = this.task.name;
@@ -50,7 +49,8 @@ export class EditTaskComponent implements OnInit {
     this.taskPoints = this.task.points;
   }
 
-  onTodoCheck(todo: Todo) {
+  // TODO: FIX: todolist is editing object live not regarding action
+  onTodoCheck(todo: Todo): void {
     todo.isDone = !todo.isDone;
   }
 
@@ -66,25 +66,25 @@ export class EditTaskComponent implements OnInit {
     });
   }
 
-  onClickAddTodo() {
+  onClickAddTodo(): void {
     this.task.todoList.push(new Todo(this.newTodoName));
     this.newTodoName = '';
   }
 
-  onClickDeleteTodo(i: number) {
+  onClickDeleteTodo(i: number): void {
     this.task.todoList.splice(i, 1);
   }
 
-  onClickCancelDueDate() {
+  onClickCancelDueDate(): void {
     this.taskDueDate = null;
   }
 
-  onClickCancelButton() {
+  onClickCancelButton(): void {
     this.dialogRef.close();
     delete this.task;
   }
 
-  onClickSaveButton() {
+  onClickSaveButton(): void {
     if (this.action !== 'new') {
       this.task.lastEditorId = this.userId;
       this.task.lastEditDate = new Date();
