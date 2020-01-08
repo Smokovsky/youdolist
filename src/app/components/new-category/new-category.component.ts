@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CategoryProviderService } from 'src/app/services/category-provider.service';
+import { CategoryListProviderService } from 'src/app/services/category-list-provider.service';
 import { Category } from 'src/app/models/category.model';
 import { Task } from 'src/app/models/task.model';
 
@@ -14,10 +14,12 @@ export class NewCategoryComponent implements OnInit {
   newCategoryFieldActive = false;
   newCategoryName: string;
 
-  constructor(private categoryProviderService: CategoryProviderService) {
-    this.categoryProviderService.getCategoryListObs().subscribe((categories: Array<Category>) => {
+  constructor(private categoryListProviderService: CategoryListProviderService) {
+
+    this.categoryListProviderService.getCategoryListObs().subscribe((categories: Array<Category>) => {
       this.categoryList = categories;
     });
+
   }
 
   ngOnInit() { }
@@ -28,7 +30,7 @@ export class NewCategoryComponent implements OnInit {
 
   onClickSubmitNewCategory(): void {
     this.newCategoryFieldActive = false;
-    this.categoryProviderService.add(new Category(this.newCategoryName, Array<Task>()));
+    this.categoryListProviderService.add(new Category(this.newCategoryName, Array<Task>()));
     this.newCategoryName = '';
   }
 

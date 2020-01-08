@@ -18,3 +18,11 @@
     font-weight: 500;
 	color: #FFF;
 }
+.navbarRight p{
+    display: inline;
+    padding: 0 15px;
+    vertical-align: super;
+}
+.navbarRight p i{
+    font-size: 0.8em;
+}

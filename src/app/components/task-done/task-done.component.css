@@ -9,7 +9,7 @@
     margin-top: 7px;
     margin-bottom: 7px;
     border-radius: 0.25rem;
-    background: #EEE;
+    background: rgb(218, 226, 211);
     -webkit-box-shadow: 0 2px 5px 0px rgba(0,0,0,0.3); 
     box-shadow: 0 2px 5px 0px rgba(0,0,0,0.3);
     cursor: grab;
@@ -30,7 +30,7 @@
 }
 .taskControls{
     position: relative;
-    min-height: 33px;
+    min-height: 48px;
     margin-top: 10px;
 }
 .buttons {
@@ -50,11 +50,11 @@ button{
     -webkit-box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
     box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3);   
 }
-.taskDoneBtn{
-    background: #47a214;
+.taskUndoBtn{
+    background: #b4b4b4;
 }
-.taskDoneBtn:hover{
-    color: #c7e7b7;
+.taskUndoBtn:hover{
+    color: #eef0b4;
 }
 .taskSettingsBtn{
     background: #e0c009;

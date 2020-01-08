@@ -15,9 +15,11 @@ export class DoneListComponent implements OnInit {
   tempNewDoneName = this.doneListName;
 
   constructor(private doneTasksProviderService: DoneTasksProviderService) {
+
     this.doneTasksProviderService.getDoneTasksObs().subscribe((doneTasks: Array<Task>) => {
       this.doneTaskList = doneTasks;
     });
+
   }
 
   ngOnInit() { }

@@ -35,7 +35,7 @@ button.categoryMenuBtn{
     right: 3px;
     top: 2px;
     vertical-align: top;
-    background: #EEE;
+    background: rgb(218, 226, 211);
     -webkit-box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
     box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
 }

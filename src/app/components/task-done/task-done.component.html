@@ -16,17 +16,17 @@
                 <div class="taskDate">
                     <p class="points"><i class="fa fa-diamond"></i> {{ task.points }}</p>
 
-                    <ng-container *ngIf="task.dueDate; else noDueDate">
-                        <p><i class="fa fa-hourglass-end"></i> {{ task.dueDate | date : 'dd/MM/y' }}</p>
+                    <ng-container>
+                        <p><i class="fa fa-check-square"></i> {{ task.completitionDate | date : 'dd/MM/y' }}</p>
                     </ng-container>
 
-                    <ng-template #noDueDate>
-                        <p><i class="fa fa-hourglass-end"></i> &#8734;</p>
-                    </ng-template>
+                    <ng-container>
+                        <p><i class="fa fa-user"></i> {{ task.completitorId }}</p>
+                    </ng-container>
                     
                 </div>
                 <div class="buttons">
-                    <button class="btn taskDoneBtn" (click)="onClickTaskDone(i)"><i class="fa fa-check"></i></button>
+                    <button class="btn taskUndoBtn" (click)="onClickTaskUndo(i)"><i class="fa fa-undo"></i></button>
                     <button class="btn taskSettingsBtn" (click)="onClickTaskSettings(task)"><i class="fa fa-cog"></i></button>
                 </div>
             </div>

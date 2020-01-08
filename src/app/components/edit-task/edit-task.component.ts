@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dial
 import { Task } from 'src/app/models/task.model';
 import { Todo } from 'src/app/models/todo.model';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
+import { BoardUserProviderService } from 'src/app/services/board-user-provider.service';
 
 @Component({
   selector: 'app-edit-task',
@@ -10,7 +11,7 @@ import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confi
   styleUrls: ['./edit-task.component.css']
 })
 export class EditTaskComponent implements OnInit {
-  // TODO: get userId from user service
+
   userId: string;
 
   task?: Task = this.data.task;
@@ -18,7 +19,7 @@ export class EditTaskComponent implements OnInit {
   taskEditorId: string;
   taskName: string ;
   taskDescription: string;
-  taskTodoList: Array<Todo>;
+  taskTodoList = new Array<Todo>();
   taskCreationDate: Date;
   taskEditDate: Date;
   taskDueDate?: Date;
@@ -30,10 +31,12 @@ export class EditTaskComponent implements OnInit {
 
   constructor(public dialog: MatDialog,
               public dialogRef: MatDialogRef<EditTaskComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: any) { }
+              @Inject(MAT_DIALOG_DATA) public data: any,
+              private boardUserProviderService: BoardUserProviderService) { }
 
   ngOnInit() {
-    this.userId = 'XQAA';
+    this.userId = this.boardUserProviderService.getUserId();
+
     if (!this.task) {
       this.task = new Task('', '', this.userId, new Array<Todo>(), 0);
       this.action = 'new';
@@ -42,14 +45,14 @@ export class EditTaskComponent implements OnInit {
     this.taskAuthorId = this.task.authorId;
     this.taskName = this.task.name;
     this.taskDescription = this.task.description;
-    this.taskTodoList = this.task.todoList;
+    this.taskTodoList = Object.assign([], this.task.todoList);
     this.taskCreationDate = this.task.creationDate;
     this.taskEditDate = this.task.lastEditDate;
     this.taskDueDate = this.task.dueDate;
     this.taskPoints = this.task.points;
   }
 
-  // TODO: FIX: todolist is editing object live not regarding action
+  // TODO: FIX: checking todos of existing indexes result in live editing without approval
   onTodoCheck(todo: Todo): void {
     todo.isDone = !todo.isDone;
   }
@@ -67,12 +70,12 @@ export class EditTaskComponent implements OnInit {
   }
 
   onClickAddTodo(): void {
-    this.task.todoList.push(new Todo(this.newTodoName));
+    this.taskTodoList.push(new Todo(this.newTodoName));
     this.newTodoName = '';
   }
 
   onClickDeleteTodo(i: number): void {
-    this.task.todoList.splice(i, 1);
+    this.taskTodoList.splice(i, 1);
   }
 
   onClickCancelDueDate(): void {

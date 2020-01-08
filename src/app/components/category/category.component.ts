@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskComponent } from '../edit-task/edit-task.component';
 import { Category } from 'src/app/models/category.model';
-import { CategoryProviderService } from 'src/app/services/category-provider.service';
+import { CategoryListProviderService } from 'src/app/services/category-list-provider.service';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
@@ -17,10 +17,12 @@ export class CategoryComponent implements OnInit {
   tempNewCategoryName: string;
 
   constructor(public dialog: MatDialog,
-              private categoryProviderService: CategoryProviderService) {
-                this.categoryProviderService.getCategoryListObs().subscribe((categories: Array<Category>) => {
-                  this.categoryList = categories;
-                });
+              private categoryListProviderService: CategoryListProviderService) {
+
+    this.categoryListProviderService.getCategoryListObs().subscribe((categories: Array<Category>) => {
+      this.categoryList = categories;
+    });
+
   }
 
   ngOnInit() {  }
@@ -32,7 +34,7 @@ export class CategoryComponent implements OnInit {
     });
   dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.categoryProviderService.remove(i);
+        this.categoryListProviderService.remove(i);
       }
     });
   }

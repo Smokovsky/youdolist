@@ -23,6 +23,7 @@ import { BoardsComponent } from './components/boards/boards.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { EditBoardComponent } from './components/edit-board/edit-board.component';
 import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
+import { TaskDoneComponent } from './components/task-done/task-done.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { AccessDeniedComponent } from './components/access-denied/access-denied.
     BoardsComponent,
     NotFoundComponent,
     EditBoardComponent,
-    AccessDeniedComponent
+    AccessDeniedComponent,
+    TaskDoneComponent
   ],
   imports: [
     BrowserModule,

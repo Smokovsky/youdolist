@@ -18,14 +18,17 @@ export class BoardsComponent implements OnInit {
   userBoards: Array<Board>;
   friendsBoards: Array<Board>;
 
-  constructor(public dialog: MatDialog, private router: Router, private boardsProviderService: BoardsProviderService) {
+  constructor(public dialog: MatDialog,
+              private router: Router,
+              private boardsProviderService: BoardsProviderService) {
+
     this.boardsProviderService.getBoardListObs().subscribe((boardList: Array<Board>) => {
       this.boardList = boardList;
     });
   }
 
   ngOnInit() {
-    // TODO: get userId from user service
+    // TODO: get user id from firebase service
     this.userId = 'XQAA';
 
     this.findUserBoards();
@@ -34,13 +37,18 @@ export class BoardsComponent implements OnInit {
   findUserBoards(): void {
     this.userBoards = new Array<Board>();
     this.friendsBoards = new Array<Board>();
-    for (const board of this.boardList) {
+    this.boardList.forEach(board => {
       if (board.ownerId === this.userId) {
         this.userBoards.push(board);
-      } else if (board.guestsId.includes(this.userId)) {
-        this.friendsBoards.push(board);
+      } else {
+        board.userList.forEach(user => {
+          if (user.id === this.userId) {
+            this.friendsBoards.push(board);
+          }
+        });
       }
-    }
+    });
+
   }
 
   onClickBoard(board: Board): void {

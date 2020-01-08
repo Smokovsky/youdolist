@@ -28,6 +28,9 @@ export class Task {
         this.points = points;
         this.creationDate = new Date();
         this.dueDate = dueDate;
+        if (!todoList) {
+            this.todoList = new Array<Todo>();
+         }
     }
 }
 
