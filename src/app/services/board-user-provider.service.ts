@@ -12,12 +12,10 @@ export class BoardUserProviderService {
 
   // TODO: get user id from firebase service
   private userId = 'XQAA';
-
-  private user: User;
-  private pointsObs: BehaviorSubject<number>;
-
   private boardAdmin = false;
+  private user: User;
 
+  private pointsObs: BehaviorSubject<number>;
 
   constructor(private activatedRoute: ActivatedRoute,
               private boardsProviderService: BoardsProviderService) {

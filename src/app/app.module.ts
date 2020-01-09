@@ -24,6 +24,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { EditBoardComponent } from './components/edit-board/edit-board.component';
 import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
 import { TaskDoneComponent } from './components/task-done/task-done.component';
+import { UndoOptionsComponent } from './components/undo-options/undo-options.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { TaskDoneComponent } from './components/task-done/task-done.component';
     NotFoundComponent,
     EditBoardComponent,
     AccessDeniedComponent,
-    TaskDoneComponent
+    TaskDoneComponent,
+    UndoOptionsComponent
   ],
   imports: [
     BrowserModule,
@@ -57,6 +59,7 @@ import { TaskDoneComponent } from './components/task-done/task-done.component';
   entryComponents: [
     EditTaskComponent,
     EditBoardComponent,
+    UndoOptionsComponent,
     ConfirmationDialogComponent
   ],
   providers: [],

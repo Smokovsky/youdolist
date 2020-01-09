@@ -30,7 +30,7 @@ export class NewCategoryComponent implements OnInit {
 
   onClickSubmitNewCategory(): void {
     this.newCategoryFieldActive = false;
-    this.categoryListProviderService.add(new Category(this.newCategoryName, Array<Task>()));
+    this.categoryListProviderService.add(new Category(this.newCategoryName, new Array<Task>()));
     this.newCategoryName = '';
   }
 

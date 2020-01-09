@@ -7,6 +7,7 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
 import { Category } from 'src/app/models/category.model';
 import { CategoryListProviderService } from 'src/app/services/category-list-provider.service';
 import { BoardUserProviderService } from 'src/app/services/board-user-provider.service';
+import { UndoOptionsComponent } from '../undo-options/undo-options.component';
 
 @Component({
   selector: 'app-task',
@@ -62,49 +63,47 @@ export class TaskComponent implements OnInit {
   }
 
   onDrop(event: CdkDragDrop<string[]>): void {
-    // Case of doing task is in task-done.component
-    if (event.previousContainer.id === 'cdk-task-drop-list-doneTaskList' &&
-        event.container.id === 'cdk-task-drop-list-doneTaskList') {
-      // Case change position at done list
+    // Case undoing task
+    if (event.previousContainer.id === 'cdk-task-drop-list-doneTaskList') {
+      if (this.boardUserProviderService.isAdmin()) {
+        const task = event.previousContainer.data[0];
+        const dialogRef = this.dialog.open(UndoOptionsComponent, {
+          data: { task }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+              transferArrayItem(event.previousContainer.data,
+                event.container.data,
+                event.previousIndex,
+                event.currentIndex);
+              if (result === 'changePoints') {
+                // TODO: Substract user points using points manipulation service
+                this.boardUserProviderService.subPoints(this.taskList[event.currentIndex].points);
+              }
+            }
+          });
+      } else {
+        transferArrayItem(event.previousContainer.data,
+                          event.container.data,
+                          event.previousIndex,
+                          event.currentIndex);
+        this.boardUserProviderService.subPoints(this.taskList[event.currentIndex].points);
+      }
 
-    } else if (event.previousContainer.id === 'cdk-task-drop-list-doneTaskList') {
-      // Case undoing task
-      transferArrayItem(event.previousContainer.data,
-                        event.container.data,
-                        event.previousIndex,
-                        event.currentIndex);
-      this.boardUserProviderService.subPoints(this.taskList[event.currentIndex].points);
+    // Case position in category change
     } else if (event.previousContainer === event.container) {
-      // change position in category
       moveItemInArray(event.container.data,
                       event.previousIndex,
                       event.currentIndex);
+
+    // Case category change
     } else {
-      // changing category
       transferArrayItem(event.previousContainer.data,
                         event.container.data,
                         event.previousIndex,
                         event.currentIndex);
       this.taskList[event.currentIndex].categoryId = this.categoryId;
     }
-
-
-
-
-    // if (event.previousContainer === event.container) {
-    //   moveItemInArray(event.container.data,
-    //                   event.previousIndex,
-    //                   event.currentIndex);
-    // } else {
-    //   transferArrayItem(event.previousContainer.data,
-    //                     event.container.data,
-    //                     event.previousIndex,
-    //                     event.currentIndex);
-    //   this.taskList[event.currentIndex].categoryId = this.categoryId;
-
-    //   if (event.previousContainer.id === 'cdk-task-drop-list-doneTaskList') {
-    //     this.boardUserProviderService.subPoints(this.taskList[event.currentIndex].points);
-    //   }
-    }
+  }
 
 }

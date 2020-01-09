@@ -7,6 +7,7 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
 import { Category } from 'src/app/models/category.model';
 import { CategoryListProviderService } from 'src/app/services/category-list-provider.service';
 import { BoardUserProviderService } from 'src/app/services/board-user-provider.service';
+import { UndoOptionsComponent } from '../undo-options/undo-options.component';
 
 @Component({
   selector: 'app-task-done',
@@ -52,11 +53,28 @@ export class TaskDoneComponent implements OnInit {
   onClickTaskUndo(i: number): void {
     if (this.taskList[i].completitorId === this.userId || this.boardUserProviderService.isAdmin()) {
       const previousCategory: string = this.taskList[i].categoryId;
-      // TODO: Admin also can decide whether or not substract points to the completitor
-      // while completitor can only undo task losing the points
-      if (this.categoryListProviderService.addTaskToCategory(this.taskList[i], previousCategory)) {
-        this.boardUserProviderService.subPoints(this.taskList[i].points);
-        this.taskList.splice(i, 1);
+
+      if (this.boardUserProviderService.isAdmin()) {
+        const task = this.taskList[i];
+        const dialogRef = this.dialog.open(UndoOptionsComponent, {
+          data: { task }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            if (this.categoryListProviderService.addTaskToCategory(this.taskList[i], previousCategory)) {
+              if (result === 'changePoints') {
+                // TODO: Substract user points using points manipulation service
+                this.boardUserProviderService.subPoints(this.taskList[i].points);
+              }
+              this.taskList.splice(i, 1);
+            }
+          }
+        });
+      } else {
+        if (this.categoryListProviderService.addTaskToCategory(this.taskList[i], previousCategory)) {
+          this.boardUserProviderService.subPoints(this.taskList[i].points);
+          this.taskList.splice(i, 1);
+        }
       }
     }
   }
@@ -82,7 +100,6 @@ export class TaskDoneComponent implements OnInit {
                         event.container.data,
                         event.previousIndex,
                         event.currentIndex);
-
       this.taskList[event.currentIndex].completitionDate = new Date();
       this.taskList[event.currentIndex].completitorId = this.userId;
       this.boardUserProviderService.addPoints(this.taskList[event.currentIndex].points);
