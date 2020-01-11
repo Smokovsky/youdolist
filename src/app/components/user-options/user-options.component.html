@@ -1,0 +1,33 @@
+<mat-dialog-content>
+    <div class="form-group">
+        <label for="userList">User list:</label>
+        <table id ="usersTable">
+            <thead>
+                <tr>
+                    <th>User Id</th>
+                    <th class="pointsTh">Points</th>
+                    <th class="optionsTh">Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of userList; let i = index">
+                    <td class="userName">{{ user.id }}</td>
+                    <td class="pointsTd">
+                        <div class="points">
+                           {{ user.points }} <i class="fa fa-diamond"></i>
+                       </div>
+                    </td>
+                    <td class="optionsTd">
+                        <button class="deleteUser" (click)="onAddUserPoints(i)"><i class="fa fa-plus"></i><i class="fa fa-diamond"></i></button>
+                        <button class="deleteUser" (click)="onSubUserPoints(i)"><i class="fa fa-minus"></i><i class="fa fa-diamond"></i></button>
+                        <button class="deleteUser" (click)="onClickDeleteUser(i)"><i class="fa fa-times"></i></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button type="cancel" class="btn btn-danger" (click)="onClickClose()">Close</button>
+</mat-dialog-actions>

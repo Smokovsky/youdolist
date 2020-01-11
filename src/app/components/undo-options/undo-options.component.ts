@@ -23,8 +23,7 @@ export class UndoOptionsComponent implements OnInit {
     this.taskCompletitor = this.task.completitorId;
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   onClickSubstractPointsButton(): void {
     this.dialogRef.close('changePoints');

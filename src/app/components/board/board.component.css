@@ -16,13 +16,18 @@
 	font-size: 1.5em;
     text-decoration: none;
     font-weight: 500;
-	color: #FFF;
+    color: #FFF;
+    cursor: pointer;
+    padding: 3px;
+    margin: 4px;
 }
 .navbarRight p{
     display: inline;
-    padding: 0 15px;
     vertical-align: super;
 }
-.navbarRight p i{
-    font-size: 0.8em;
+.points{
+    display: inline-block;
+    height: 100%;
+    margin-right: 10px;
+    font-size: 0.9em;
 }

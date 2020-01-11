@@ -49,6 +49,10 @@ export class BoardUserProviderService {
     return this.pointsObs.asObservable();
   }
 
+  nextObservable(): void {
+    this.pointsObs.next(this.user.points);
+  }
+
   addPoints(points: number): void {
     this.user.addPoints(points);
     this.pointsObs.next(this.user.points);

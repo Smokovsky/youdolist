@@ -5,6 +5,9 @@ import { Board } from 'src/app/models/board.model';
 import { CategoryListProviderService } from 'src/app/services/category-list-provider.service';
 import { DoneTasksProviderService } from 'src/app/services/done-tasks-provider.service';
 import { BoardUserProviderService } from 'src/app/services/board-user-provider.service';
+import { UserOptionsComponent } from '../user-options/user-options.component';
+import { MatDialog } from '@angular/material/dialog';
+import { UserOptionsProviderService } from 'src/app/services/user-options-provider.service';
 
 @Component({
   selector: 'app-board',
@@ -12,28 +15,25 @@ import { BoardUserProviderService } from 'src/app/services/board-user-provider.s
   styleUrls: ['./board.component.css'],
   providers: [CategoryListProviderService,
               DoneTasksProviderService,
-              BoardUserProviderService]
+              BoardUserProviderService,
+              UserOptionsProviderService]
 })
 export class BoardComponent implements OnInit {
 
   boardId: string;
   userId: string;
-  boardList: Array<Board>;
   boardExist = false;
   boardAuth = false;
-  isAdmin = false;
   userPoints: number;
 
-  constructor(private router: Router,
+  constructor(public dialog: MatDialog,
+              private router: Router,
               private activatedRoute: ActivatedRoute,
               private boardsProviderService: BoardsProviderService,
               private categoryListProviderService: CategoryListProviderService,
               private doneTasksProviderService: DoneTasksProviderService,
-              private boardUserProviderService: BoardUserProviderService) {
-
-    this.boardsProviderService.getBoardListObs().subscribe((boardList: Array<Board>) => {
-      this.boardList = boardList;
-    });
+              private boardUserProviderService: BoardUserProviderService,
+              private userOptionsProviderService: UserOptionsProviderService) {
 
     this.boardUserProviderService.getPointsObs().subscribe((userPoints: number) => {
       this.userPoints = userPoints;
@@ -45,36 +45,43 @@ export class BoardComponent implements OnInit {
     this.userId = this.boardUserProviderService.getUserId();
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
 
-    this.boardList.forEach(board => {
-      if ( board.id === this.boardId) {
-        this.boardExist = true;
-        if (board.ownerId === this.userId) {
-          this.isAdmin = true;
+    // TODO: This (from here) sould be rerunned when admin is doing changes to userList
+    // aswell as user points nextObs should be provided with each points action
+    if (this.boardsProviderService.getBoard(this.boardId)) {
+      this.boardExist = true;
+      this.boardsProviderService.getBoard(this.boardId).userList.forEach(user => {
+        if (user.id === this.userId) {
           this.loadBoard();
-        } else {
-          board.userList.forEach(user => {
-            if (user.id === this.userId) {
-              this.loadBoard();
-            }
-          });
         }
-      }
-    });
+      });
+    }
 
     if (!this.boardAuth) {
       if (this.boardExist) {
         this.router.navigate(['/access-denied']);
       } else {
-      this.router.navigate(['/not-found']);
+        this.router.navigate(['/not-found']);
       }
     }
 
+  }
+
+  onClickUserOptions(): void {
+    const userOptionsProviderService = this.userOptionsProviderService;
+    this.dialog.open(UserOptionsComponent, {
+      data: {userOptionsProviderService}
+    });
+  }
+
+  onClickRewardList(): void {
+    // TODO
   }
 
   loadBoard(): void {
     this.boardAuth = true;
     this.categoryListProviderService.setCategoryList(this.boardId);
     this.doneTasksProviderService.setDoneList(this.boardId);
+    this.userOptionsProviderService.setUserList(this.boardId);
     // TODO: setRewardList();
   }
 }

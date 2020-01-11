@@ -1,0 +1,28 @@
+table#usersTable{
+    width: 100%;
+}
+.pointsTh{
+    text-align: right;
+}
+.optionsTh{
+    text-align: center;
+}
+.optionsTd{
+    text-align: right;
+    width: 145px;
+}
+.pointsTd{
+    width: 1px;
+    max-width: 100px;
+}
+.points{
+    display: flex;
+    float: right;
+}
+.points .fa{
+    margin-top: 3px;
+    margin-left: 3px;
+}
+button{
+    display: inline;
+}

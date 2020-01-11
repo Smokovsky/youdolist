@@ -25,6 +25,7 @@ import { EditBoardComponent } from './components/edit-board/edit-board.component
 import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
 import { TaskDoneComponent } from './components/task-done/task-done.component';
 import { UndoOptionsComponent } from './components/undo-options/undo-options.component';
+import { UserOptionsComponent } from './components/user-options/user-options.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { UndoOptionsComponent } from './components/undo-options/undo-options.com
     EditBoardComponent,
     AccessDeniedComponent,
     TaskDoneComponent,
-    UndoOptionsComponent
+    UndoOptionsComponent,
+    UserOptionsComponent
   ],
   imports: [
     BrowserModule,
@@ -60,6 +62,7 @@ import { UndoOptionsComponent } from './components/undo-options/undo-options.com
     EditTaskComponent,
     EditBoardComponent,
     UndoOptionsComponent,
+    UserOptionsComponent,
     ConfirmationDialogComponent
   ],
   providers: [],
