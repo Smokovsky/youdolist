@@ -26,6 +26,7 @@ import { AccessDeniedComponent } from './components/access-denied/access-denied.
 import { TaskDoneComponent } from './components/task-done/task-done.component';
 import { UndoOptionsComponent } from './components/undo-options/undo-options.component';
 import { UserOptionsComponent } from './components/user-options/user-options.component';
+import { ValueInputDialogComponent } from './components/shared/value-input-dialog/value-input-dialog.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { UserOptionsComponent } from './components/user-options/user-options.com
     AccessDeniedComponent,
     TaskDoneComponent,
     UndoOptionsComponent,
-    UserOptionsComponent
+    UserOptionsComponent,
+    ValueInputDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -63,7 +65,8 @@ import { UserOptionsComponent } from './components/user-options/user-options.com
     EditBoardComponent,
     UndoOptionsComponent,
     UserOptionsComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    ValueInputDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

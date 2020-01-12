@@ -1,3 +1,7 @@
+.mat-dialog-actions{
+    position: relative;
+    float: right;
+}
 table#usersTable{
     width: 100%;
 }

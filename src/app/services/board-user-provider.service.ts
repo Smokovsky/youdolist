@@ -22,14 +22,15 @@ export class BoardUserProviderService {
 
     const board = this.boardsProviderService.getBoard(this.activatedRoute.snapshot.paramMap.get('id'));
     if (board) {
-      board.userList.forEach(user => {
-        if (user.id === this.userId) {
-          this.user = user;
+      for (let i = 0, len = board.userList.length; i < len; i++) {
+        if (board.userList[i].id === this.userId) {
+          this.user = board.userList[i];
           if (this.userId === board.ownerId) {
             this.boardAdmin = true;
           }
+          break;
         }
-      });
+      }
     } else {
       // Prevents breaking on reload
       this.user = new User('empty user');

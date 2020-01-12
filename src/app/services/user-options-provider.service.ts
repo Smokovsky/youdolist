@@ -27,32 +27,35 @@ export class UserOptionsProviderService {
   }
 
   addUserPoints(userId: string, points: number): void {
-    this.userList.forEach(user => {
-      if (user.id === userId) {
-        user.addPoints(points);
+    for (let i = 0, len = this.userList.length; i < len; i++) {
+      if (this.userList[i].id === userId) {
+        this.userList[i].addPoints(points);
+        this.userListObs.next(this.userList);
+        this.boardUserProviderService.nextObservable();
+        break;
       }
-    });
-    this.userListObs.next(this.userList);
-    this.boardUserProviderService.nextObservable();
+    }
   }
 
   substractUserPoints(userId: string, points: number): void {
-    this.userList.forEach(user => {
-      if (user.id === userId) {
-        user.subPoints(points);
+    for (let i = 0, len = this.userList.length; i < len; i++) {
+      if (this.userList[i].id === userId) {
+        this.userList[i].subPoints(points);
+        this.userListObs.next(this.userList);
+        this.boardUserProviderService.nextObservable();
+        break;
       }
-    });
-    this.userListObs.next(this.userList);
-    this.boardUserProviderService.nextObservable();
+    }
   }
 
   deleteUser(user: User): void {
-    this.userList.forEach((u, index) => {
-      if (u.id === user.id) {
-        this.userList.splice(index, 1);
+    for (let i = 0, len = this.userList.length; i < len; i++) {
+      if (this.userList[i].id === user.id) {
+        this.userList.splice(i, 1);
         this.userListObs.next(this.userList);
+        break;
       }
-    });
+    }
   }
 
 }

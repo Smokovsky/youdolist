@@ -16,23 +16,25 @@ export class BoardsProviderService {
 
   constructor() {
     // *** EXAMPLE DATA *** //
-    this.boardList.push(new Board('My board',
-                                  'XQAA',
-                                  new Array<User>(
-                                    new User('XQAA')),
-                                  new Array<Category>(
-                                    new Category('Category 1',
-                                      new Array<Task>())
-                                  ),
-                                  new Array<Task>()));
-    this.boardList.push(new Board('Friend board',
-                        'EAEA',
-                        new Array<User>(
-                          new User('EAEA'),
-                          new User('XQAA')
-                        ),
-                        new Array<Category>(),
-                        new Array<Task>()));
+    this.boardList.push(
+      new Board('My board',
+      'XQAA',
+      new Array<User>(
+        new User('XQAA')),
+      new Array<Category>(
+        new Category('Category 1',
+          new Array<Task>())
+      ),
+      new Array<Task>()));
+    this.boardList.push(
+      new Board('Friend board',
+      'EAEA',
+      new Array<User>(
+        new User('EAEA'),
+        new User('XQAA')
+      ),
+      new Array<Category>(),
+      new Array<Task>()));
     this.boardListObs.next(this.boardList);
     // *** EXAMPLE DATA *** //
   }
@@ -51,12 +53,12 @@ export class BoardsProviderService {
   }
 
   deleteBoard(id: string): void {
-    this.boardList.forEach((item, index) => {
-      if (item.id === id) {
-        this.boardList.splice(index, 1);
+    for (let i = 0, len = this.boardList.length; i < len; i++) {
+      if (this.boardList[i].id === id) {
+        this.boardList.splice(i, 1);
+        this.boardListObs.next(this.boardList);
       }
-    });
-    this.boardListObs.next(this.boardList);
+    }
   }
 
   getBoardListObs(): Observable<Array<Board>> {

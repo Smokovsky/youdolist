@@ -49,11 +49,13 @@ export class BoardComponent implements OnInit {
     // aswell as user points nextObs should be provided with each points action
     if (this.boardsProviderService.getBoard(this.boardId)) {
       this.boardExist = true;
-      this.boardsProviderService.getBoard(this.boardId).userList.forEach(user => {
-        if (user.id === this.userId) {
+      const userList = this.boardsProviderService.getBoard(this.boardId).userList;
+      for (let i = 0, len = userList.length; i < len; i++) {
+        if (userList[i].id === this.userId) {
           this.loadBoard();
+          break;
         }
-      });
+      }
     }
 
     if (!this.boardAuth) {

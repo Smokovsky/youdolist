@@ -25,6 +25,9 @@
     display: inline;
     vertical-align: super;
 }
+.navbarRight p i{
+    margin-left: 3px;
+}
 .points{
     display: inline-block;
     height: 100%;

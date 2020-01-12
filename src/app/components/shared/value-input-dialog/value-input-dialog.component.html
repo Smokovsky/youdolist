@@ -1,0 +1,10 @@
+<div mat-dialog-content>
+    {{ message }}
+    <div class="form-group value">
+        <input type="number" class="form-control valueField" placeholder="0" [(ngModel)]="value" cdkFocusInitial>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button class="btn btn-danger" (click)="onClickCancel()">Cancel</button>
+    <button class="btn btn-success" (click)="onClickSubmit()">Submit</button>
+</div>

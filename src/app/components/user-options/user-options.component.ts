@@ -2,6 +2,8 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { User } from 'src/app/models/user.model';
 import { UserOptionsProviderService } from 'src/app/services/user-options-provider.service';
+import { ValueInputDialogComponent } from '../shared/value-input-dialog/value-input-dialog.component';
+import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 
 
 @Component({
@@ -26,15 +28,39 @@ export class UserOptionsComponent implements OnInit {
 
 
   onAddUserPoints(i: number): void {
-    this.userOptionsProviderService.addUserPoints(this.userList[i].id, 100);
+    const dialogRef = this.dialog.open(ValueInputDialogComponent, {
+      width: '350px',
+      data: 'Enter amount of points to be added'
+    });
+    dialogRef.afterClosed().subscribe((value: number) => {
+      if (value) {
+        this.userOptionsProviderService.addUserPoints(this.userList[i].id, value);
+      }
+    });
   }
 
   onSubUserPoints(i: number): void {
-    this.userOptionsProviderService.substractUserPoints(this.userList[i].id, 100);
+    const dialogRef = this.dialog.open(ValueInputDialogComponent, {
+      width: '350px',
+      data: 'Enter amount of points to be substracted'
+    });
+    dialogRef.afterClosed().subscribe((value: number) => {
+      if (value) {
+        this.userOptionsProviderService.substractUserPoints(this.userList[i].id, value);
+      }
+    });
   }
 
   onClickDeleteUser(i: number): void {
-    this.userOptionsProviderService.deleteUser(this.userList[i]);
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: 'Are you sure you want to delete this user? This cannot be undone.'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.userOptionsProviderService.deleteUser(this.userList[i]);
+        }
+      });
   }
 
   onClickClose(): void {

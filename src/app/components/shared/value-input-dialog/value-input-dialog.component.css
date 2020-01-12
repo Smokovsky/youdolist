@@ -1,7 +1,7 @@
 .mat-dialog-actions{
     position: relative;
     float: right;
-    padding-bottom: 5px;
+    padding: 5px;
 }
 button{
     margin-left: 4px;
