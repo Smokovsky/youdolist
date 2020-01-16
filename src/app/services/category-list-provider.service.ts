@@ -13,7 +13,7 @@ export class CategoryListProviderService {
 
   private categoryListObs = new BehaviorSubject<Array<Category>>(this.categoryList);
 
-  constructor(private boardsProviderService: BoardsProviderService) { }
+  constructor(private boardsProviderService: BoardsProviderService) {  }
 
   // HMM: Maybe this could be done in constructor of category service?
   setCategoryList(id: string): void {

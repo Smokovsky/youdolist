@@ -37,6 +37,9 @@
             <ng-container *ngIf="taskEditorId">
                 <p><i class="fa fa-edit"></i> Edited: {{ taskEditDate | date : 'dd/MM/y' }} by {{ taskEditorId }}</p>
             </ng-container>
+            <ng-container *ngIf="taskCompletitorId">
+                <p><i class="fa fa-edit"></i> Done: {{ taskCompletitionDate | date : 'dd/MM/y' }} by {{ taskCompletitorId }}</p>
+            </ng-container>
         </div>
         <div class="input-group deleteTask">
             <button class="btn btn-danger deleteBtn" (click)="onClickTaskDelete()"><i class="fa fa-trash"></i> Delete task</button>

@@ -6,7 +6,7 @@
                 <div class="categoryTitle">
                     <h2>{{ doneListName }}</h2>
                 </div>
-                <div ngbDropdown class="ngbDropdown">
+                <div *ngIf="userAccessLevel >= 3" ngbDropdown class="ngbDropdown">
                     <button ngbDropdownToggle class="btn categoryMenuBtn" id="categoryOptions">
                         <i class="fa fa-cogs"></i>
                     </button>

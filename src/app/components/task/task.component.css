@@ -14,6 +14,9 @@
     box-shadow: 0 2px 5px 0px rgba(0,0,0,0.3);
     cursor: grab;
 }
+.unapproved{
+    background: rgb(255, 245, 155);
+}
 .task:first-child{
     margin-top: 0;
 }
@@ -30,13 +33,19 @@
 }
 .taskControls{
     position: relative;
-    min-height: 33px;
+    min-height: 38px;
     margin-top: 10px;
 }
 .buttons {
     position: absolute;
     right: 2px;
     bottom: 2px;
+}
+.buttons p{
+    color: #cf202b;
+    font-size: 0.8em;
+    margin: 0;
+    padding: 0;
 }
 button{
     float: right;
@@ -50,6 +59,21 @@ button{
     -webkit-box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
     box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3);   
 }
+.taskApproveBtn{
+    width: 30px;
+    border-radius: 50%;
+    background: #47a214;
+}
+.taskDeleteBtn{
+    width: 30px;
+    border-radius: 50%;
+    background: #cf202b;
+}
+.taskApprovalSettingsBtn{
+    width: 30px;
+    border-radius: 50%;
+    background: #e0c009;
+}
 .taskDoneBtn{
     background: #47a214;
 }
@@ -61,12 +85,6 @@ button{
 }
 .taskSettingsBtn:hover{
     color: #eef0b4;
-}
-.taskDeleteBtn{
-    background: #cf202b;
-}
-.taskDeleteBtn:hover{
-    color: #e1acb0;
 }
 .taskName h3{
     word-break: break-word;

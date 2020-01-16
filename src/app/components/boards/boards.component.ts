@@ -38,17 +38,18 @@ export class BoardsComponent implements OnInit {
     this.userBoards = new Array<Board>();
     this.friendsBoards = new Array<Board>();
     this.boardList.forEach(board => {
-      if (board.ownerId === this.userId) {
-        this.userBoards.push(board);
-      } else {
-        board.userList.forEach(user => {
-          if (user.id === this.userId) {
+      for (let i = 0, len = board.userList.length; i < len; i++) {
+        if (board.userList[i].id === this.userId) {
+          if (board.userList[i].accessLevel === 4) {
+            this.userBoards.push(board);
+            break;
+          } else {
             this.friendsBoards.push(board);
+            break;
           }
-        });
+        }
       }
     });
-
   }
 
   onClickBoard(board: Board): void {

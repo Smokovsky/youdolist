@@ -8,12 +8,15 @@ table#usersTable{
 .pointsTh{
     text-align: right;
 }
-.optionsTh{
+.pointOptionsTh{
     text-align: center;
 }
-.optionsTd{
+.pointOptionsTd{
     text-align: right;
     width: 145px;
+}
+.levelOptionsTd{
+    text-align: center;
 }
 .pointsTd{
     width: 1px;

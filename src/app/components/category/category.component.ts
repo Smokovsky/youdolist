@@ -4,6 +4,7 @@ import { EditTaskComponent } from '../edit-task/edit-task.component';
 import { Category } from 'src/app/models/category.model';
 import { CategoryListProviderService } from 'src/app/services/category-list-provider.service';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
+import { BoardUserProviderService } from 'src/app/services/board-user-provider.service';
 
 @Component({
   selector: 'app-category',
@@ -11,16 +12,22 @@ import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confi
   styleUrls: ['./category.component.css']
 })
 export class CategoryComponent implements OnInit {
+  userAccessLevel: number;
   categoryList: Array<Category>;
   editCategoryName: string;
   editCategoryIdActive = -1;
   tempNewCategoryName: string;
 
   constructor(public dialog: MatDialog,
-              private categoryListProviderService: CategoryListProviderService) {
+              private categoryListProviderService: CategoryListProviderService,
+              private boardUserProviderService: BoardUserProviderService) {
 
     this.categoryListProviderService.getCategoryListObs().subscribe((categories: Array<Category>) => {
       this.categoryList = categories;
+    });
+
+    this.boardUserProviderService.getUserAccessLevelObs().subscribe((accessLevel: number) => {
+      this.userAccessLevel = accessLevel;
     });
 
   }
@@ -54,8 +61,9 @@ export class CategoryComponent implements OnInit {
   }
 
   onClickAddNewTask(category: Category): void {
+    const boardUserProviderService = this.boardUserProviderService;
     const dialogRef = this.dialog.open(EditTaskComponent, {
-      data: { }
+      data: { boardUserProviderService }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.action === 'new') {

@@ -28,10 +28,9 @@ export class EditBoardComponent implements OnInit {
     this.userId = 'XQAA';
 
     if (!this.board) {
-      this.board = new Board('', this.userId, new Array<User>(new User(this.userId)), new Array<Category>(), new Array<Task>());
+      this.board = new Board('', new Array<User>(new User(this.userId, 4)), new Array<Category>(), new Array<Task>());
     }
     this.boardName = this.board.name;
-    this.ownerId = this.board.ownerId;
     this.userList = this.board.userList;
   }
 

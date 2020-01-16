@@ -2,7 +2,9 @@
     <a href="/boards">YouDoList</a>
     <div class="ml-auto navbarRight">
         <div class="points"><p>{{ userPoints }}<i class="fa fa-diamond"></i></p></div>
-        <a class="" (click)="onClickUserOptions()"><i class="fa fa-user"></i></a>
+        <ng-container *ngIf="userAccessLevel >= 3">
+            <a class="" (click)="onClickUserOptions()"><i class="fa fa-user"></i></a>
+        </ng-container>
         <a class="" (click)="onClickRewardList()"><i class="fa fa-gift"></i></a>
         <a class="" href="/boards"><i class="fa fa-arrow-circle-left"></i></a>
     </div>

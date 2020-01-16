@@ -12,10 +12,10 @@ export class BoardUserProviderService {
 
   // TODO: get user id from firebase service
   private userId = 'XQAA';
-  private boardAdmin = false;
   private user: User;
 
   private pointsObs: BehaviorSubject<number>;
+  private accessLevelObs: BehaviorSubject<number>;
 
   constructor(private activatedRoute: ActivatedRoute,
               private boardsProviderService: BoardsProviderService) {
@@ -25,25 +25,27 @@ export class BoardUserProviderService {
       for (let i = 0, len = board.userList.length; i < len; i++) {
         if (board.userList[i].id === this.userId) {
           this.user = board.userList[i];
-          if (this.userId === board.ownerId) {
-            this.boardAdmin = true;
-          }
           break;
         }
       }
     } else {
       // Prevents breaking on reload
-      this.user = new User('empty user');
+      this.user = new User('empty user', 0);
     }
     this.pointsObs = new BehaviorSubject<number>(this.user.points);
+    this.accessLevelObs = new BehaviorSubject<number>(this.user.accessLevel);
   }
 
   getUserId(): string {
     return this.userId;
   }
 
-  isAdmin(): boolean {
-    return this.boardAdmin;
+  getUserAccessLevel(): number {
+    return this.user.accessLevel;
+  }
+
+  getUserAccessLevelObs(): Observable<number> {
+    return this.accessLevelObs.asObservable();
   }
 
   getPointsObs(): Observable<number> {

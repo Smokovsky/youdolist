@@ -12,7 +12,9 @@ import { BoardUserProviderService } from 'src/app/services/board-user-provider.s
 })
 export class EditTaskComponent implements OnInit {
 
+  boardUserProviderService: BoardUserProviderService = this.data.boardUserProviderService;
   userId: string;
+  userAccessLevel: number;
 
   task?: Task = this.data.task;
   taskAuthorId: string;
@@ -23,6 +25,8 @@ export class EditTaskComponent implements OnInit {
   taskCreationDate: Date;
   taskEditDate: Date;
   taskDueDate?: Date;
+  taskCompletitionDate?: Date;
+  taskCompletitorId?: string;
   taskPoints: number;
 
   newTodoName: string;
@@ -31,14 +35,19 @@ export class EditTaskComponent implements OnInit {
 
   constructor(public dialog: MatDialog,
               public dialogRef: MatDialogRef<EditTaskComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: any,
-              private boardUserProviderService: BoardUserProviderService) { }
+              @Inject(MAT_DIALOG_DATA) public data: any) {
+
+    this.boardUserProviderService.getUserAccessLevelObs().subscribe((accessLevel: number) => {
+      this.userAccessLevel = accessLevel;
+    });
+
+  }
 
   ngOnInit() {
     this.userId = this.boardUserProviderService.getUserId();
 
     if (!this.task) {
-      this.task = new Task('', '', this.userId, new Array<Todo>(), 0);
+      this.task = new Task('', '', this.userId, new Array<Todo>(), 0, false);
       this.action = 'new';
     }
     this.taskEditorId = this.task.lastEditorId;
@@ -50,6 +59,8 @@ export class EditTaskComponent implements OnInit {
     this.taskEditDate = this.task.lastEditDate;
     this.taskDueDate = this.task.dueDate;
     this.taskPoints = this.task.points;
+    this.taskCompletitionDate = this.task.completitionDate;
+    this.taskCompletitorId = this.task.completitorId;
   }
 
   // TODO: FIX: checking todos of existing indexes result in live editing without approval
@@ -91,6 +102,9 @@ export class EditTaskComponent implements OnInit {
     if (this.action !== 'new') {
       this.task.lastEditorId = this.userId;
       this.task.lastEditDate = new Date();
+    }
+    if (this.userAccessLevel >= 3) {
+      this.task.isApproved = true;
     }
     this.task.name = this.taskName;
     this.task.description = this.taskDescription;

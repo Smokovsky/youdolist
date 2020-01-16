@@ -51,6 +51,14 @@ export class UserOptionsComponent implements OnInit {
     });
   }
 
+  onIncreaseUserLevel(i: number): void {
+    this.userOptionsProviderService.increaseUserLevel(this.userList[i].id);
+  }
+
+  onDecreaseUserLevel(i: number): void {
+    this.userOptionsProviderService.decreaseUserLevel(this.userList[i].id);
+  }
+
   onClickDeleteUser(i: number): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',

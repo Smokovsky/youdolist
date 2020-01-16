@@ -10,12 +10,19 @@ import { BoardUserProviderService } from './board-user-provider.service';
 })
 export class UserOptionsProviderService {
 
+  userId: string;
+  isOwner = false;
   private userList: Array<User> = [];
 
   private userListObs = new BehaviorSubject<Array<User>>(this.userList);
 
   constructor(private boardsProviderService: BoardsProviderService,
-              private boardUserProviderService: BoardUserProviderService) { }
+              private boardUserProviderService: BoardUserProviderService) { 
+    this.userId = this.boardUserProviderService.getUserId();
+    if (this.boardUserProviderService.getUserAccessLevel() > 3) {
+      this.isOwner = true;
+    }
+  }
 
   setUserList(id: string): void {
     this.userList = this.boardsProviderService.getBoard(id).userList;
@@ -44,6 +51,36 @@ export class UserOptionsProviderService {
         this.userListObs.next(this.userList);
         this.boardUserProviderService.nextObservable();
         break;
+      }
+    }
+  }
+
+  increaseUserLevel(userId: string): void {
+    for (let i = 0, len = this.userList.length; i < len; i++) {
+      if (this.userList[i].id === userId) {
+        if (this.isOwner) {
+          if (this.userList[i].accessLevel < 3) {
+            this.userList[i].accessLevel += 1;
+          }
+        } else {
+          if (this.userList[i].accessLevel < 2) {
+            this.userList[i].accessLevel += 1;
+          }
+        }
+      }
+    }
+  }
+
+  decreaseUserLevel(userId: string): void {
+    for (let i = 0, len = this.userList.length; i < len; i++) {
+      if (this.userList[i].id === userId) {
+        if (this.userList[i].accessLevel === 3) {
+          if (this.isOwner) {
+            this.userList[i].accessLevel -= 1;
+          }
+        } else if (this.userList[i].accessLevel > 1) {
+          this.userList[i].accessLevel -= 1;
+        }
       }
     }
   }

@@ -1,9 +1,11 @@
 export class User {
     id: string;
+    accessLevel: number;
     points: number;
 
-    constructor(id: string) {
+    constructor(id: string, accessLevel: number) {
         this.id = id;
+        this.accessLevel = accessLevel;
         this.points = 0;
     }
 

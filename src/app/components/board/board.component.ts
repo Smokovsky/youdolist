@@ -19,24 +19,30 @@ import { UserOptionsProviderService } from 'src/app/services/user-options-provid
               UserOptionsProviderService]
 })
 export class BoardComponent implements OnInit {
+  // private categoryListProviderService: CategoryListProviderService;
 
   boardId: string;
   userId: string;
   boardExist = false;
   boardAuth = false;
+  userAccessLevel: number;
   userPoints: number;
 
   constructor(public dialog: MatDialog,
               private router: Router,
               private activatedRoute: ActivatedRoute,
               private boardsProviderService: BoardsProviderService,
-              private categoryListProviderService: CategoryListProviderService,
               private doneTasksProviderService: DoneTasksProviderService,
               private boardUserProviderService: BoardUserProviderService,
+              private categoryListProviderService: CategoryListProviderService,
               private userOptionsProviderService: UserOptionsProviderService) {
 
     this.boardUserProviderService.getPointsObs().subscribe((userPoints: number) => {
       this.userPoints = userPoints;
+    });
+
+    this.boardUserProviderService.getUserAccessLevelObs().subscribe((accessLevel: number) => {
+      this.userAccessLevel = accessLevel;
     });
 
   }
@@ -44,6 +50,7 @@ export class BoardComponent implements OnInit {
   ngOnInit() {
     this.userId = this.boardUserProviderService.getUserId();
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
+    // this.categoryListProviderService = new CategoryListProviderService(this.boardsProviderService, this.boardId);
 
     // TODO: This (from here) sould be rerunned when admin is doing changes to userList
     // aswell as user points nextObs should be provided with each points action

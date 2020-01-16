@@ -5,19 +5,27 @@
             <thead>
                 <tr>
                     <th>User Id</th>
+                    <th class="levelTh">Access level</th>
                     <th class="pointsTh">Points</th>
-                    <th class="optionsTh">Options</th>
+                    <th class="pointOptionsTh">Point options</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let user of userList; let i = index">
                     <td class="userName">{{ user.id }}</td>
+                    <td class="levelOptionsTd">
+                        <ng-container *ngIf="4 > user.accessLevel">
+                            <button class="decreaseLevel" (click)="onDecreaseUserLevel(i)"><i class="fa fa-minus"></i></button>
+                            {{ user.accessLevel }}
+                            <button class="increaseLevel" (click)="onIncreaseUserLevel(i)"><i class="fa fa-plus"></i></button>
+                        </ng-container>
+                    </td>
                     <td class="pointsTd">
                         <div class="points">
                            {{ user.points }} <i class="fa fa-diamond"></i>
                        </div>
                     </td>
-                    <td class="optionsTd">
+                    <td class="pointOptionsTd">
                         <button class="deleteUser" (click)="onAddUserPoints(i)"><i class="fa fa-plus"></i><i class="fa fa-diamond"></i></button>
                         <button class="deleteUser" (click)="onSubUserPoints(i)"><i class="fa fa-minus"></i><i class="fa fa-diamond"></i></button>
                         <button class="deleteUser" (click)="onClickDeleteUser(i)"><i class="fa fa-times"></i></button>
