@@ -1,0 +1,17 @@
+<mat-dialog-content>
+    
+    <div class="rewardList" cdkDropList id="{{ 'cdk-reward-drop-list-' + categoryId }}" [cdkDropListData]="rewardList"
+    [cdkDropListConnectedTo]="categoryIds" (cdkDropListDropped)="onDrop($event)">
+        <div *ngFor="let reward of rewardList; let i = index" cdkDrag>
+            <div class="reward" style="position: relative;">
+                <p style="max-width: 200px;">{{ reward.name }}<br>
+                Cost: {{ reward.cost }} <i class="fa fa-diamond"></i></p>
+                <button style="position: absolute; right: 0; top: 0;">get</button>
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button type="cancel" class="btn btn-danger" (click)="onClickClose()">Close</button>
+</mat-dialog-actions>

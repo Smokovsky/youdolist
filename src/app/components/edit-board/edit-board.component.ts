@@ -4,6 +4,7 @@ import { Board } from 'src/app/models/board.model';
 import { Task } from 'src/app/models/task.model';
 import { Category } from 'src/app/models/category.model';
 import { User } from 'src/app/models/user.model';
+import { Reward } from 'src/app/models/reward.model';
 
 @Component({
   selector: 'app-edit-board',
@@ -28,7 +29,8 @@ export class EditBoardComponent implements OnInit {
     this.userId = 'XQAA';
 
     if (!this.board) {
-      this.board = new Board('', new Array<User>(new User(this.userId, 4)), new Array<Category>(), new Array<Task>());
+      this.board = new Board('', new Array<User>(new User(this.userId, 4)),
+                            new Array<Category>(), new Array<Task>(), new Array<Reward>());
     }
     this.boardName = this.board.name;
     this.userList = this.board.userList;

@@ -19,7 +19,6 @@ export class DoneTasksProviderService {
   constructor(private boardsProviderService: BoardsProviderService,
               private boardUserProviderService: BoardUserProviderService) {
 
-    // TODO: get userId from user service
     this.userId = this.boardUserProviderService.getUserId();
 
    }

@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BoardsProviderService } from 'src/app/services/boards-provider.service';
-import { Board } from 'src/app/models/board.model';
 import { CategoryListProviderService } from 'src/app/services/category-list-provider.service';
 import { DoneTasksProviderService } from 'src/app/services/done-tasks-provider.service';
 import { BoardUserProviderService } from 'src/app/services/board-user-provider.service';
 import { UserOptionsComponent } from '../user-options/user-options.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UserOptionsProviderService } from 'src/app/services/user-options-provider.service';
+import { RewardListProviderService } from 'src/app/services/reward-list-provider.service';
+import { RewardListComponent } from '../reward-list/reward-list.component';
 
 @Component({
   selector: 'app-board',
@@ -16,10 +17,10 @@ import { UserOptionsProviderService } from 'src/app/services/user-options-provid
   providers: [CategoryListProviderService,
               DoneTasksProviderService,
               BoardUserProviderService,
-              UserOptionsProviderService]
+              UserOptionsProviderService,
+              RewardListProviderService]
 })
 export class BoardComponent implements OnInit {
-  // private categoryListProviderService: CategoryListProviderService;
 
   boardId: string;
   userId: string;
@@ -35,7 +36,8 @@ export class BoardComponent implements OnInit {
               private doneTasksProviderService: DoneTasksProviderService,
               private boardUserProviderService: BoardUserProviderService,
               private categoryListProviderService: CategoryListProviderService,
-              private userOptionsProviderService: UserOptionsProviderService) {
+              private userOptionsProviderService: UserOptionsProviderService,
+              private rewardListProviderService: RewardListProviderService,) {
 
     this.boardUserProviderService.getPointsObs().subscribe((userPoints: number) => {
       this.userPoints = userPoints;
@@ -50,10 +52,7 @@ export class BoardComponent implements OnInit {
   ngOnInit() {
     this.userId = this.boardUserProviderService.getUserId();
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
-    // this.categoryListProviderService = new CategoryListProviderService(this.boardsProviderService, this.boardId);
 
-    // TODO: This (from here) sould be rerunned when admin is doing changes to userList
-    // aswell as user points nextObs should be provided with each points action
     if (this.boardsProviderService.getBoard(this.boardId)) {
       this.boardExist = true;
       const userList = this.boardsProviderService.getBoard(this.boardId).userList;
@@ -78,12 +77,17 @@ export class BoardComponent implements OnInit {
   onClickUserOptions(): void {
     const userOptionsProviderService = this.userOptionsProviderService;
     this.dialog.open(UserOptionsComponent, {
-      data: {userOptionsProviderService}
+      data: { userOptionsProviderService }
     });
   }
 
   onClickRewardList(): void {
-    // TODO
+    const boardUserProviderService = this.boardUserProviderService;
+    const rewardListProviderService = this.rewardListProviderService;
+    this.dialog.open(RewardListComponent, {
+      data: { boardUserProviderService,
+              rewardListProviderService }
+    });
   }
 
   loadBoard(): void {
@@ -91,6 +95,7 @@ export class BoardComponent implements OnInit {
     this.categoryListProviderService.setCategoryList(this.boardId);
     this.doneTasksProviderService.setDoneList(this.boardId);
     this.userOptionsProviderService.setUserList(this.boardId);
-    // TODO: setRewardList();
+    this.rewardListProviderService.setRewardList(this.boardId);
   }
+
 }

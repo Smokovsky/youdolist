@@ -16,15 +16,14 @@
                 <div class="taskControls">
                     <div class="taskDate">
                         <p class="points"><i class="fa fa-diamond"></i> {{ task.points }}</p>
-
-                        <ng-container *ngIf="task.dueDate; else noDueDate">
-                            <p><i class="fa fa-hourglass-end"></i> {{ task.dueDate | date : 'dd/MM/y' }}</p>
-                        </ng-container>
-
-                        <ng-template #noDueDate>
-                            <p><i class="fa fa-hourglass-end"></i> &#8734;</p>
-                        </ng-template>
-                        
+                        <p><i class="fa fa-hourglass-end"></i>
+                            <ng-container *ngIf="task.dueDate; else noDueDate">
+                                 {{ task.dueDate | date : 'dd/MM/y' }}
+                            </ng-container>
+                            <ng-template #noDueDate>
+                                 &#8734;
+                            </ng-template>
+                        </p>
                     </div>
                     <div class="buttons">
                         <ng-container *ngIf="task.isApproved; else approveOptions">
@@ -37,7 +36,7 @@
                                 <button class="btn taskApproveBtn" (click)="onClickTaskApprove(i)"><i class="fa fa-check"></i></button>
                                 <button class="btn taskApprovalSettingsBtn" (click)="onClickTaskSettings(task)"><i class="fa fa-cog"></i></button>
                             </ng-container>
-                            <button class="btn taskDeleteBtn" (click)="onClickTaskDelete(task)"><i class="fa fa-times"></i></button>
+                            <button class="btn taskDeleteBtn" (click)="onClickTaskDelete(i)"><i class="fa fa-times"></i></button>
                         </ng-template>
                     </div>
                 </div>

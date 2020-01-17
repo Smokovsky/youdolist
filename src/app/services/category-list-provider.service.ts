@@ -30,7 +30,6 @@ export class CategoryListProviderService {
     this.categoryListObs.next(this.categoryList);
   }
 
-  // TODO: Single categories may need special own service instances
   addTaskToCategory(task: Task, categoryId: string): boolean {
     for (const category of this.categoryList) {
       if (category.id === categoryId) {

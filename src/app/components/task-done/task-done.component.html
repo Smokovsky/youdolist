@@ -24,6 +24,7 @@
                         <button *ngIf="userAccessLevel >= 3" class="btn taskSettingsBtn" (click)="onClickTaskSettings(task)"><i class="fa fa-cog"></i></button>
                     </ng-container>
                     <ng-template #approveOptions>
+                        <p>This task need approval</p>
                         <button *ngIf="userAccessLevel >= 3" class="btn deleteBtn" (click)="onClickUnapprovedTaskDelete(i)"><i class="fa fa-times"></i></button>
                         <button *ngIf="task.completitorId === userId || userAccessLevel >= 3" class="btn unapproveUndoBtn" (click)="onClickUnapprovedTaskUndo(i)"><i class="fa fa-undo"></i></button>
                         <button *ngIf="userAccessLevel >= 3" class="btn approveBtn" (click)="onClickApprove(i)"><i class="fa fa-check"></i></button>

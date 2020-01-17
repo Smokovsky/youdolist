@@ -1,53 +1,57 @@
-<mat-dialog-content>
-    <div class="form-group name">
-        <label for="name">Task name:</label>
-        <input type="text" class="form-control nameField" placeholder="Add name..." [(ngModel)]="taskName" cdkFocusInitial>
-    </div>
-    <div class="form-group">
-        <label for="description">Description:</label>
-        <textarea class="form-control" placeholder="Add description..." [(ngModel)]="taskDescription"></textarea>
-    </div>
-    <div class="form-group">
-        <label for="todoList">Todo list:</label>
-        <ul *ngFor="let todo of taskTodoList; let i = index">
-            <li><input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(todo)">
-            <p [className]="todo.isDone ? 'active' : 'done'">{{ todo.name }}</p><a class="deleteTodo" (click)="onClickDeleteTodo(i)"><i class="fa fa-times"></i></a></li>
-        </ul>
-    </div>
-    <div class="input-group">
-        <input class="form-control newTodoName" type="text" placeholder="Add new todo..." [(ngModel)]="newTodoName">
-        <span class="input-group-btn">
-            <button class="btn addNewTodo" (click)="onClickAddTodo()"><i class="fa fa-check"></i></button>
-        </span>
-    </div>
-    <div class="input-group points">
-        <label for="points">Points:</label>
-        <input type="number" class="form-control pointsField" placeholder="Add points..." [(ngModel)]="taskPoints">
-    </div>
-    <div class="input-group dueDate">
-        <label for="dueDate">Due date:</label>
-        <input class="form-control dueDateField" placeholder="Add due date..." [matDatepicker]="datepicker" [(ngModel)]="taskDueDate">
-        <mat-datepicker-toggle [for]="datepicker"></mat-datepicker-toggle>
-        <mat-datepicker #datepicker></mat-datepicker>
-        <a class="cancelDueDate" (click)="onClickCancelDueDate()"><i class="fa fa-times"></i></a>
-    </div>
-    <ng-container *ngIf="action!='new'">
-        <div class="input-group creationDetails">
-            <p><i class="fa fa-hourglass-start"></i> Created: {{ taskCreationDate | date : 'dd/MM/y' }} by {{ taskAuthorId }}</p>
-            <ng-container *ngIf="taskEditorId">
-                <p><i class="fa fa-edit"></i> Edited: {{ taskEditDate | date : 'dd/MM/y' }} by {{ taskEditorId }}</p>
-            </ng-container>
-            <ng-container *ngIf="taskCompletitorId">
-                <p><i class="fa fa-edit"></i> Done: {{ taskCompletitionDate | date : 'dd/MM/y' }} by {{ taskCompletitorId }}</p>
-            </ng-container>
+<form name="editTaskForm">
+    <mat-dialog-content>
+        <div class="form-group name">
+            <label for="name">Task name:</label>
+            <input type="text" class="form-control nameField" placeholder="Add name..." [(ngModel)]="taskName" cdkFocusInitial name="nameField" required>
         </div>
-        <div class="input-group deleteTask">
-            <button class="btn btn-danger deleteBtn" (click)="onClickTaskDelete()"><i class="fa fa-trash"></i> Delete task</button>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea class="form-control" placeholder="Add description..." [(ngModel)]="taskDescription" name="descriptionField"></textarea>
         </div>
-    </ng-container>
-</mat-dialog-content>
+        <div class="form-group">
+            <label for="todoList">Todo list:</label>
+            <ul *ngFor="let todo of taskTodoList; let i = index">
+                <li>
+                    <input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(todo)">
+                    <p [className]="todo.isDone ? 'active' : 'done'">{{ todo.name }}</p><a class="deleteTodo" (click)="onClickDeleteTodo(i)"><i class="fa fa-times"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="input-group">
+            <input class="form-control newTodoName" type="text" placeholder="Add new todo..." [(ngModel)]="newTodoName" name="newTodoField">
+            <span class="input-group-btn">
+                <button class="btn addNewTodo" (click)="onClickAddTodo()"><i class="fa fa-check"></i></button>
+            </span>
+        </div>
+        <div class="input-group points">
+            <label for="points">Points:</label>
+            <input type="number" class="form-control pointsField" placeholder="Add points..." [(ngModel)]="taskPoints" name="pointsField">
+        </div>
+        <div class="input-group dueDate">
+            <label for="dueDate">Due date:</label>
+            <input class="form-control dueDateField" placeholder="Add due date..." [matDatepicker]="datepicker" [(ngModel)]="taskDueDate" name="taskDueField">
+            <mat-datepicker-toggle [for]="datepicker"></mat-datepicker-toggle>
+            <mat-datepicker #datepicker></mat-datepicker>
+            <a class="cancelDueDate" (click)="onClickCancelDueDate()"><i class="fa fa-times"></i></a>
+        </div>
+        <ng-container *ngIf="action!='new'">
+            <div class="input-group creationDetails">
+                <p><i class="fa fa-hourglass-start"></i> Created: {{ taskCreationDate | date : 'dd/MM/y' }} by {{ taskAuthorId }}</p>
+                <ng-container *ngIf="taskEditorId">
+                    <p><i class="fa fa-edit"></i> Edited: {{ taskEditDate | date : 'dd/MM/y' }} by {{ taskEditorId }}</p>
+                </ng-container>
+                <ng-container *ngIf="taskCompletitorId">
+                    <p><i class="fa fa-edit"></i> Done: {{ taskCompletitionDate | date : 'dd/MM/y' }} by {{ taskCompletitorId }}</p>
+                </ng-container>
+            </div>
+            <div class="input-group deleteTask">
+                <button class="btn btn-danger deleteBtn" (click)="onClickTaskDelete()"><i class="fa fa-trash"></i> Delete task</button>
+            </div>
+        </ng-container>
+    </mat-dialog-content>
 
-<mat-dialog-actions>
-    <button type="submit" class="btn btn-success" (click)="onClickSaveButton()">Save</button>
-    <button type="cancel" class="btn btn-danger" (click)="onClickCancelButton()">Cancel</button>
-</mat-dialog-actions>
+    <mat-dialog-actions>
+        <button type="submit" class="btn btn-success" (click)="onClickSaveButton()">Save</button>
+        <button type="cancel" class="btn btn-danger" (click)="onClickCancelButton()">Cancel</button>
+    </mat-dialog-actions>
+</form>

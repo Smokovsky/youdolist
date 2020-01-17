@@ -27,6 +27,7 @@ import { TaskDoneComponent } from './components/task-done/task-done.component';
 import { UndoOptionsComponent } from './components/undo-options/undo-options.component';
 import { UserOptionsComponent } from './components/user-options/user-options.component';
 import { ValueInputDialogComponent } from './components/shared/value-input-dialog/value-input-dialog.component';
+import { RewardListComponent } from './components/reward-list/reward-list.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { ValueInputDialogComponent } from './components/shared/value-input-dialo
     TaskDoneComponent,
     UndoOptionsComponent,
     UserOptionsComponent,
-    ValueInputDialogComponent
+    ValueInputDialogComponent,
+    RewardListComponent
   ],
   imports: [
     BrowserModule,
@@ -66,7 +68,8 @@ import { ValueInputDialogComponent } from './components/shared/value-input-dialo
     UndoOptionsComponent,
     UserOptionsComponent,
     ConfirmationDialogComponent,
-    ValueInputDialogComponent
+    ValueInputDialogComponent,
+    RewardListComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

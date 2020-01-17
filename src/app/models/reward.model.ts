@@ -1,14 +1,14 @@
-export class RewardService {
+export class Reward {
   name: string;
   cost: number;
-  quantity: number;
   isRepeatable: boolean;
+  quantity: number;
   isApproved: boolean;
-  userId: string;
+  userId?: string;
   created: Date;
-  collected: Date;
+  collected?: Date;
 
-  constructor(name: string, cost: number, isRepeatable: boolean, isApproved: boolean, userId: string) {
+  constructor(name: string, cost: number, isRepeatable: boolean, isApproved: boolean, userId?: string) {
     this.name = name;
     this.cost = cost;
     this.isRepeatable = isRepeatable;

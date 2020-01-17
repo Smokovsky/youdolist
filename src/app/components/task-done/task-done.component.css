@@ -41,6 +41,12 @@
     right: 2px;
     bottom: 2px;
 }
+.buttons p{
+    color: #cf202b;
+    font-size: 0.8em;
+    margin: 0;
+    padding: 0;
+}
 button{
     float: right;
     width: 40px;
