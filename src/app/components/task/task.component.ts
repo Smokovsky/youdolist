@@ -112,7 +112,6 @@ export class TaskComponent implements OnInit {
                 this.taskList[event.currentIndex].categoryId = this.categoryId;
               }
             });
-
         } else {
           transferArrayItem(event.previousContainer.data,
                             event.container.data,
@@ -123,8 +122,6 @@ export class TaskComponent implements OnInit {
           this.taskList[event.currentIndex].completitorId = null;
           this.taskList[event.currentIndex].categoryId = this.categoryId;
         }
-
-
       } else {
         const task: any = event.previousContainer.data[event.previousIndex];
         if (!task.isApproved && task.categoryId === this.categoryId && task.completitorId === this.userId) {
