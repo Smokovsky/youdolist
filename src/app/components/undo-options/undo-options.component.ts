@@ -18,6 +18,7 @@ export class UndoOptionsComponent implements OnInit {
   constructor(public dialog: MatDialog,
               public dialogRef: MatDialogRef<UndoOptionsComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any) {
+
     this.taskName = this.task.name;
     this.taskPoints = this.task.points;
     this.taskCompletitor = this.task.completitorId;
@@ -34,7 +35,7 @@ export class UndoOptionsComponent implements OnInit {
   }
 
   onClickCancelButton(): void {
-    this.dialogRef.close();
+    this.dialogRef.close('closed');
   }
 
 }

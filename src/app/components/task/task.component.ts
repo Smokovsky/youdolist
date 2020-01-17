@@ -91,25 +91,40 @@ export class TaskComponent implements OnInit {
     // Case undoing task
     if (event.previousContainer.id === 'cdk-task-drop-list-doneTaskList') {
       if (this.boardUserProviderService.getUserAccessLevel() >= 3) {
-        const task = event.previousContainer.data[0];
-        const dialogRef = this.dialog.open(UndoOptionsComponent, {
-          data: { task }
-        });
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-              transferArrayItem(event.previousContainer.data,
-                                event.container.data,
-                                event.previousIndex,
-                                event.currentIndex);
-              this.taskList[event.currentIndex].completitionDate = null;
-              this.taskList[event.currentIndex].completitorId = null;
-              if (result === 'changePoints') {
-                this.userOptionsProviderService.substractUserPoints(this.taskList[event.currentIndex].completitorId,
-                                                                    this.taskList[event.currentIndex].points);
-              }
-              this.taskList[event.currentIndex].categoryId = this.categoryId;
-            }
+        const task: any = event.previousContainer.data[0];
+        if (task.isApproved) {
+          const dialogRef = this.dialog.open(UndoOptionsComponent, {
+            data: { task }
           });
+          dialogRef.afterClosed().subscribe(result => {
+              if (result) {
+                transferArrayItem(event.previousContainer.data,
+                                  event.container.data,
+                                  event.previousIndex,
+                                  event.currentIndex);
+                this.taskList[event.currentIndex].isApproved = true;
+                if (result === 'changePoints') {
+                  this.userOptionsProviderService.substractUserPoints(this.taskList[event.currentIndex].completitorId,
+                                                                      this.taskList[event.currentIndex].points);
+                }
+                this.taskList[event.currentIndex].completitionDate = null;
+                this.taskList[event.currentIndex].completitorId = null;
+                this.taskList[event.currentIndex].categoryId = this.categoryId;
+              }
+            });
+
+        } else {
+          transferArrayItem(event.previousContainer.data,
+                            event.container.data,
+                            event.previousIndex,
+                            event.currentIndex);
+          this.taskList[event.currentIndex].isApproved = true;
+          this.taskList[event.currentIndex].completitionDate = null;
+          this.taskList[event.currentIndex].completitorId = null;
+          this.taskList[event.currentIndex].categoryId = this.categoryId;
+        }
+
+
       } else {
         const task: any = event.previousContainer.data[event.previousIndex];
         if (!task.isApproved && task.categoryId === this.categoryId && task.completitorId === this.userId) {
@@ -127,17 +142,17 @@ export class TaskComponent implements OnInit {
     } else if (event.previousContainer === event.container) {
       if (this.userAccessLevel >= 3) {
         moveItemInArray(event.container.data,
-          event.previousIndex,
-          event.currentIndex);
+                        event.previousIndex,
+                        event.currentIndex);
       }
 
     // Case category change
     } else {
       if (this.userAccessLevel >= 3) {
         transferArrayItem(event.previousContainer.data,
-          event.container.data,
-          event.previousIndex,
-          event.currentIndex);
+                          event.container.data,
+                          event.previousIndex,
+                          event.currentIndex);
         this.taskList[event.currentIndex].categoryId = this.categoryId;
       }
     }
