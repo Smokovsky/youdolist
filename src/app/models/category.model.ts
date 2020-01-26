@@ -5,7 +5,6 @@ export class Category {
     name: string;
     taskList: Array<Task>;
 
-    // TODO: delete id from constructor params
     constructor(name: string, taskList?: Array<Task>) {
         this.id = this.getRandomId();
         this.name = name;

@@ -1,17 +1,87 @@
 <mat-dialog-content>
+    <ng-container *ngIf="!historyMode; else history">
+        <div class="title">
+            <h2>Reward List</h2>
+        </div>
+        <div class="rewardList" cdkDropList id="cdk-reward-drop-list" [cdkDropListData]="rewardList"
+        (cdkDropListDropped)="onDrop($event)">
+            <div *ngFor="let reward of rewardList; let i = index" cdkDrag>
     
-    <div class="rewardList" cdkDropList id="{{ 'cdk-reward-drop-list-' + categoryId }}" [cdkDropListData]="rewardList"
-    [cdkDropListConnectedTo]="categoryIds" (cdkDropListDropped)="onDrop($event)">
-        <div *ngFor="let reward of rewardList; let i = index" cdkDrag>
-            <div class="reward" style="position: relative;">
-                <p style="max-width: 200px;">{{ reward.name }}<br>
-                Cost: {{ reward.cost }} <i class="fa fa-diamond"></i></p>
-                <button style="position: absolute; right: 0; top: 0;">get</button>
+                <div class="placeholder" *cdkDragPlaceholder></div>
+                <div class="reward" [ngClass]="(reward.isApproved)?'reward':'unapproved'">
+                    <div class="rewardName">
+                        <h3>{{ reward.name }}</h3>
+                    </div>
+                    <div class="rewardDescription">
+                        <p>{{ reward.description }}</p>
+                    </div>
+                    <div class="rewardCost">
+                        <p>{{ reward.cost }} <i class="fa fa-diamond"></i></p>
+                    </div>
+                    <div class="rewardControls">
+                        <div class="rewardDate"></div>
+                        <div class="buttons">
+                            <ng-container *ngIf="reward.isApproved; else approveOptions">
+                                <button class="btn getRewardBtn" [disabled]="reward.cost > userPoints" (click)="onClickGetReward(i)">Get <i class="fa fa-gift"></i></button>
+                                <button *ngIf="userAccessLevel >= 3" class="btn rewardSettingsBtn" (click)="onClickRewardSettings(reward)"><i class="fa fa-cog"></i></button>
+                            </ng-container>
+                            <ng-template #approveOptions>
+                                <p>This reward requires approval</p>
+                                <ng-container *ngIf="userAccessLevel >= 3">
+                                    <button class="btn rewardApproveBtn" (click)="onClickRewardApprove(i)"><i class="fa fa-check"></i></button>
+                                    <button class="btn rewardApprovalSettingsBtn" (click)="onClickRewardSettings(reward)"><i class="fa fa-cog"></i></button>
+                                </ng-container>
+                                <button class="btn rewardDeleteBtn" (click)="onClickRewardDelete(i)"><i class="fa fa-times"></i></button>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </ng-container>
+    <ng-template #history>
+        <div class="title">
+            <h2>Reward History</h2>
+        </div>
+        <div class="rewardHistoryList" cdkDropList id="cdk-reward-drop-list" [cdkDropListData]="rewardHistoryList"
+        (cdkDropListDropped)="onDrop($event)">
+        <div *ngFor="let reward of rewardHistoryList; let i = index" cdkDrag>
+            <div class="placeholder" *cdkDragPlaceholder></div>
+            <div *ngIf="reward.userId == userId || userAccessLevel >= 3" class="reward" [ngClass]="(reward.isApproved)?'reward':'unapproved'">
+                <div class="rewardName">
+                    <h3>{{ reward.name }} ({{ reward.cost }})<i class="fa fa-diamond"></i></h3>
+                </div>
+                <div class="rewardUser">
+                    <p><i class="fa fa-user"></i> {{ reward.collectorId }}</p>
+                </div>
+                <div class="rewardControls">
+                    <div class="rewardDate"></div>
+                    <div class="buttons">
+                        <ng-container *ngIf="reward.isApproved; else approveOptions">
+                            <p class="approved"><i class="fa fa-check"></i> Reward approved</p>
+                        </ng-container>
+                        <ng-template #approveOptions>
+                            <p>This reward requires approval</p>
+                            <ng-container *ngIf="userAccessLevel >= 3">
+                                <button class="btn rewardApproveBtn" (click)="onClickRewardHistoryApprove(i)"><i class="fa fa-check"></i></button>
+                                <button class="btn rewardApprovalSettingsBtn" (click)="onClickUndoReward(i)"><i class="fa fa-undo"></i></button>
+                            </ng-container>
+                            <button class="btn rewardDeleteBtn" (click)="onClickRewardHistoryDelete(i)"><i class="fa fa-times"></i></button>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </ng-template>
 </mat-dialog-content>
 
 <mat-dialog-actions>
+    <ng-container *ngIf="!historyMode">
+        <button *ngIf="userAccessLevel == 2" type="button" class="btn btn-success" (click)="onClickAddReward()"><i class="fa fa-plus"></i> Propose reward</button>
+        <button *ngIf="userAccessLevel >= 3" type="button" class="btn btn-success" (click)="onClickAddReward()"><i class="fa fa-plus"></i> Add reward</button>
+        <button type="button" class="btn btn-primary" (click)="onClickHistory()"><i class="fa fa-history"></i> History</button>
+    </ng-container>
+    <button *ngIf="historyMode" type="button" class="btn btn-primary" (click)="onClickHistory()"><i class="fa fa-bars"></i> Active</button>
     <button type="cancel" class="btn btn-danger" (click)="onClickClose()">Close</button>
 </mat-dialog-actions>

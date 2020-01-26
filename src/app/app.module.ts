@@ -7,6 +7,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
@@ -28,6 +29,7 @@ import { UndoOptionsComponent } from './components/undo-options/undo-options.com
 import { UserOptionsComponent } from './components/user-options/user-options.component';
 import { ValueInputDialogComponent } from './components/shared/value-input-dialog/value-input-dialog.component';
 import { RewardListComponent } from './components/reward-list/reward-list.component';
+import { EditRewardComponent } from './components/edit-reward/edit-reward.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +50,8 @@ import { RewardListComponent } from './components/reward-list/reward-list.compon
     UndoOptionsComponent,
     UserOptionsComponent,
     ValueInputDialogComponent,
-    RewardListComponent
+    RewardListComponent,
+    EditRewardComponent
   ],
   imports: [
     BrowserModule,
@@ -57,6 +60,7 @@ import { RewardListComponent } from './components/reward-list/reward-list.compon
     BrowserAnimationsModule,
     MatDialogModule,
     MatButtonModule,
+    MatSnackBarModule,
     MatDatepickerModule,
     MatNativeDateModule,
     NgbModule,
@@ -69,7 +73,8 @@ import { RewardListComponent } from './components/reward-list/reward-list.compon
     UserOptionsComponent,
     ConfirmationDialogComponent,
     ValueInputDialogComponent,
-    RewardListComponent
+    RewardListComponent,
+    EditRewardComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

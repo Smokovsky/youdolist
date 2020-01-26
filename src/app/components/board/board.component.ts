@@ -37,7 +37,7 @@ export class BoardComponent implements OnInit {
               private boardUserProviderService: BoardUserProviderService,
               private categoryListProviderService: CategoryListProviderService,
               private userOptionsProviderService: UserOptionsProviderService,
-              private rewardListProviderService: RewardListProviderService,) {
+              private rewardListProviderService: RewardListProviderService) {
 
     this.boardUserProviderService.getPointsObs().subscribe((userPoints: number) => {
       this.userPoints = userPoints;
@@ -84,9 +84,11 @@ export class BoardComponent implements OnInit {
   onClickRewardList(): void {
     const boardUserProviderService = this.boardUserProviderService;
     const rewardListProviderService = this.rewardListProviderService;
+    const userOptionsProviderService = this.userOptionsProviderService;
     this.dialog.open(RewardListComponent, {
       data: { boardUserProviderService,
-              rewardListProviderService }
+              rewardListProviderService,
+              userOptionsProviderService }
     });
   }
 

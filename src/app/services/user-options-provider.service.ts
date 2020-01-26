@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs';
 import { BoardsProviderService } from './boards-provider.service';
 import { BoardUserProviderService } from './board-user-provider.service';
+import { SnackBarProviderService } from './snack-bar-provider.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class UserOptionsProviderService {
   private userListObs = new BehaviorSubject<Array<User>>(this.userList);
 
   constructor(private boardsProviderService: BoardsProviderService,
-              private boardUserProviderService: BoardUserProviderService) { 
+              private boardUserProviderService: BoardUserProviderService,
+              private snackbarService: SnackBarProviderService) {
     this.userId = this.boardUserProviderService.getUserId();
     if (this.boardUserProviderService.getUserAccessLevel() > 3) {
       this.isOwner = true;
@@ -61,10 +63,12 @@ export class UserOptionsProviderService {
         if (this.isOwner) {
           if (this.userList[i].accessLevel < 3) {
             this.userList[i].accessLevel += 1;
+            this.snackbarService.openSnack('User access level increased');
           }
         } else {
           if (this.userList[i].accessLevel < 2) {
             this.userList[i].accessLevel += 1;
+            this.snackbarService.openSnack('User access level increased');
           }
         }
       }
@@ -77,9 +81,11 @@ export class UserOptionsProviderService {
         if (this.userList[i].accessLevel === 3) {
           if (this.isOwner) {
             this.userList[i].accessLevel -= 1;
+            this.snackbarService.openSnack('User access level decreased');
           }
         } else if (this.userList[i].accessLevel > 1) {
           this.userList[i].accessLevel -= 1;
+          this.snackbarService.openSnack('User access level decreased');
         }
       }
     }

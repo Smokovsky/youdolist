@@ -1,5 +1,15 @@
 .mat-dialog-actions{
+    position: relative;
     float: right;
+    padding-bottom: 5px;
+}
+.mat-dialog-actions button{
+    margin-left: 4px;
+    margin-top: 4px;
+}
+.mat-dialog-content{
+    min-width: 300px;
+    padding: 0 20px 10px 20px;
 }
 input,
 textarea{
@@ -28,10 +38,6 @@ label{
 p{
     padding: 0;
     display: inline;
-}
-.mat-dialog-content{
-    min-width: 300px;
-    padding: 0 20px 10px 20px;
 }
 .active{
     text-decoration: line-through;

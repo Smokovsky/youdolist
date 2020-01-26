@@ -72,10 +72,10 @@ export class BoardsProviderService {
     this.boardList[0].doneList[0].completitionDate = new Date();
 
     this.boardList[0].rewardList.push(
-      new Reward('Dinner @ McDonald\'s', 250, false, true)
+      new Reward('Dinner @ McDonald\'s', 250, false, 'XQAA')
     );
     this.boardList[0].rewardList.push(
-      new Reward('Small Lego box', 500, false, true)
+      new Reward('Small Lego box', 500, true, 'XQAA')
     );
 
     this.boardList.push(
@@ -137,6 +137,13 @@ export class BoardsProviderService {
 
     this.boardList[1].doneList[0].completitorId = 'ELON';
     this.boardList[1].doneList[0].completitionDate = new Date();
+
+    this.boardList[1].rewardList.push(
+      new Reward('Dinner @ McDonald\'s', 10, false, 'XQAA')
+    );
+    this.boardList[1].rewardList.push(
+      new Reward('Small Lego box', 20, true, 'XQAA')
+    );
 
     this.boardList.push(
       new Board('Friend board (lvl 2)',

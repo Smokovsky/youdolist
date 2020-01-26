@@ -1,6 +1,9 @@
-button {
+.mat-dialog-actions{
+    text-align: center;
+}
+button{
     display: block;
     margin: 3px;
-    width: 100%;
-    text-align: center;
+    width: 90%;
+    margin: 2px auto;
 }

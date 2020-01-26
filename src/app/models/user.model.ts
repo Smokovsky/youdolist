@@ -9,11 +9,11 @@ export class User {
         this.points = 0;
     }
 
-    addPoints(points: number) {
+    addPoints(points: number): void {
         this.points += points;
     }
 
-    subPoints(points: number) {
+    subPoints(points: number): void {
         this.points -= points;
     }
 }

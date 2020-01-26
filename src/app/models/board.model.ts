@@ -10,16 +10,17 @@ export class Board {
     categories: Array<Category>;
     doneList: Array<Task>;
     rewardList: Array<Reward>;
+    rewardHistoryList: Array<Reward>;
 
     constructor(name: string, userList: Array<User>, categories: Array<Category>,
                 doneList: Array<Task>, rewardList: Array<Reward>) {
         this.id = this.getRandomId();
-        // this.id = id;
         this.name = name;
         this.userList = userList;
         this.categories = categories;
         this.doneList = doneList;
         this.rewardList = rewardList;
+        this.rewardHistoryList = new Array<Reward>();
     }
 
     // TODO: avoid duplicates

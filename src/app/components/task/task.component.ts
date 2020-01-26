@@ -9,6 +9,8 @@ import { CategoryListProviderService } from 'src/app/services/category-list-prov
 import { BoardUserProviderService } from 'src/app/services/board-user-provider.service';
 import { UndoOptionsComponent } from '../undo-options/undo-options.component';
 import { UserOptionsProviderService } from 'src/app/services/user-options-provider.service';
+import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
+import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-task',
@@ -31,7 +33,8 @@ export class TaskComponent implements OnInit {
               private categoryListProviderService: CategoryListProviderService,
               private doneTasksProviderService: DoneTasksProviderService,
               private boardUserProviderService: BoardUserProviderService,
-              private userOptionsProviderService: UserOptionsProviderService) {
+              private userOptionsProviderService: UserOptionsProviderService,
+              private snackbarService: SnackBarProviderService) {
 
     this.doneTasksProviderService.getDoneTasksObs().subscribe((doneTasks: Array<Task>) => {
       this.doneTasksList = doneTasks;
@@ -57,10 +60,20 @@ export class TaskComponent implements OnInit {
 
   onClickTaskApprove(i: number): void {
     this.taskList[i].isApproved = true;
+    this.snackbarService.openSnack('Task approved');
   }
 
   onClickTaskDelete(i: number): void {
-    this.taskList.splice(i, 1);
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: 'Are you sure you want to delete this task? You won\'t be able to get it back.'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.taskList.splice(i, 1);
+        this.snackbarService.openSnack('Task deleted');
+      }
+    });
   }
 
   onClickTaskDone(i: number): void {
@@ -73,6 +86,7 @@ export class TaskComponent implements OnInit {
     this.taskList[i].completitionDate = new Date();
     this.doneTasksProviderService.add(this.taskList[i]);
     this.taskList.splice(i, 1);
+    this.snackbarService.openSnack('Task completed');
   }
 
   onClickTaskSettings(task: Task): void {
@@ -83,6 +97,7 @@ export class TaskComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.action === 'delete') {
         this.taskList.splice(this.taskList.indexOf(result.task), 1);
+        this.snackbarService.openSnack('Task deleted');
       }
     });
   }
@@ -97,7 +112,7 @@ export class TaskComponent implements OnInit {
             data: { task }
           });
           dialogRef.afterClosed().subscribe(result => {
-              if (result) {
+              if (result === 'changePoints' || result === 'leavePoints') {
                 transferArrayItem(event.previousContainer.data,
                                   event.container.data,
                                   event.previousIndex,
@@ -110,6 +125,7 @@ export class TaskComponent implements OnInit {
                 this.taskList[event.currentIndex].completitionDate = null;
                 this.taskList[event.currentIndex].completitorId = null;
                 this.taskList[event.currentIndex].categoryId = this.categoryId;
+                this.snackbarService.openSnack('Task undone');
               }
             });
         } else {
@@ -121,6 +137,7 @@ export class TaskComponent implements OnInit {
           this.taskList[event.currentIndex].completitionDate = null;
           this.taskList[event.currentIndex].completitorId = null;
           this.taskList[event.currentIndex].categoryId = this.categoryId;
+          this.snackbarService.openSnack('Task undone');
         }
       } else {
         const task: any = event.previousContainer.data[event.previousIndex];
@@ -132,6 +149,9 @@ export class TaskComponent implements OnInit {
           this.taskList[event.currentIndex].completitionDate = null;
           this.taskList[event.currentIndex].completitorId = null;
           this.taskList[event.currentIndex].isApproved = true;
+          this.snackbarService.openSnack('Task undone');
+        } else {
+          this.snackbarService.openSnack('You cannot undo this task');
         }
       }
 
@@ -141,6 +161,8 @@ export class TaskComponent implements OnInit {
         moveItemInArray(event.container.data,
                         event.previousIndex,
                         event.currentIndex);
+      } else {
+        this.snackbarService.openSnack('You cannot reorganize items');
       }
 
     // Case category change
@@ -151,6 +173,8 @@ export class TaskComponent implements OnInit {
                           event.previousIndex,
                           event.currentIndex);
         this.taskList[event.currentIndex].categoryId = this.categoryId;
+      } else {
+        this.snackbarService.openSnack('You cannot reorganize items');
       }
     }
   }

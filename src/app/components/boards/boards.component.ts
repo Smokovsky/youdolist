@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { EditBoardComponent } from '../edit-board/edit-board.component';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
+import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
 
 @Component({
   selector: 'app-boards',
@@ -20,7 +21,8 @@ export class BoardsComponent implements OnInit {
 
   constructor(public dialog: MatDialog,
               private router: Router,
-              private boardsProviderService: BoardsProviderService) {
+              private boardsProviderService: BoardsProviderService,
+              private snackbarService: SnackBarProviderService) {
 
     this.boardsProviderService.getBoardListObs().subscribe((boardList: Array<Board>) => {
       this.boardList = boardList;
@@ -77,6 +79,7 @@ export class BoardsComponent implements OnInit {
       if (result) {
         this.boardsProviderService.deleteBoard(id);
         this.findUserBoards();
+        this.snackbarService.openSnack('Board deleted');
       }
     });
   }

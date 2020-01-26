@@ -5,6 +5,7 @@ import { Task } from 'src/app/models/task.model';
 import { Category } from 'src/app/models/category.model';
 import { User } from 'src/app/models/user.model';
 import { Reward } from 'src/app/models/reward.model';
+import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
 
 @Component({
   selector: 'app-edit-board',
@@ -17,18 +18,21 @@ export class EditBoardComponent implements OnInit {
   board?: Board = this.data.board;
 
   boardName: string;
+  isNew = false;
   ownerId: string;
   userList: Array<User>;
 
   constructor(public dialog: MatDialog,
               public dialogRef: MatDialogRef<EditBoardComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: any) { }
+              @Inject(MAT_DIALOG_DATA) public data: any,
+              private snackbarService: SnackBarProviderService) { }
 
   ngOnInit() {
     // TODO: get user id from firebase service
     this.userId = 'XQAA';
 
     if (!this.board) {
+      this.isNew = true;
       this.board = new Board('', new Array<User>(new User(this.userId, 4)),
                             new Array<Category>(), new Array<Task>(), new Array<Reward>());
     }
@@ -44,6 +48,11 @@ export class EditBoardComponent implements OnInit {
   onClickSaveButton(): void {
     this.board.name = this.boardName;
     this.board.userList = this.userList;
+    if (!this.isNew) {
+      this.snackbarService.openSnack('Board saved');
+    } else {
+      this.snackbarService.openSnack('New board created');
+    }
     this.dialogRef.close(this.board);
   }
 

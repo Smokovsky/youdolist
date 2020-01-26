@@ -15,7 +15,6 @@ export class CategoryListProviderService {
 
   constructor(private boardsProviderService: BoardsProviderService) {  }
 
-  // HMM: Maybe this could be done in constructor of category service?
   setCategoryList(id: string): void {
     this.categoryList = this.boardsProviderService.getBoard(id).categories;
     this.categoryListObs.next(this.categoryList);

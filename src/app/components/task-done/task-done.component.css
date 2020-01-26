@@ -33,7 +33,7 @@
 }
 .taskControls{
     position: relative;
-    min-height: 48px;
+    min-height: 52px;
     margin-top: 10px;
 }
 .buttons {
@@ -103,17 +103,17 @@ button{
 .fa{
     vertical-align: baseline;
 }
-.fa-diamond {
+.fa-diamond{
     margin-left: -1px;
 }
 .points{
     font-weight: bold;
 }
-.cdk-drop-list-dragging {
+.cdk-drop-list-dragging{
     cursor: grabbing;
 }
 
-.placeholder {
+.placeholder{
     background: rgb(226, 226, 226);
     border: dotted 3px rgb(196, 196, 196);
     margin-top: 3px; 

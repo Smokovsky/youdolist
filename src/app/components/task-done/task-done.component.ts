@@ -9,6 +9,8 @@ import { CategoryListProviderService } from 'src/app/services/category-list-prov
 import { BoardUserProviderService } from 'src/app/services/board-user-provider.service';
 import { UndoOptionsComponent } from '../undo-options/undo-options.component';
 import { UserOptionsProviderService } from 'src/app/services/user-options-provider.service';
+import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
+import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-task-done',
@@ -32,7 +34,8 @@ export class TaskDoneComponent implements OnInit {
               private categoryListProviderService: CategoryListProviderService,
               private doneTasksProviderService: DoneTasksProviderService,
               private boardUserProviderService: BoardUserProviderService,
-              private userOptionsProviderService: UserOptionsProviderService) {
+              private userOptionsProviderService: UserOptionsProviderService,
+              private snackbarService: SnackBarProviderService) {
 
     // TODO: get userId from user service
     this.doneTasksProviderService.getDoneTasksObs().subscribe((doneTasks: Array<Task>) => {
@@ -67,7 +70,7 @@ export class TaskDoneComponent implements OnInit {
           data: { task }
         });
         dialogRef.afterClosed().subscribe(result => {
-          if (result) {
+          if (result === 'changePoints' || result === 'leavePoints') {
             const completitorId = this.taskList[i].completitorId;
             const completitionDate = this.taskList[i].completitionDate;
             const points = this.taskList[i].points;
@@ -75,10 +78,10 @@ export class TaskDoneComponent implements OnInit {
             this.taskList[i].completitionDate = null;
             if (this.categoryListProviderService.addTaskToCategory(this.taskList[i], previousCategory)) {
               if (result === 'changePoints') {
-                this.userOptionsProviderService.substractUserPoints(completitorId,
-                                                                    points);
+                this.userOptionsProviderService.substractUserPoints(completitorId, points);
               }
               this.taskList.splice(i, 1);
+              this.snackbarService.openSnack('Task undone');
             } else {
               this.taskList[i].completitorId = completitorId;
               this.taskList[i].completitionDate = completitionDate;
@@ -89,6 +92,7 @@ export class TaskDoneComponent implements OnInit {
         this.taskList[i].isApproved = true;
         if (this.categoryListProviderService.addTaskToCategory(this.taskList[i], previousCategory)) {
           this.taskList.splice(i, 1);
+          this.snackbarService.openSnack('Task undone');
         } else {
           this.taskList[i].isApproved = false;
         }
@@ -111,6 +115,7 @@ export class TaskDoneComponent implements OnInit {
   onClickApprove(i: number): void {
     this.taskList[i].isApproved = true;
     this.userOptionsProviderService.addUserPoints(this.taskList[i].completitorId, this.taskList[i].points);
+    this.snackbarService.openSnack('Task approved');
   }
 
   onClickUnapprovedTaskUndo(i: number): void {
@@ -118,13 +123,23 @@ export class TaskDoneComponent implements OnInit {
     this.taskList[i].isApproved = true;
     if (this.categoryListProviderService.addTaskToCategory(this.taskList[i], previousCategory)) {
       this.taskList.splice(i, 1);
+      this.snackbarService.openSnack('Task undone');
     } else {
       this.taskList[i].isApproved = false;
     }
   }
 
   onClickUnapprovedTaskDelete(i: number): void {
-    this.taskList.splice(i, 1);
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '350px',
+      data: 'Are you sure you want to delete this task? You won\'t be able to get it back.'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.snackbarService.openSnack('Task deleted');
+        this.taskList.splice(i, 1);
+      }
+    });
   }
 
   onDrop(event: CdkDragDrop<string[]>): void {
@@ -133,6 +148,8 @@ export class TaskDoneComponent implements OnInit {
       moveItemInArray(event.container.data,
                       event.previousIndex,
                       event.currentIndex);
+      } else {
+        this.snackbarService.openSnack('You cannot reorganize items');
       }
     } else {
       const task: any = event.previousContainer.data[event.previousIndex];
@@ -148,6 +165,9 @@ export class TaskDoneComponent implements OnInit {
         }
         this.taskList[event.currentIndex].completitionDate = new Date();
         this.taskList[event.currentIndex].completitorId = this.userId;
+        this.snackbarService.openSnack('Task completed');
+      } else {
+        this.snackbarService.openSnack('You cannot complete unapproved task');
       }
     }
   }

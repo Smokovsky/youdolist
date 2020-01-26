@@ -4,6 +4,7 @@ import { User } from 'src/app/models/user.model';
 import { UserOptionsProviderService } from 'src/app/services/user-options-provider.service';
 import { ValueInputDialogComponent } from '../shared/value-input-dialog/value-input-dialog.component';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
+import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
 
 
 @Component({
@@ -18,7 +19,8 @@ export class UserOptionsComponent implements OnInit {
 
   constructor(public dialog: MatDialog,
               public dialogRef: MatDialogRef<UserOptionsComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: any) {  }
+              @Inject(MAT_DIALOG_DATA) public data: any,
+              private snackbarService: SnackBarProviderService) {  }
 
   ngOnInit() {
     this.userOptionsProviderService.getUserListObs().subscribe((users: Array<User>) => {
@@ -35,6 +37,7 @@ export class UserOptionsComponent implements OnInit {
     dialogRef.afterClosed().subscribe((value: number) => {
       if (value) {
         this.userOptionsProviderService.addUserPoints(this.userList[i].id, value);
+        this.snackbarService.openSnack('Added points to user');
       }
     });
   }
@@ -47,6 +50,7 @@ export class UserOptionsComponent implements OnInit {
     dialogRef.afterClosed().subscribe((value: number) => {
       if (value) {
         this.userOptionsProviderService.substractUserPoints(this.userList[i].id, value);
+        this.snackbarService.openSnack('Substracted points from user');
       }
     });
   }
@@ -67,6 +71,7 @@ export class UserOptionsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.userOptionsProviderService.deleteUser(this.userList[i]);
+          this.snackbarService.openSnack('User deleted');
         }
       });
   }

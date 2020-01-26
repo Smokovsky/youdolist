@@ -5,6 +5,7 @@ import { Category } from 'src/app/models/category.model';
 import { CategoryListProviderService } from 'src/app/services/category-list-provider.service';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 import { BoardUserProviderService } from 'src/app/services/board-user-provider.service';
+import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
 
 @Component({
   selector: 'app-category',
@@ -20,7 +21,8 @@ export class CategoryComponent implements OnInit {
 
   constructor(public dialog: MatDialog,
               private categoryListProviderService: CategoryListProviderService,
-              private boardUserProviderService: BoardUserProviderService) {
+              private boardUserProviderService: BoardUserProviderService,
+              private snackbarService: SnackBarProviderService) {
 
     this.categoryListProviderService.getCategoryListObs().subscribe((categories: Array<Category>) => {
       this.categoryList = categories;
@@ -42,6 +44,7 @@ export class CategoryComponent implements OnInit {
   dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.categoryListProviderService.remove(i);
+        this.snackbarService.openSnack('Category deleted');
       }
     });
   }

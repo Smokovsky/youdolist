@@ -1,3 +1,9 @@
 body{
     font-size: 18px;
 }
+span.mat-button-wrapper {
+    color: #bdbdbd;
+}
+span,simple-snack-bar.mat-simple-snackbar.ng-star-inserted {
+    color: #FFF;
+}

@@ -4,6 +4,7 @@ import { Task } from 'src/app/models/task.model';
 import { Todo } from 'src/app/models/todo.model';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 import { BoardUserProviderService } from 'src/app/services/board-user-provider.service';
+import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
 
 @Component({
   selector: 'app-edit-task',
@@ -35,7 +36,8 @@ export class EditTaskComponent implements OnInit {
 
   constructor(public dialog: MatDialog,
               public dialogRef: MatDialogRef<EditTaskComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: any) {
+              @Inject(MAT_DIALOG_DATA) public data: any,
+              private snackbarService: SnackBarProviderService) {
 
     this.boardUserProviderService.getUserAccessLevelObs().subscribe((accessLevel: number) => {
       this.userAccessLevel = accessLevel;
@@ -75,6 +77,7 @@ export class EditTaskComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        this.snackbarService.openSnack('Task deleted');
         this.dialogRef.close({task: this.task, action: 'delete'});
       }
     });
@@ -102,6 +105,9 @@ export class EditTaskComponent implements OnInit {
     if (this.action !== 'new') {
       this.task.lastEditorId = this.userId;
       this.task.lastEditDate = new Date();
+      this.snackbarService.openSnack('Task saved');
+    } else {
+      this.snackbarService.openSnack('New task created');
     }
     if (this.userAccessLevel >= 3) {
       this.task.isApproved = true;

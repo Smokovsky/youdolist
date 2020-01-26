@@ -1,0 +1,55 @@
+.mat-dialog-actions{
+    position: relative;
+    float: right;
+    padding-bottom: 5px;
+}
+.mat-dialog-actions button{
+    margin-left: 4px;
+    margin-top: 4px;
+}
+.mat-dialog-content{
+    max-width: 500px;
+}
+input,
+textarea{
+    padding: 0 5px;
+}
+input {
+    height: 25px;
+    margin-right: 5px;
+}
+button{
+    margin: 0 0 0 5px;
+}
+label{
+    width: 100%;
+    margin-bottom: 0;
+    font-weight: bold;
+}
+p{
+    padding: 0;
+    display: inline;
+}
+.input-group{
+    vertical-align: middle;
+}
+.form-group{
+    margin-bottom: 0.2rem;
+}
+.creationDetails{
+    padding-top: 25px;
+}
+.creationDetails p{
+    width: 100%;
+    font-size: 0.8em;
+    padding: 0 10px;
+    margin: 0;
+}
+.deleteReward{
+    text-align: center;
+    width: 100%;
+}
+.deleteReward button{
+    width: 100%;
+    padding: 0;
+}

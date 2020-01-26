@@ -1,19 +1,21 @@
 export class Reward {
   name: string;
+  description: string;
   cost: number;
-  isRepeatable: boolean;
-  quantity: number;
   isApproved: boolean;
-  userId?: string;
   created: Date;
+  authorId: string;
+  edited?: Date;
+  editorId?: string;
   collected?: Date;
+  collectorId?: string;
 
-  constructor(name: string, cost: number, isRepeatable: boolean, isApproved: boolean, userId?: string) {
+  constructor(name: string, cost: number, isApproved: boolean, authorId: string, description?: string) {
     this.name = name;
+    this.description = description;
     this.cost = cost;
-    this.isRepeatable = isRepeatable;
     this.isApproved = isApproved;
-    this.userId = userId;
+    this.authorId = authorId;
     this.created = new Date();
   }
 }
