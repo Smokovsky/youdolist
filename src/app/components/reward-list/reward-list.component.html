@@ -16,22 +16,22 @@
                         <p>{{ reward.description }}</p>
                     </div>
                     <div class="rewardCost">
-                        <p>{{ reward.cost }} <i class="fa fa-diamond"></i></p>
+                        <p>{{ reward.points }} <i class="fa fa-diamond"></i></p>
                     </div>
                     <div class="rewardControls">
                         <div class="rewardDate"></div>
                         <div class="buttons">
                             <ng-container *ngIf="reward.isApproved; else approveOptions">
-                                <button class="btn getRewardBtn" [disabled]="reward.cost > userPoints" (click)="onClickGetReward(i)">Get <i class="fa fa-gift"></i></button>
+                                <button class="btn getRewardBtn" [disabled]="reward.points > userPoints" (click)="onClickGetReward(reward)">Get <i class="fa fa-gift"></i></button>
                                 <button *ngIf="userAccessLevel >= 3" class="btn rewardSettingsBtn" (click)="onClickRewardSettings(reward)"><i class="fa fa-cog"></i></button>
                             </ng-container>
                             <ng-template #approveOptions>
                                 <p>This reward requires approval</p>
                                 <ng-container *ngIf="userAccessLevel >= 3">
-                                    <button class="btn rewardApproveBtn" (click)="onClickRewardApprove(i)"><i class="fa fa-check"></i></button>
+                                    <button class="btn rewardApproveBtn" (click)="onClickRewardApprove(reward.id)"><i class="fa fa-check"></i></button>
                                     <button class="btn rewardApprovalSettingsBtn" (click)="onClickRewardSettings(reward)"><i class="fa fa-cog"></i></button>
                                 </ng-container>
-                                <button class="btn rewardDeleteBtn" (click)="onClickRewardDelete(i)"><i class="fa fa-times"></i></button>
+                                <button class="btn rewardDeleteBtn" (click)="onClickRewardDelete(reward.id)"><i class="fa fa-times"></i></button>
                             </ng-template>
                         </div>
                     </div>
@@ -49,10 +49,10 @@
             <div class="placeholder" *cdkDragPlaceholder></div>
             <div *ngIf="reward.userId == userId || userAccessLevel >= 3" class="reward" [ngClass]="(reward.isApproved)?'reward':'unapproved'">
                 <div class="rewardName">
-                    <h3>{{ reward.name }} ({{ reward.cost }})<i class="fa fa-diamond"></i></h3>
+                    <h3>{{ reward.name }} ({{ reward.points }})<i class="fa fa-diamond"></i></h3>
                 </div>
                 <div class="rewardUser">
-                    <p><i class="fa fa-user"></i> {{ reward.collectorId }}</p>
+                    <p><i class="fa fa-user"></i> {{ reward.completitorId }}</p>
                 </div>
                 <div class="rewardControls">
                     <div class="rewardDate"></div>
@@ -63,10 +63,10 @@
                         <ng-template #approveOptions>
                             <p>This reward requires approval</p>
                             <ng-container *ngIf="userAccessLevel >= 3">
-                                <button class="btn rewardApproveBtn" (click)="onClickRewardHistoryApprove(i)"><i class="fa fa-check"></i></button>
-                                <button class="btn rewardApprovalSettingsBtn" (click)="onClickUndoReward(i)"><i class="fa fa-undo"></i></button>
+                                <button class="btn rewardApproveBtn" (click)="onClickRewardHistoryApprove(reward.id)"><i class="fa fa-check"></i></button>
+                                <button class="btn rewardApprovalSettingsBtn" (click)="onClickUndoReward(reward)"><i class="fa fa-undo"></i></button>
                             </ng-container>
-                            <button class="btn rewardDeleteBtn" (click)="onClickRewardHistoryDelete(i)"><i class="fa fa-times"></i></button>
+                            <button class="btn rewardDeleteBtn" (click)="onClickRewardHistoryDelete(reward.id)"><i class="fa fa-times"></i></button>
                         </ng-template>
                     </div>
                 </div>

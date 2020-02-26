@@ -2,29 +2,39 @@
     position: relative;
     float: right;
 }
+.title h2{
+    text-align: center;
+    font-size: 1.8em;
+}
 table#usersTable{
     width: 100%;
 }
+th {
+    padding: 0 15px;
+}
+.userTh{
+    text-align: left;
+    padding-left: 0;
+}
 .pointsTh{
-    text-align: right;
+    text-align: center;
 }
 .pointOptionsTh{
     text-align: center;
 }
 .pointOptionsTd{
-    text-align: right;
+    text-align: center;
     width: 145px;
 }
 .levelOptionsTd{
     text-align: center;
 }
 .pointsTd{
-    width: 1px;
-    max-width: 100px;
+    min-width: 1px;
+    text-align: center;
 }
 .points{
-    display: flex;
-    float: right;
+    display: inline-flex;
 }
 .points .fa{
     margin-top: 3px;

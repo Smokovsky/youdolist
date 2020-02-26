@@ -1,4 +1,0 @@
-<ul *ngFor="let todo of todos">
-    <li><input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(todo)"> 
-    <p [ngClass]="{'done': todo.isDone }">{{ todo.name }}</p></li>
-</ul>

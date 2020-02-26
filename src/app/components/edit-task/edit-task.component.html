@@ -12,7 +12,7 @@
             <label for="todoList">Todo list:</label>
             <ul *ngFor="let todo of taskTodoList; let i = index">
                 <li>
-                    <input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(todo)">
+                    <input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(i)">
                     <p [className]="todo.isDone ? 'active' : 'done'">{{ todo.name }}</p><a class="deleteTodo" (click)="onClickDeleteTodo(i)"><i class="fa fa-times"></i></a>
                 </li>
             </ul>
@@ -41,7 +41,7 @@
                     <p><i class="fa fa-edit"></i> Edited: {{ taskEditDate | date : 'dd/MM/y' }} by {{ taskEditorId }}</p>
                 </ng-container>
                 <ng-container *ngIf="taskCompletitorId">
-                    <p><i class="fa fa-edit"></i> Done: {{ taskCompletitionDate | date : 'dd/MM/y' }} by {{ taskCompletitorId }}</p>
+                    <p><i class="fa fa-edit"></i> Done: {{ taskCompletitionDate.toDate() | date : 'dd/MM/y' }} by {{ taskCompletitorId }}</p>
                 </ng-container>
             </div>
             <div class="input-group deleteTask">

@@ -1,6 +1,6 @@
-<div class="taskList" cdkDropList id="{{ 'cdk-task-drop-list-' + categoryId }}" [cdkDropListData]="taskList"
-[cdkDropListConnectedTo]="categoryIds" (cdkDropListDropped)="onDrop($event)">
-    <div *ngFor="let task of taskList; let i = index" cdkDrag [cdkDragStartDelay]="10"> 
+<div class="taskList" cdkDropList id="{{ 'cdk-task-drop-list-' + categoryId }}" [cdkDropListData]="doneTaskList"
+[cdkDropListConnectedTo]="categoryIdList" (cdkDropListDropped)="onDrop($event)">
+    <div *ngFor="let task of doneTaskList; let i = index" cdkDrag [cdkDragStartDelay]="10"> 
         <div class="placeholder" *cdkDragPlaceholder></div>
         <div class="task" [ngClass]="(task.isApproved)?'task':'unapproved'">
             <div class="taskName">
@@ -10,24 +10,27 @@
                 <p>{{ task.description }}</p>
             </div>
             <div class="todoList">
-                <app-todo [todos]="task.todoList"></app-todo>
+                <ul *ngFor="let todo of task.todoList">
+                    <li><input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(todo)"> 
+                    <p [ngClass]="{'done': todo.isDone }">{{ todo.name }}</p></li>
+                </ul>
             </div>
             <div class="taskControls">
                 <div class="taskDate">
                     <p class="points"><i class="fa fa-diamond"></i> {{ task.points }}</p>
-                    <p><i class="fa fa-check-square"></i> {{ task.completitionDate | date : 'dd/MM/y' }}</p>
+                    <p *ngIf="task.completitionDate"><i class="fa fa-check-square"></i> {{ task.completitionDate.seconds * 1000 | date }}</p>
                     <p><i class="fa fa-user"></i> {{ task.completitorId }}</p>
                 </div>
                 <div class="buttons">
                     <ng-container *ngIf="task.isApproved; else approveOptions">
-                        <button *ngIf="userAccessLevel >= 3" class="btn taskUndoBtn" (click)="onClickTaskUndo(i)"><i class="fa fa-undo"></i></button>
+                        <button *ngIf="userAccessLevel >= 3" class="btn taskUndoBtn" (click)="onClickTaskUndo(task)"><i class="fa fa-undo"></i></button>
                         <button *ngIf="userAccessLevel >= 3" class="btn taskSettingsBtn" (click)="onClickTaskSettings(task)"><i class="fa fa-cog"></i></button>
                     </ng-container>
                     <ng-template #approveOptions>
                         <p>This task requires approval</p>
-                        <button *ngIf="userAccessLevel >= 3" class="btn deleteBtn" (click)="onClickUnapprovedTaskDelete(i)"><i class="fa fa-times"></i></button>
-                        <button *ngIf="task.completitorId === userId || userAccessLevel >= 3" class="btn unapproveUndoBtn" (click)="onClickUnapprovedTaskUndo(i)"><i class="fa fa-undo"></i></button>
-                        <button *ngIf="userAccessLevel >= 3" class="btn approveBtn" (click)="onClickApprove(i)"><i class="fa fa-check"></i></button>
+                        <button *ngIf="userAccessLevel >= 3" class="btn deleteBtn" (click)="onClickUnapprovedTaskDelete(task.id)"><i class="fa fa-times"></i></button>
+                        <button *ngIf="task.completitorId === userId || userAccessLevel >= 3" class="btn unapproveUndoBtn" (click)="onClickUnapprovedTaskUndo(task)"><i class="fa fa-undo"></i></button>
+                        <button *ngIf="userAccessLevel >= 3" class="btn approveBtn" (click)="onClickApprove(task)"><i class="fa fa-check"></i></button>
                     </ng-template>
                 </div>
             </div>

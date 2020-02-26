@@ -1,57 +1,72 @@
-import { Component, OnInit } from '@angular/core';
-import { BoardsProviderService } from 'src/app/services/boards-provider.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Board } from 'src/app/models/board.model';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { EditBoardComponent } from '../edit-board/edit-board.component';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-boards',
   templateUrl: './boards.component.html',
   styleUrls: ['./boards.component.css']
 })
-export class BoardsComponent implements OnInit {
+export class BoardsComponent implements OnInit, OnDestroy {
 
-  boardList: Array<Board>;
   userId: string;
-  userBoards: Array<Board>;
-  friendsBoards: Array<Board>;
+
+  userBoardsObs: Observable<Board[]>;
+  userBoardsSubscription: Subscription;
+  userBoards: Board[];
+
+  friendsBoardsObs: Observable<Board[]>;
+  friendsBoardsSubscription: Subscription;
+  friendsBoards: Board[];
+
 
   constructor(public dialog: MatDialog,
               private router: Router,
-              private boardsProviderService: BoardsProviderService,
+              private afs: AngularFirestore,
               private snackbarService: SnackBarProviderService) {
 
-    this.boardsProviderService.getBoardListObs().subscribe((boardList: Array<Board>) => {
-      this.boardList = boardList;
-    });
-  }
-
-  ngOnInit() {
-    // TODO: get user id from firebase service
     this.userId = 'XQAA';
 
-    this.findUserBoards();
+    this.userBoardsObs = this.afs.collection('boards', ref => ref.where('ownerId', '==', this.userId))
+      .snapshotChanges().pipe(
+        map(actions => {
+          return actions.map(action => {
+            const data = action.payload.doc.data() as Board;
+            const id = action.payload.doc.id;
+            return {id, ...data};
+          });
+        })) as Observable<Board[]>;
+    this.userBoardsSubscription = this.userBoardsObs.subscribe(userBoards => {
+      this.userBoards = userBoards;
+    });
+
+    this.friendsBoardsObs = this.afs.collection('boards', ref => ref.where('guestsId', 'array-contains', this.userId))
+      .snapshotChanges().pipe(
+        map(actions => {
+          return actions.map(action => {
+            const data = action.payload.doc.data() as Board;
+            const id = action.payload.doc.id;
+            return {id, ...data};
+          });
+        })) as Observable<Board[]>;
+    this.friendsBoardsSubscription = this.friendsBoardsObs.subscribe(friendsBoards => {
+      this.friendsBoards = friendsBoards;
+    });
+
   }
 
-  findUserBoards(): void {
-    this.userBoards = new Array<Board>();
-    this.friendsBoards = new Array<Board>();
-    this.boardList.forEach(board => {
-      for (let i = 0, len = board.userList.length; i < len; i++) {
-        if (board.userList[i].id === this.userId) {
-          if (board.userList[i].accessLevel === 4) {
-            this.userBoards.push(board);
-            break;
-          } else {
-            this.friendsBoards.push(board);
-            break;
-          }
-        }
-      }
-    });
+  ngOnInit() { }
+
+  ngOnDestroy() {
+    this.friendsBoardsSubscription.unsubscribe();
+    this.userBoardsSubscription.unsubscribe();
   }
 
   onClickBoard(board: Board): void {
@@ -62,10 +77,22 @@ export class BoardsComponent implements OnInit {
     const dialogRef = this.dialog.open(EditBoardComponent, {
       data: { }
     });
-    dialogRef.afterClosed().subscribe((result: Board) => {
-      if (result) {
-        this.boardsProviderService.addBoard(result);
-        this.findUserBoards();
+    dialogRef.afterClosed().subscribe((board: Board) => {
+      if (board) {
+        const pushkey = this.afs.createId();
+        const newDoc = { ...board };
+        this.afs.collection('boards').doc(pushkey)
+        .set(newDoc);
+
+        this.afs.collection('boards').doc(pushkey)
+        .collection('userList').doc(this.userId)
+        .set({accessLevel: 4, points: 0});
+
+        this.afs.collection('boards').doc(pushkey)
+        .collection('categoryList').doc('doneList')
+        .set({name: 'Done list'});
+
+        this.snackbarService.openSnack('New board created');
       }
     });
   }
@@ -77,16 +104,23 @@ export class BoardsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.boardsProviderService.deleteBoard(id);
-        this.findUserBoards();
+        this.afs.collection('boards').doc(id)
+        .delete();
         this.snackbarService.openSnack('Board deleted');
       }
     });
   }
 
   onClickEdit(board: Board): void {
-    this.dialog.open(EditBoardComponent, {
+    const dialogRef = this.dialog.open(EditBoardComponent, {
       data: { board }
+    });
+    dialogRef.afterClosed().subscribe((b: Board) => {
+      if (b) {
+        this.afs.collection('boards').doc<Board>(b.id)
+        .update(b);
+        this.snackbarService.openSnack('Board saved');
+      }
     });
   }
 

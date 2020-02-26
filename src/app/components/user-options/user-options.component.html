@@ -1,10 +1,12 @@
 <mat-dialog-content>
+    <div class="title">
+        <h2>User List</h2>
+    </div>
     <div class="form-group">
-        <label for="userList">User list:</label>
-        <table id ="usersTable">
+        <table id="usersTable">
             <thead>
                 <tr>
-                    <th>User Id</th>
+                    <th class="userTh">User Id</th>
                     <th class="levelTh">Access level</th>
                     <th class="pointsTh">Points</th>
                     <th class="pointOptionsTh">Point options</th>
@@ -14,10 +16,10 @@
                 <tr *ngFor="let user of userList; let i = index">
                     <td class="userName">{{ user.id }}</td>
                     <td class="levelOptionsTd">
-                        <ng-container *ngIf="4 > user.accessLevel">
-                            <button class="decreaseLevel" (click)="onDecreaseUserLevel(i)"><i class="fa fa-minus"></i></button>
+                        <ng-container>
+                            <button class="decreaseLevel" (click)="onDecreaseUserLevel(user.id)"><i class="fa fa-minus"></i></button>
                             {{ user.accessLevel }}
-                            <button class="increaseLevel" (click)="onIncreaseUserLevel(i)"><i class="fa fa-plus"></i></button>
+                            <button class="increaseLevel" (click)="onIncreaseUserLevel(user.id)"><i class="fa fa-plus"></i></button>
                         </ng-container>
                     </td>
                     <td class="pointsTd">
@@ -26,9 +28,9 @@
                        </div>
                     </td>
                     <td class="pointOptionsTd">
-                        <button class="deleteUser" (click)="onAddUserPoints(i)"><i class="fa fa-plus"></i><i class="fa fa-diamond"></i></button>
-                        <button class="deleteUser" (click)="onSubUserPoints(i)"><i class="fa fa-minus"></i><i class="fa fa-diamond"></i></button>
-                        <button class="deleteUser" (click)="onClickDeleteUser(i)"><i class="fa fa-times"></i></button>
+                        <button class="deleteUser" (click)="onAddUserPoints(user.id)"><i class="fa fa-plus"></i><i class="fa fa-diamond"></i></button>
+                        <button class="deleteUser" (click)="onSubUserPoints(user.id)"><i class="fa fa-minus"></i><i class="fa fa-diamond"></i></button>
+                        <button class="deleteUser" *ngIf="4 > user.accessLevel" (click)="onClickDeleteUser(user.id)"><i class="fa fa-times"></i></button>
                     </td>
                 </tr>
             </tbody>

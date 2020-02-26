@@ -9,16 +9,14 @@ import { Task } from 'src/app/models/task.model';
 })
 export class UndoOptionsComponent implements OnInit {
 
-  task?: Task = this.data.task;
+  task?: Task = this.data.document;
   taskName: string;
   taskPoints: number;
   taskCompletitor: string;
 
-
   constructor(public dialog: MatDialog,
               public dialogRef: MatDialogRef<UndoOptionsComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any) {
-
     this.taskName = this.task.name;
     this.taskPoints = this.task.points;
     this.taskCompletitor = this.task.completitorId;
@@ -35,7 +33,7 @@ export class UndoOptionsComponent implements OnInit {
   }
 
   onClickCancelButton(): void {
-    this.dialogRef.close('closed');
+    this.dialogRef.close();
   }
 
 }

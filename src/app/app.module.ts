@@ -14,7 +14,6 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { AppComponent } from './app.component';
 import { CategoryComponent } from './components/category/category.component';
 import { TaskComponent } from './components/task/task.component';
-import { TodoComponent } from './components/todo/todo.component';
 import { EditTaskComponent } from './components/edit-task/edit-task.component';
 import { NewCategoryComponent } from './components/new-category/new-category.component';
 import { DoneListComponent } from './components/done-list/done-list.component';
@@ -31,12 +30,15 @@ import { ValueInputDialogComponent } from './components/shared/value-input-dialo
 import { RewardListComponent } from './components/reward-list/reward-list.component';
 import { EditRewardComponent } from './components/edit-reward/edit-reward.component';
 
+import { AngularFireModule } from 'angularfire2';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { environment } from '../environments/environment';
+
 @NgModule({
   declarations: [
     AppComponent,
     CategoryComponent,
     TaskComponent,
-    TodoComponent,
     EditTaskComponent,
     NewCategoryComponent,
     DoneListComponent,
@@ -64,7 +66,9 @@ import { EditRewardComponent } from './components/edit-reward/edit-reward.compon
     MatDatepickerModule,
     MatNativeDateModule,
     NgbModule,
-    DragDropModule
+    DragDropModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFirestoreModule
   ],
   entryComponents: [
     EditTaskComponent,

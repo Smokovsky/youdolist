@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { CategoryListProviderService } from 'src/app/services/category-list-provider.service';
 import { Category } from 'src/app/models/category.model';
-import { Task } from 'src/app/models/task.model';
 import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-new-category',
@@ -15,13 +15,13 @@ export class NewCategoryComponent implements OnInit {
   newCategoryFieldActive = false;
   newCategoryName: string;
 
-  constructor(private categoryListProviderService: CategoryListProviderService,
+  boardId: string;
+
+  constructor(private afs: AngularFirestore,
+              private activatedRoute: ActivatedRoute,
               private snackbarService: SnackBarProviderService) {
 
-    this.categoryListProviderService.getCategoryListObs().subscribe((categories: Array<Category>) => {
-      this.categoryList = categories;
-    });
-
+    this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
   }
 
   ngOnInit() { }
@@ -32,7 +32,9 @@ export class NewCategoryComponent implements OnInit {
 
   onClickSubmitNewCategory(): void {
     this.newCategoryFieldActive = false;
-    this.categoryListProviderService.add(new Category(this.newCategoryName, new Array<Task>()));
+    // this.categoryListProviderService.add(new Category(this.newCategoryName, new Array<Task>()));
+    this.afs.collection('boards').doc(this.boardId).collection<Category>('categoryList')
+    .doc(this.afs.createId()).set({name: this.newCategoryName, timeStamp: new Date()});
     this.newCategoryName = '';
     this.snackbarService.openSnack('New category created');
   }

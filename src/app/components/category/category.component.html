@@ -13,7 +13,7 @@
                                 <i class="fa fa-cogs"></i>
                             </button>
                             <div ngbDropdownMenu aria-labelledby="categoryOptions" class="ngbDropdownToggle">
-                                <button ngbDropdownItem (click)="onClickDelete(i)"><i class="fa fa-times"></i> Delete</button>
+                                <button ngbDropdownItem (click)="onClickDelete(category.id)"><i class="fa fa-times"></i> Delete</button>
                                 <button ngbDropdownItem (click)="onClickEdit(i)"><i class="fa fa-edit"></i> Edit</button>
                             </div>
                         </div>
@@ -25,17 +25,17 @@
                         <input #newCategoryNameField autofocus class="form-control width100 editCategoryName" 
                         value="{{ category.name }}" type="text" [(ngModel)]="tempNewCategoryName">
                         <span class="input-group-btn editCategoryButtons">
-                            <button class="btn" (click)="onClickSubmitEdit(i)"><i class="fa fa-check"></i></button>
-                            <button class="btn" (click)="onClickCancelEdit(i)"><i class="fa fa-times"></i></button>
+                            <button class="btn" (click)="onClickSubmitEdit(category.id)"><i class="fa fa-check"></i></button>
+                            <button class="btn" (click)="onClickCancelEdit()"><i class="fa fa-times"></i></button>
                         </span>
                     </div>
                 </ng-template>
 
             </div>
             <div class="tasksFlexWrap">
-                <app-task [taskList]="category.taskList" [categoryId]="category.id"></app-task>
+                <app-task [categoryId]="category.id"></app-task>
             </div>
-            <a class="addNewTask" *ngIf="userAccessLevel >= 2" (click)="onClickAddNewTask(category)">
+            <a class="addNewTask" *ngIf="userAccessLevel >= 2" (click)="onClickAddNewTask(category.id)">
                 <i class="fa fa-plus">
                     <ng-container *ngIf="userAccessLevel >= 3; else proposeTask">
                         <p>Add new task</p>

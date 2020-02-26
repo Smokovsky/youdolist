@@ -20,7 +20,6 @@ export class EditBoardComponent implements OnInit {
   boardName: string;
   isNew = false;
   ownerId: string;
-  userList: Array<User>;
 
   constructor(public dialog: MatDialog,
               public dialogRef: MatDialogRef<EditBoardComponent>,
@@ -33,26 +32,17 @@ export class EditBoardComponent implements OnInit {
 
     if (!this.board) {
       this.isNew = true;
-      this.board = new Board('', new Array<User>(new User(this.userId, 4)),
-                            new Array<Category>(), new Array<Task>(), new Array<Reward>());
+      this.board = {name: '', ownerId: this.userId, guestsId: []};
     }
     this.boardName = this.board.name;
-    this.userList = this.board.userList;
   }
 
   onClickCancelButton(): void {
     this.dialogRef.close();
-    delete this.board;
   }
 
   onClickSaveButton(): void {
     this.board.name = this.boardName;
-    this.board.userList = this.userList;
-    if (!this.isNew) {
-      this.snackbarService.openSnack('Board saved');
-    } else {
-      this.snackbarService.openSnack('New board created');
-    }
     this.dialogRef.close(this.board);
   }
 

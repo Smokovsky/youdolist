@@ -1,41 +1,64 @@
-import { Component, OnInit } from '@angular/core';
-import { Task } from 'src/app/models/task.model';
-import { DoneTasksProviderService } from 'src/app/services/done-tasks-provider.service';
-import { BoardUserProviderService } from 'src/app/services/board-user-provider.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { ActivatedRoute } from '@angular/router';
+import { User } from 'src/app/models/user.model';
+import { Category } from 'src/app/models/category.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-done-list',
   templateUrl: './done-list.component.html',
   styleUrls: ['./done-list.component.css']
 })
-export class DoneListComponent implements OnInit {
+export class DoneListComponent implements OnInit, OnDestroy {
+
+  boardId: string;
+  userId: string;
+  userSubscription: Subscription;
   userAccessLevel: number;
-  doneTaskList: Array<Task>;
-  doneListName = 'Done list';
+
+  doneListNameSubscription: Subscription;
+  doneListName: string;
   editNameActive = false;
   tempNewDoneName = this.doneListName;
 
-  constructor(private doneTasksProviderService: DoneTasksProviderService,
-              private boardUserProviderService: BoardUserProviderService) {
+  constructor(private afs: AngularFirestore,
+              private activatedRoute: ActivatedRoute) {
 
-    this.boardUserProviderService.getUserAccessLevelObs().subscribe((accessLevel: number) => {
-      this.userAccessLevel = accessLevel;
+    this.userId = 'XQAA';
+
+    this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
+
+    this.userSubscription = this.afs.collection('boards').doc(this.boardId)
+    .collection<User>('userList').doc(this.userId)
+    .valueChanges().subscribe((user: User) => {
+      this.userAccessLevel = user.accessLevel;
     });
 
-    this.doneTasksProviderService.getDoneTasksObs().subscribe((doneTasks: Array<Task>) => {
-      this.doneTaskList = doneTasks;
+    this.doneListNameSubscription = this.afs.collection('boards').doc(this.boardId)
+    .collection('categoryList').doc('doneList')
+    .valueChanges().subscribe((doneList: Category) => {
+      this.doneListName = doneList.name;
     });
 
   }
 
   ngOnInit() { }
 
+  ngOnDestroy() {
+    this.doneListNameSubscription.unsubscribe();
+    this.userSubscription.unsubscribe();
+  }
+
   onClickEdit(): void {
-    this.editNameActive = !this.editNameActive;
+    this.tempNewDoneName = this.doneListName;
+    this.editNameActive = true;
   }
 
   onClickSubmit(): void {
-    this.doneListName = this.tempNewDoneName;
+    this.afs.collection('boards').doc(this.boardId)
+    .collection('categoryList').doc('doneList')
+    .update({name: this.tempNewDoneName});
     this.editNameActive = false;
   }
 
