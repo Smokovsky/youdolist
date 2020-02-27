@@ -1,7 +1,7 @@
 .appBackground{
 	position: relative;
-	background: #FFF;
-	height: calc(100vh - 40px);
+	background: linear-gradient(65deg, #689bc7, #1ca982);
+	height: calc(100vh - 42px);
 	padding: 15px;
 	white-space: nowrap;
 	overflow: auto;
@@ -9,7 +9,7 @@
 	text-align: center;
 }
 .navbar-dark{
-    height: 40px;
+    height: 42px;
 	flex-wrap: nowrap;
     background: #282828;
     color: #FFF;
@@ -20,6 +20,15 @@
 	font-weight: 500;
 	color: #FFF;
 }
+.userAvatar{
+	max-height: 32px;
+	border-radius: 30px;
+}
+.userOptionsBtn{
+	padding: 0;
+	box-shadow: none;
+}
+
 .boardsWrapper{
 	display: table;
     position: absolute;

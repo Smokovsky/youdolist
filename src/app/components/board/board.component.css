@@ -1,13 +1,13 @@
 .appBackground{
-	height: calc(100vh - 40px);
+	height: calc(100vh - 42px);
 	padding: 15px;
     margin: 0;
     overflow: auto;
     white-space: nowrap;
-    background: #FFF;
+    background: linear-gradient(65deg, #689bc7, #1ca982);
 }
 .navbar-dark{
-    height: 40px;
+    height: 42px;
 	flex-wrap: nowrap;
     background: #282828;
     color: #FFF;
@@ -21,12 +21,34 @@
     padding: 3px;
     margin: 4px;
 }
+.userAvatar{
+	max-height: 32px;
+	border-radius: 30px;
+}
+.userOptionsBtn{
+	padding: 0;
+    box-shadow: none;
+    margin-left: 5px;
+    margin-top: 4px;
+}
+.dropdown{
+    display: inline-grid;
+}
+.dropdown-toggle::after{
+    content: none;
+}
+.ngbDropdownToggle{
+    background: #F5F5F5;
+}
 .navbarRight p{
     display: inline;
     vertical-align: super;
 }
 .navbarRight p i{
     margin-left: 3px;
+}
+.navbarRight img{
+    vertical-align: sub;
 }
 .points{
     display: inline-block;

@@ -1,5 +1,6 @@
 export interface User {
-    id?: string;
-    accessLevel?: number;
-    points?: number;
+    uid: string;
+    email: string;
+    photoURL?: string;
+    displayName?: string;
 }

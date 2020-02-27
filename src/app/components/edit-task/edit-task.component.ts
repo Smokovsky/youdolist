@@ -5,8 +5,10 @@ import { Todo } from 'src/app/models/todo.model';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
 import { AngularFirestore } from 'angularfire2/firestore';
-import { User } from 'src/app/models/user.model';
+import { BoardUser } from 'src/app/models/boardUser.model';
 import { Subscription } from 'rxjs';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { UsersDetailProviderService } from 'src/app/services/users-detail-provider.service';
 
 @Component({
   selector: 'app-edit-task',
@@ -15,10 +17,13 @@ import { Subscription } from 'rxjs';
 })
 export class EditTaskComponent implements OnInit, OnDestroy {
 
+  detailsService: UsersDetailProviderService = this.data.detailsService;
+
   boardId?: string = this.data.boardId;
 
   userId: string;
   userSubscription: Subscription;
+  boardUserSubscription: Subscription;
   userAccessLevel: number;
 
   task?: Task = this.data.task;
@@ -26,10 +31,10 @@ export class EditTaskComponent implements OnInit, OnDestroy {
   taskAuthorId: string;
   taskEditorId: string;
   taskName: string ;
-  taskDescription: string;
+  taskDescription?: string;
   taskTodoList = Array<Todo>();
-  taskCreationDate: Date;
-  taskEditDate: Date;
+  taskCreationDate?: Date;
+  taskEditDate?: Date;
   taskDueDate?: any;
   taskCompletitionDate?: Date;
   taskCompletitorId?: string;
@@ -41,17 +46,23 @@ export class EditTaskComponent implements OnInit, OnDestroy {
 
   constructor(public dialog: MatDialog,
               public dialogRef: MatDialogRef<EditTaskComponent>,
+              private afAuth: AngularFireAuth,
               private afs: AngularFirestore,
               @Inject(MAT_DIALOG_DATA) public data: any,
               private snackbarService: SnackBarProviderService) {
 
-    this.userId = 'XQAA';
+    this.userSubscription = this.afAuth.user.subscribe(user => {
+      if (user) {
+        this.userId = user.uid;
 
-    this.userSubscription = this.afs.collection('boards').doc(this.boardId)
-    .collection<User>('userList').doc(this.userId)
-    .valueChanges().subscribe((user: User) => {
-      this.userAccessLevel = user.accessLevel;
+        this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
+        .collection<BoardUser>('userList').doc(this.userId)
+        .valueChanges().subscribe((boardUser: BoardUser) => {
+          this.userAccessLevel = boardUser.accessLevel;
+        });
+      }
     });
+
   }
 
   ngOnInit() {
@@ -64,6 +75,7 @@ export class EditTaskComponent implements OnInit, OnDestroy {
       this.taskEditorId = this.task.lastEditorId;
       this.taskAuthorId = this.task.authorId;
       this.taskName = this.task.name;
+      this.taskPoints = this.task.points;
       this.taskDescription = this.task.description;
       this.taskTodoList = Object.assign([], this.task.todoList);
       this.taskCreationDate = this.task.creationDate.toDate();
@@ -73,13 +85,15 @@ export class EditTaskComponent implements OnInit, OnDestroy {
       if (this.task.dueDate) {
         this.taskDueDate = this.task.dueDate;
       }
-      this.taskPoints = this.task.points;
-      this.taskCompletitionDate = this.task.completitionDate;
-      this.taskCompletitorId = this.task.completitorId;
+      if (this.task.completitionDate) {
+        this.taskCompletitionDate = this.task.completitionDate.toDate();
+        this.taskCompletitorId = this.task.completitorId;
+      }
     }
   }
 
   ngOnDestroy() {
+    this.boardUserSubscription.unsubscribe();
     this.userSubscription.unsubscribe();
   }
 

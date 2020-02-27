@@ -10,8 +10,8 @@
                 <p>{{ task.description }}</p>
             </div>
             <div class="todoList">
-                <ul *ngFor="let todo of task.todoList">
-                    <li><input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(todo)"> 
+                <ul *ngFor="let todo of task.todoList; let j = index">
+                    <li><input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(task.todoList, task.id, j)"> 
                     <p [ngClass]="{'done': todo.isDone }">{{ todo.name }}</p></li>
                 </ul>
             </div>
@@ -19,7 +19,7 @@
                 <div class="taskDate">
                     <p class="points"><i class="fa fa-diamond"></i> {{ task.points }}</p>
                     <p *ngIf="task.completitionDate"><i class="fa fa-check-square"></i> {{ task.completitionDate.seconds * 1000 | date }}</p>
-                    <p><i class="fa fa-user"></i> {{ task.completitorId }}</p>
+                    <p><i class="fa fa-user"></i> {{ usersDetailProvider.getDisplayName(task.completitorId) }}</p>
                 </div>
                 <div class="buttons">
                     <ng-container *ngIf="task.isApproved; else approveOptions">

@@ -14,7 +14,7 @@
             </thead>
             <tbody>
                 <tr *ngFor="let user of userList; let i = index">
-                    <td class="userName">{{ user.id }}</td>
+                    <td class="userName">{{ usersDetailProvider.getDisplayName(user.id) }}</td>
                     <td class="levelOptionsTd">
                         <ng-container>
                             <button class="decreaseLevel" (click)="onDecreaseUserLevel(user.id)"><i class="fa fa-minus"></i></button>

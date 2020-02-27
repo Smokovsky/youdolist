@@ -8,10 +8,13 @@ import { UndoOptionsComponent } from '../undo-options/undo-options.component';
 import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 import { AngularFirestore } from 'angularfire2/firestore';
-import { User } from 'src/app/models/user.model';
+import { BoardUser } from 'src/app/models/boardUser.model';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AuthService } from 'src/app/services/auth.service';
+import { UsersDetailProviderService } from 'src/app/services/users-detail-provider.service';
+import { Todo } from 'src/app/models/todo.model';
 
 @Component({
   selector: 'app-task-done',
@@ -23,12 +26,13 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
   boardId: string;
 
   categoryId = 'doneList';
-  categoryListObs: Observable<Category[]>;
+  categoryListObs: Observable<string[]>;
   categoryListSubscription: Subscription;
   categoryIdList = new Array<string>();
 
   userId: string;
   userSubscription: Subscription;
+  boardUserSubscription: Subscription;
   userAccessLevel: number;
 
   doneTaskListObs: Observable<Task[]>;
@@ -37,30 +41,35 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
 
   constructor(public dialog: MatDialog,
               private afs: AngularFirestore,
+              private auth: AuthService,
               private activatedRoute: ActivatedRoute,
+              private usersDetailProvider: UsersDetailProviderService,
               private snackbarService: SnackBarProviderService) {
 
-    this.userId = 'XQAA';
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
+    this.userSubscription = this.auth.user$.subscribe(user => {
+      if (user) {
+        this.userId = user.uid;
 
-    this.userSubscription = this.afs.collection('boards').doc(this.boardId)
-    .collection<User>('userList').doc(this.userId)
-    .valueChanges().subscribe((user: User) => {
-      this.userAccessLevel = user.accessLevel;
+        this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
+        .collection<BoardUser>('userList').doc(this.userId)
+        .valueChanges().subscribe((boardUser: BoardUser) => {
+          this.userAccessLevel = boardUser.accessLevel;
+        });
+      }
     });
 
     this.categoryListObs = this.afs.collection('boards').doc(this.boardId)
     .collection<Category>('categoryList').snapshotChanges().pipe(
       map(actions => {
         return actions.map(action => {
-          const data = action.payload.doc.data() as Task;
           const id = action.payload.doc.id;
-          return {id, ...data};
+          return id;
         });
-      })) as Observable<Category[]>;
+      })) as Observable<string[]>;
     this.categoryListSubscription = this.categoryListObs.subscribe(categories => {
       categories.forEach(category => {
-        this.categoryIdList.push('cdk-task-drop-list-' + category.id);
+        this.categoryIdList.push('cdk-task-drop-list-' + category);
       });
     });
 
@@ -86,20 +95,28 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.doneTaskListSubscription.unsubscribe();
     this.categoryListSubscription.unsubscribe();
+    this.boardUserSubscription.unsubscribe();
     this.userSubscription.unsubscribe();
+  }
+
+  onTodoCheck(todos: Array<Todo>, taskId: string, i: number): void {
+    todos[i].isDone = !todos[i].isDone;
+    this.afs.collection('boards').doc(this.boardId)
+    .collection('categoryList').doc(this.categoryId)
+    .collection('taskList').doc(taskId).update({todoList: todos});
   }
 
   onClickTaskUndo(document: Task): void {
     if (document.completitorId === this.userId || this.userAccessLevel >= 3) {
       if (this.userAccessLevel >= 3) {
         const dialogRef = this.dialog.open(UndoOptionsComponent, {
-          data: { document }
+          data: { document, detailsService: this.usersDetailProvider }
         });
         dialogRef.afterClosed().subscribe(result => {
           if (result === 'changePoints' || result === 'leavePoints') {
             if (result === 'changePoints') {
               this.afs.collection('boards').doc(this.boardId)
-              .collection<User>('userList').doc(document.completitorId)
+              .collection<BoardUser>('userList').doc(document.completitorId)
               .ref.get().then(user => {
                 if (user.exists) {
                   this.afs.collection('boards').doc(this.boardId)
@@ -146,9 +163,8 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
   }
 
   onClickTaskSettings(task: Task): void {
-    const boardId = this.boardId;
     const dialogRef = this.dialog.open(EditTaskComponent, {
-      data: { boardId, task }
+      data: { boardId: this.boardId, task, detailsService: this.usersDetailProvider }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.action === 'delete') {
@@ -174,7 +190,7 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
     .collection('taskList').doc(task.id)
     .update({isApproved: true});
     this.afs.collection('boards').doc(this.boardId)
-    .collection<User>('userList').doc(task.completitorId)
+    .collection<BoardUser>('userList').doc(task.completitorId)
     .ref.get().then(user => {
       if (user.exists) {
         this.afs.collection('boards').doc(this.boardId)
@@ -186,7 +202,7 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
   }
 
   onClickUnapprovedTaskUndo(document: Task): void {
-    if (document.completitorId === this.userId && !document.isApproved) {
+    if (this.userAccessLevel >= 3 || document.completitorId === this.userId && !document.isApproved) {
       // Subscribing to original document to get data
       this.afs.collection('boards').doc(this.boardId)
       .collection('categoryList').doc('doneList')
@@ -258,7 +274,7 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
         if (this.userAccessLevel >= 3) {
           approved = true;
           this.afs.collection('boards').doc(this.boardId)
-          .collection<User>('userList').doc(this.userId)
+          .collection<BoardUser>('userList').doc(this.userId)
           .ref.get().then(user => {
             if (user.exists) {
               this.afs.collection('boards').doc(this.boardId)
@@ -310,17 +326,16 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
             .snapshotChanges().pipe(
               map(actions => {
                 return actions.map(action => {
-                  const data = action.payload.doc.data() as Task;
                   const id = action.payload.doc.id;
-                  return {id, ...data};
+                  return id;
                 });
-              })) as Observable<Task[]>;
+              })) as Observable<string[]>;
             previousCatObs.subscribe(previousTasks => {
-              previousTasks.forEach(t => {
+              previousTasks.forEach(tid => {
                 if (count > 0) {
                   this.afs.collection('boards').doc(this.boardId)
                   .collection('categoryList').doc(document.categoryId)
-                  .collection<Task>('taskList').doc(t.id)
+                  .collection<Task>('taskList').doc(tid)
                   .update({position: count});
                   count--;
                 }

@@ -8,6 +8,7 @@ import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.ser
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-boards',
@@ -16,7 +17,9 @@ import { map } from 'rxjs/operators';
 })
 export class BoardsComponent implements OnInit, OnDestroy {
 
+  userSubscription: Subscription;
   userId: string;
+  userPhotoURL: string;
 
   userBoardsObs: Observable<Board[]>;
   userBoardsSubscription: Subscription;
@@ -24,49 +27,57 @@ export class BoardsComponent implements OnInit, OnDestroy {
 
   friendsBoardsObs: Observable<Board[]>;
   friendsBoardsSubscription: Subscription;
-  friendsBoards: Board[];
+  friendsBoards: Board[] = [];
 
 
   constructor(public dialog: MatDialog,
               private router: Router,
               private afs: AngularFirestore,
+              private auth: AuthService,
               private snackbarService: SnackBarProviderService) {
 
-    this.userId = 'XQAA';
+    this.userSubscription = this.auth.user$.subscribe(user => {
+      if (user) {
+        this.userId = user.uid;
+        this.userPhotoURL = user.photoURL;
 
-    this.userBoardsObs = this.afs.collection('boards', ref => ref.where('ownerId', '==', this.userId))
-      .snapshotChanges().pipe(
-        map(actions => {
-          return actions.map(action => {
-            const data = action.payload.doc.data() as Board;
-            const id = action.payload.doc.id;
-            return {id, ...data};
-          });
-        })) as Observable<Board[]>;
-    this.userBoardsSubscription = this.userBoardsObs.subscribe(userBoards => {
-      this.userBoards = userBoards;
+        this.userBoardsObs = this.afs.collection('boards', ref => ref.where('ownerId', '==', user.uid))
+        .snapshotChanges().pipe(
+          map(actions => {
+            return actions.map(action => {
+              const data = action.payload.doc.data() as Board;
+              const id = action.payload.doc.id;
+              return {id, ...data};
+            });
+          })) as Observable<Board[]>;
+        this.userBoardsSubscription = this.userBoardsObs.subscribe(userBoards => {
+          this.userBoards = userBoards;
+        });
+
+        this.friendsBoardsObs = this.afs.collection('boards', ref => ref.where('guestsId', 'array-contains', user.uid))
+          .snapshotChanges().pipe(
+            map(actions => {
+              return actions.map(action => {
+                const data = action.payload.doc.data() as Board;
+                const id = action.payload.doc.id;
+                return {id, ...data};
+              });
+            })) as Observable<Board[]>;
+        this.friendsBoardsSubscription = this.friendsBoardsObs.subscribe(friendsBoards => {
+          this.friendsBoards = friendsBoards;
+        });
+      }
     });
-
-    this.friendsBoardsObs = this.afs.collection('boards', ref => ref.where('guestsId', 'array-contains', this.userId))
-      .snapshotChanges().pipe(
-        map(actions => {
-          return actions.map(action => {
-            const data = action.payload.doc.data() as Board;
-            const id = action.payload.doc.id;
-            return {id, ...data};
-          });
-        })) as Observable<Board[]>;
-    this.friendsBoardsSubscription = this.friendsBoardsObs.subscribe(friendsBoards => {
-      this.friendsBoards = friendsBoards;
-    });
-
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+
+  }
 
   ngOnDestroy() {
     this.friendsBoardsSubscription.unsubscribe();
     this.userBoardsSubscription.unsubscribe();
+    this.userSubscription.unsubscribe();
   }
 
   onClickBoard(board: Board): void {
@@ -79,6 +90,7 @@ export class BoardsComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((board: Board) => {
       if (board) {
+        board.ownerId = this.userId;
         const pushkey = this.afs.createId();
         const newDoc = { ...board };
         this.afs.collection('boards').doc(pushkey)

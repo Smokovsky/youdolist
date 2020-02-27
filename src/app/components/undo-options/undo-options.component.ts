@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Task } from 'src/app/models/task.model';
+import { UsersDetailProviderService } from 'src/app/services/users-detail-provider.service';
 
 @Component({
   selector: 'app-undo-options',
@@ -8,6 +9,8 @@ import { Task } from 'src/app/models/task.model';
   styleUrls: ['./undo-options.component.css']
 })
 export class UndoOptionsComponent implements OnInit {
+
+  detailsService: UsersDetailProviderService = this.data.detailsService;
 
   task?: Task = this.data.document;
   taskName: string;

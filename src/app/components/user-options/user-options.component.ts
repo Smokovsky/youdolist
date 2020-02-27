@@ -1,12 +1,14 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { User } from 'src/app/models/user.model';
+import { BoardUser } from 'src/app/models/boardUser.model';
 import { ValueInputDialogComponent } from '../shared/value-input-dialog/value-input-dialog.component';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AuthService } from 'src/app/services/auth.service';
+import { UsersDetailProviderService } from 'src/app/services/users-detail-provider.service';
 
 
 @Component({
@@ -15,43 +17,48 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./user-options.component.css']
 })
 export class UserOptionsComponent implements OnInit, OnDestroy {
-
+  usersDetailProvider: UsersDetailProviderService = this.data.usersDetailProvider;
   boardId?: string = this.data.boardId;
   userId: string;
   userSubscription: Subscription;
+  boardUserSubscription: Subscription;
   userAccessLevel: number;
 
-  userListObs: Observable<User[]>;
+  userListObs: Observable<BoardUser[]>;
   userListSubscription: Subscription;
-  userList: Array<User>;
+  userList: Array<BoardUser>;
 
   constructor(private afs: AngularFirestore,
               public dialog: MatDialog,
               public dialogRef: MatDialogRef<UserOptionsComponent>,
+              private auth: AuthService,
               @Inject(MAT_DIALOG_DATA) public data: any,
               private snackbarService: SnackBarProviderService) {
 
-    this.userId = 'XQAA';
+    this.userSubscription = this.auth.user$.subscribe(user => {
+      if (user) {
+        this.userId = user.uid;
 
+        this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
+        .collection<BoardUser>('userList').doc(this.userId)
+        .valueChanges().subscribe((boardUser: BoardUser) => {
+          this.userAccessLevel = boardUser.accessLevel;
+        });
+      }
+    });
   }
 
   ngOnInit() {
-    this.userSubscription = this.afs.collection('boards').doc(this.boardId)
-    .collection<User>('userList').doc(this.userId)
-    .valueChanges().subscribe((user: User) => {
-      this.userAccessLevel = user.accessLevel;
-    });
-
     this.userListObs = this.afs.collection('boards').doc(this.boardId)
     .collection('userList')
     .snapshotChanges().pipe(
       map(actions => {
         return actions.map(action => {
-          const data = action.payload.doc.data() as User;
+          const data = action.payload.doc.data() as BoardUser;
           const id = action.payload.doc.id;
           return {id, ...data};
         });
-      })) as Observable<User[]>;
+      })) as Observable<BoardUser[]>;
     this.userListSubscription = this.userListObs.subscribe(userList => {
       this.userList = userList;
     });
@@ -59,6 +66,7 @@ export class UserOptionsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.userListSubscription.unsubscribe();
+    this.boardUserSubscription.unsubscribe();
     this.userSubscription.unsubscribe();
   }
 

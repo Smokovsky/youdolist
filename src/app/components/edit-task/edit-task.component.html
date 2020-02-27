@@ -36,12 +36,12 @@
         </div>
         <ng-container *ngIf="action!='new'">
             <div class="input-group creationDetails">
-                <p><i class="fa fa-hourglass-start"></i> Created: {{ taskCreationDate | date : 'dd/MM/y' }} by {{ taskAuthorId }}</p>
+                <p><i class="fa fa-hourglass-start"></i> Created: {{ taskCreationDate | date : 'dd/MM/y' }} by {{ detailsService.getDisplayName(taskAuthorId) }}</p>
                 <ng-container *ngIf="taskEditorId">
-                    <p><i class="fa fa-edit"></i> Edited: {{ taskEditDate | date : 'dd/MM/y' }} by {{ taskEditorId }}</p>
+                    <p><i class="fa fa-edit"></i> Edited: {{ taskEditDate | date : 'dd/MM/y' }} by {{ detailsService.getDisplayName(taskEditorId) }}</p>
                 </ng-container>
                 <ng-container *ngIf="taskCompletitorId">
-                    <p><i class="fa fa-edit"></i> Done: {{ taskCompletitionDate.toDate() | date : 'dd/MM/y' }} by {{ taskCompletitorId }}</p>
+                    <p><i class="fa fa-edit"></i> Done: {{ taskCompletitionDate | date : 'dd/MM/y' }} by {{ detailsService.getDisplayName(taskCompletitorId) }}</p>
                 </ng-container>
             </div>
             <div class="input-group deleteTask">

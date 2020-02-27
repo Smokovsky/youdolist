@@ -5,10 +5,11 @@ import { Category } from 'src/app/models/category.model';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
 import { AngularFirestore } from 'angularfire2/firestore';
-import { User } from 'src/app/models/user.model';
+import { BoardUser } from 'src/app/models/boardUser.model';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-category',
@@ -19,6 +20,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   boardId: string;
   userId: string;
   userSubscription: Subscription;
+  boardUserSubscription: Subscription;
   userAccessLevel: number;
 
   categoryListObs: Observable<Category[]>;
@@ -30,33 +32,39 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   constructor(public dialog: MatDialog,
               private afs: AngularFirestore,
+              private auth: AuthService,
               private activatedRoute: ActivatedRoute,
               private snackbarService: SnackBarProviderService) {
 
-    // TODO: get user id
-    this.userId = 'XQAA';
-
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
 
-    this.userSubscription = this.afs.collection('boards').doc(this.boardId)
-    .collection<User>('userList').doc(this.userId)
-    .valueChanges().subscribe((user: User) => {
-      this.userAccessLevel = user.accessLevel;
+    this.userSubscription = this.auth.user$.subscribe(user => {
+      if (user) {
+        this.userId = user.uid;
+
+        this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
+        .collection<BoardUser>('userList').doc(this.userId)
+        .valueChanges().subscribe((boardUser: BoardUser) => {
+          this.userAccessLevel = boardUser.accessLevel;
+        });
+
+        this.categoryListObs = this.afs.collection('boards').doc(this.boardId)
+        .collection<Category>('categoryList', ref => ref.orderBy('timeStamp', 'asc'))
+        .snapshotChanges().pipe(
+          map(actions => {
+            return actions.map(action => {
+              const data = action.payload.doc.data() as Category;
+              const id = action.payload.doc.id;
+              return {id, ...data};
+            });
+        })) as Observable<Category[]>;
+        this.categoryListSubscription = this.categoryListObs.subscribe(categoryList => {
+          this.categoryList = categoryList;
+        });
+      }
     });
 
-    this.categoryListObs = this.afs.collection('boards').doc(this.boardId)
-    .collection<Category>('categoryList', ref => ref.orderBy('timeStamp', 'asc'))
-    .snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(action => {
-          const data = action.payload.doc.data() as Category;
-          const id = action.payload.doc.id;
-          return {id, ...data};
-        });
-    })) as Observable<Category[]>;
-    this.categoryListSubscription = this.categoryListObs.subscribe(categoryList => {
-      this.categoryList = categoryList;
-    });
+
 
   }
 
@@ -64,6 +72,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.categoryListSubscription.unsubscribe();
+    this.boardUserSubscription.unsubscribe();
     this.userSubscription.unsubscribe();
   }
 

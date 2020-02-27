@@ -1,11 +1,11 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
-import { Reward } from 'src/app/models/reward.model';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 import { AngularFirestore } from 'angularfire2/firestore';
-import { User } from 'src/app/models/user.model';
+import { BoardUser } from 'src/app/models/boardUser.model';
 import { Subscription } from 'rxjs';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-edit-reward',
@@ -15,8 +15,10 @@ import { Subscription } from 'rxjs';
 export class EditRewardComponent implements OnInit, OnDestroy {
 
   boardId?: string = this.data.boardId;
+
   userId: string;
-  userSubscribtion: Subscription;
+  userSubscription: Subscription;
+  boardUserSubscription: Subscription;
   userAccessLevel: number;
 
   reward?: any = this.data.reward;
@@ -33,6 +35,7 @@ export class EditRewardComponent implements OnInit, OnDestroy {
   action: string;
 
   constructor(private afs: AngularFirestore,
+              private afAuth: AngularFireAuth,
               public dialog: MatDialog,
               public dialogRef: MatDialogRef<EditRewardComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
@@ -40,10 +43,16 @@ export class EditRewardComponent implements OnInit, OnDestroy {
 
     this.userId = 'XQAA';
 
-    this.userSubscribtion = this.afs.collection('boards').doc(this.boardId)
-    .collection<User>('userList').doc(this.userId)
-    .valueChanges().subscribe((user: User) => {
-      this.userAccessLevel = user.accessLevel;
+    this.userSubscription = this.afAuth.user.subscribe(user => {
+      if (user) {
+        this.userId = user.uid;
+
+        this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
+        .collection<BoardUser>('userList').doc(this.userId)
+        .valueChanges().subscribe((boardUser: BoardUser) => {
+          this.userAccessLevel = boardUser.accessLevel;
+        });
+      }
     });
 
   }
@@ -77,7 +86,8 @@ export class EditRewardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.userSubscribtion.unsubscribe();
+    this.boardUserSubscription.unsubscribe();
+    this.userSubscription.unsubscribe();
   }
 
   onClickRewardDelete(): void {

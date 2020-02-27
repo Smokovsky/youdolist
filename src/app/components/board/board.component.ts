@@ -5,14 +5,16 @@ import { MatDialog } from '@angular/material/dialog';
 import { RewardListComponent } from '../reward-list/reward-list.component';
 
 import { AngularFirestore } from 'angularfire2/firestore';
-import { User } from 'src/app/models/user.model';
+import { BoardUser } from 'src/app/models/boardUser.model';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/services/auth.service';
+import { UsersDetailProviderService } from 'src/app/services/users-detail-provider.service';
 
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.css'],
-  providers: []
+  providers: [UsersDetailProviderService]
 })
 export class BoardComponent implements OnInit, OnDestroy {
 
@@ -22,43 +24,53 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   userId: string;
   userSubscription: Subscription;
+  boardUserSubscription: Subscription;
   userAccessLevel: number;
   userPoints: number;
+  userPhotoURL: string;
 
   constructor(public dialog: MatDialog,
               private router: Router,
               private activatedRoute: ActivatedRoute,
-              private afs: AngularFirestore) {
+              private auth: AuthService,
+              private afs: AngularFirestore,
+              private usersDetailProvider: UsersDetailProviderService) {
 
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
+    this.usersDetailProvider.init(this.boardId);
 
-    this.userId = 'XQAA';
+    this.userSubscription = this.auth.user$.subscribe(user => {
+      if (user) {
+        this.userId = user.uid;
+        this.userPhotoURL = user.photoURL;
 
-    this.afs.collection('boards').doc(this.boardId).ref.get().then(doc => {
-      if (doc.exists) {
-        if (doc.data().ownerId === this.userId) {
-          this.boardAuth = true;
-        } else {
-          doc.data().guestsId.forEach((element: any) => {
-            if (this.userId === element) {
+        this.afs.collection('boards').doc(this.boardId).ref.get().then(doc => {
+          if (doc.exists) {
+            if (doc.data().ownerId === this.userId) {
               this.boardAuth = true;
             } else {
-              this.router.navigate(['/access-denied']);
+              doc.data().guestsId.forEach((element: any) => {
+                if (this.userId === element) {
+                  this.boardAuth = true;
+                } else {
+                  this.router.navigate(['/access-denied']);
+                }
+              });
             }
-          });
-        }
-      } else {
-        this.router.navigate(['/not-found']);
-      }
-    }).catch(error => {
-      console.log('Error :', error);
-    });
+          } else {
+            this.router.navigate(['/not-found']);
+          }
+        }).catch(error => {
+          console.log('Error :', error);
+        });
 
-    this.userSubscription = this.afs.collection('boards').doc(this.boardId)
-    .collection<User>('userList').doc(this.userId)
-    .valueChanges().subscribe((user: User) => {
-      this.userPoints = user.points;
-      this.userAccessLevel = user.accessLevel;
+        this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
+        .collection<BoardUser>('userList').doc(this.userId)
+        .valueChanges().subscribe((boardUser: BoardUser) => {
+          this.userPoints = boardUser.points;
+          this.userAccessLevel = boardUser.accessLevel;
+        });
+      }
     });
 
   }
@@ -66,12 +78,13 @@ export class BoardComponent implements OnInit, OnDestroy {
   ngOnInit() { }
 
   ngOnDestroy() {
+    this.boardUserSubscription.unsubscribe();
     this.userSubscription.unsubscribe();
   }
 
   onClickUserOptions(): void {
     this.dialog.open(UserOptionsComponent, {
-      data: { boardId: this.boardId }
+      data: { boardId: this.boardId, usersDetailProvider: this.usersDetailProvider }
     });
   }
 
@@ -79,6 +92,14 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.dialog.open(RewardListComponent, {
       data: {boardId: this.boardId}
     });
+  }
+
+  onClickBack(): void {
+    this.router.navigate(['/boards']);
+  }
+
+  onClickLogout(): void {
+    this.auth.signOut();
   }
 
 }

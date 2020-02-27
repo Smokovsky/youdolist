@@ -33,6 +33,9 @@ import { EditRewardComponent } from './components/edit-reward/edit-reward.compon
 import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { environment } from '../environments/environment';
+import { LoginComponent } from './components/login/login.component';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from '@angular/fire/auth';
 
 @NgModule({
   declarations: [
@@ -53,7 +56,8 @@ import { environment } from '../environments/environment';
     UserOptionsComponent,
     ValueInputDialogComponent,
     RewardListComponent,
-    EditRewardComponent
+    EditRewardComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -68,6 +72,8 @@ import { environment } from '../environments/environment';
     NgbModule,
     DragDropModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireDatabaseModule,
+    AngularFireAuthModule,
     AngularFirestoreModule
   ],
   entryComponents: [

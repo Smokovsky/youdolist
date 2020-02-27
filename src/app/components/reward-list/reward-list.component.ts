@@ -6,9 +6,10 @@ import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.ser
 import { EditRewardComponent } from '../edit-reward/edit-reward.component';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
 import { AngularFirestore } from 'angularfire2/firestore';
-import { User } from 'src/app/models/user.model';
+import { BoardUser } from 'src/app/models/boardUser.model';
 import { map } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-reward-list',
@@ -19,7 +20,8 @@ export class RewardListComponent implements OnInit, OnDestroy {
 
   boardId = this.data.boardId;
   userId: string;
-  userSubscribtion: Subscription;
+  userSubscription: Subscription;
+  boardUserSubscription: Subscription;
   userAccessLevel: number;
   userPoints: number;
 
@@ -34,6 +36,7 @@ export class RewardListComponent implements OnInit, OnDestroy {
   historyMode = false;
 
   constructor(private afs: AngularFirestore,
+              private auth: AuthService,
               @Inject(MAT_DIALOG_DATA) public data: any,
               public dialog: MatDialog,
               public dialogRef: MatDialogRef<RewardListComponent>,
@@ -41,11 +44,17 @@ export class RewardListComponent implements OnInit, OnDestroy {
 
     this.userId = 'XQAA';
 
-    this.userSubscribtion = this.afs.collection('boards').doc(this.boardId)
-    .collection<User>('userList').doc(this.userId)
-    .valueChanges().subscribe((user: User) => {
-      this.userAccessLevel = user.accessLevel;
-      this.userPoints = user.points;
+    this.userSubscription = this.auth.user$.subscribe(user => {
+      if (user) {
+        this.userId = user.uid;
+
+        this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
+        .collection<BoardUser>('userList').doc(this.userId)
+        .valueChanges().subscribe((boardUser: BoardUser) => {
+          this.userAccessLevel = boardUser.accessLevel;
+          this.userPoints = boardUser.points;
+        });
+      }
     });
 
     this.rewardListObs = this.afs.collection('boards').doc(this.boardId)
@@ -83,7 +92,8 @@ export class RewardListComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.rewardHistoryListSubscription.unsubscribe();
     this.rewardListSubscribtion.unsubscribe();
-    this.userSubscribtion.unsubscribe();
+    this.boardUserSubscription.unsubscribe();
+    this.userSubscription.unsubscribe();
   }
 
   onClickAddReward(): void {
@@ -183,7 +193,7 @@ export class RewardListComponent implements OnInit, OnDestroy {
   onClickUndoReward(reward: Reward): void {
     this.transferRewardFrom(reward.id, 'rewardHistoryList');
     this.afs.collection('boards').doc(this.boardId)
-    .collection<User>('userList').doc(reward.completitorId)
+    .collection<BoardUser>('userList').doc(reward.completitorId)
     .ref.get().then(user => {
       if (user.exists) {
         this.afs.collection('boards').doc(this.boardId)

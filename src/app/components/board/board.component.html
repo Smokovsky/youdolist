@@ -7,7 +7,15 @@
                 <a class="" (click)="onClickUserOptions()"><i class="fa fa-user"></i></a>
             </ng-container>
             <a class="" (click)="onClickRewardList()"><i class="fa fa-gift"></i></a>
-            <a class="" href="/boards"><i class="fa fa-arrow-circle-left"></i></a>
+            <div ngbDropdown placement="bottom-right" display="dynamic" class="">
+                <button ngbDropdownToggle class="btn userOptionsBtn" id="userOptions">
+                    <img class="userAvatar" src="{{userPhotoURL}}" alt="User">
+                </button>
+                <div ngbDropdownMenu aria-labelledby="userOptions" class="ngbDropdownToggle">
+                    <button ngbDropdownItem (click)="onClickBack()"><i class="fa fa-arrow-circle-left"></i> Back to boards</button>
+                    <button ngbDropdownItem (click)="onClickLogout()"><i class="fa fa-sign-out"></i> Logout</button>
+                </div>
+            </div>
         </div>
     </nav>
     <div class="container-fluid appBackground">

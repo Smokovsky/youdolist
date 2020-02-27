@@ -13,12 +13,12 @@
     </div>
     <ng-container *ngIf="action!='new'">
         <div class="input-group creationDetails">
-            <p><i class="fa fa-hourglass-start"></i> Created: {{ rewardCreated | date : 'dd/MM/y' }} by {{ rewardAuthorId }}</p>
+            <p><i class="fa fa-hourglass-start"></i> Created: {{ creationDate | date : 'dd/MM/y' }} by {{ authorId }}</p>
             <ng-container *ngIf="rewardEditorId">
-                <p><i class="fa fa-edit"></i> Edited: {{ rewardEdited | date : 'dd/MM/y' }} by {{ rewardEditorId }}</p>
+                <p><i class="fa fa-edit"></i> Edited: {{ lastEditDate | date : 'dd/MM/y' }} by {{ lastEditorId }}</p>
             </ng-container>
             <ng-container *ngIf="rewardCollectorId">
-                <p><i class="fa fa-edit"></i> Done: {{ RewardCollected | date : 'dd/MM/y' }} by {{ rewardCollectorId }}</p>
+                <p><i class="fa fa-edit"></i> Done: {{ completitionDate | date : 'dd/MM/y' }} by {{ completitorId }}</p>
             </ng-container>
         </div>
         <div class="input-group deleteReward">
