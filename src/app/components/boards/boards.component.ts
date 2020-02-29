@@ -118,6 +118,7 @@ export class BoardsComponent implements OnInit, OnDestroy {
       if (result) {
         this.afs.collection('boards').doc(id)
         .delete();
+
         this.snackbarService.openSnack('Board deleted');
       }
     });

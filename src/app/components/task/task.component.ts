@@ -62,7 +62,6 @@ export class TaskComponent implements OnInit, OnDestroy {
       }
     });
 
-
     this.categoryListObs = this.afs.collection('boards').doc(this.boardId)
     .collection<Category>('categoryList').snapshotChanges().pipe(
       map(actions => {
@@ -137,7 +136,6 @@ export class TaskComponent implements OnInit, OnDestroy {
   }
 
   onClickTaskDone(task: Task): void {
-    let taskApproved = false;
     if (this.userAccessLevel >= 3) {
       this.afs.collection('boards').doc(this.boardId)
       .collection<BoardUser>('userList').doc(this.userId)
@@ -148,50 +146,8 @@ export class TaskComponent implements OnInit, OnDestroy {
           .update({points: user.data().points + task.points});
         }
       });
-      taskApproved = true;
     }
-    // Subscribing to original document to get data
-    this.afs.collection('boards').doc(this.boardId)
-    .collection('categoryList').doc(this.categoryId)
-    .collection('taskList').doc(task.id)
-    .valueChanges().subscribe((tsk: Task) => {
-      if (tsk) {
-        // Getting snap for category collection size value to use as position field
-        this.afs.collection('boards').doc(this.boardId)
-        .collection('categoryList').doc('doneList')
-        .collection('taskList').ref.get().then(doneSnap => {
-          // Adding a copy of document into desired category
-          this.afs.collection('boards').doc(this.boardId)
-          .collection('categoryList').doc('doneList')
-          .collection('taskList').doc(task.id)
-          .set({categoryId: tsk.categoryId, name: tsk.name, description: tsk.description,
-                authorId: tsk.authorId, creationDate: tsk.creationDate, lastEditorId: tsk.lastEditorId,
-                lastEditDate: tsk.lastEditDate, isApproved: taskApproved, todoList: tsk.todoList, dueDate: tsk.dueDate,
-                points: tsk.points, completitorId: this.userId, completitionDate: new Date(), position: doneSnap.size + 1});
-          // Getting snap for doneTasks collection size value to use as position field
-          this.afs.collection('boards').doc(this.boardId)
-          .collection('categoryList').doc(this.categoryId)
-          .collection('taskList').ref.get().then(catSnap => {
-            let count = catSnap.size;
-            this.taskList.forEach((t: Task) => {
-              if (t) {
-                // Updating tasks positions
-                this.afs.collection('boards').doc(this.boardId)
-                .collection('categoryList').doc(this.categoryId)
-                .collection<Task>('taskList').doc(t.id)
-                .update({position: count});
-                count--;
-              }
-            });
-          });
-        });
-        // Deleting task in original category
-        this.afs.collection('boards').doc(this.boardId)
-        .collection('categoryList').doc(this.categoryId)
-        .collection('taskList').doc(task.id).delete();
-      }
-    });
-    this.snackbarService.openSnack('Task completed');
+    this.doTask(task);
   }
 
   onClickTaskSettings(task: Task): void {
@@ -202,11 +158,11 @@ export class TaskComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
 
       if (result && result.action === 'delete') {
+        this.taskList.splice(this.taskList.indexOf(result.task), 1);
         this.afs.collection('boards').doc(this.boardId)
         .collection('categoryList').doc(this.categoryId)
         .collection<Task>('taskList').doc(result.task.id)
         .delete();
-        this.taskList.splice(this.taskList.indexOf(result.task), 1);
         this.updateTaskPositions();
         this.snackbarService.openSnack('Task deleted');
 
@@ -222,7 +178,7 @@ export class TaskComponent implements OnInit, OnDestroy {
   onDrop(event: CdkDragDrop<string[]>): void {
     let document: any;
 
-    // Case undoing task
+    // Case (1 of 3): undoing task
     if (event.previousContainer.id === 'cdk-task-drop-list-doneList') {
       document = event.previousContainer.data[event.previousIndex];
       if (this.userAccessLevel >= 3) {
@@ -230,18 +186,18 @@ export class TaskComponent implements OnInit, OnDestroy {
           data: { document, detailsService: this.usersDetailProvider }
         });
         dialogRef.afterClosed().subscribe(result => {
-          if (result === 'changePoints' || result === 'leavePoints') {
-            if (result === 'changePoints') {
-              this.afs.collection('boards').doc(this.boardId)
-              .collection<BoardUser>('userList').doc(document.completitorId)
-              .ref.get().then(user => {
-                if (user.exists) {
-                  this.afs.collection('boards').doc(this.boardId)
-                  .collection('userList').doc(document.completitorId)
-                  .update({points: user.data().points - document.points});
-                }
-              });
-            }
+          if (result === 'changePoints') {
+            this.afs.collection('boards').doc(this.boardId)
+            .collection<BoardUser>('userList').doc(document.completitorId)
+            .ref.get().then(user => {
+              if (user.exists) {
+                this.afs.collection('boards').doc(this.boardId)
+                .collection('userList').doc(document.completitorId)
+                .update({points: user.data().points - document.points});
+              }
+            });
+            this.undoTask(event);
+          } else if (result === 'leavePoints') {
             this.undoTask(event);
           }
         });
@@ -251,7 +207,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         }
       }
 
-    // Case position in category change
+    // Case (2 of 3): position in category change
     } else if (event.previousContainer === event.container) {
       if (this.userAccessLevel >= 3) {
         moveItemInArray(event.container.data,
@@ -262,49 +218,28 @@ export class TaskComponent implements OnInit, OnDestroy {
         this.snackbarService.openSnack('You cannot reorganize items');
       }
 
-    // Case category change
+    // Case (3 of 3): category change
     } else {
       if (this.userAccessLevel >= 3) {
         document = event.previousContainer.data[event.previousIndex];
         transferArrayItem(event.previousContainer.data,
-                          event.container.data,
-                          event.previousIndex,
-                          event.currentIndex);
-        const previousCategoryId = document.categoryId;
-        this.afs.collection('boards').doc(this.boardId)
-        .collection('categoryList').doc(previousCategoryId)
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex);
+        const taskSubscription = this.afs.collection('boards').doc(this.boardId)
+        .collection('categoryList').doc(document.categoryId)
         .collection('taskList').doc(document.id)
         .valueChanges().subscribe((task: Task) => {
 
         if (task) {
+          this.addTaskAfterDrop(task, event.currentIndex);
           this.afs.collection('boards').doc(this.boardId)
-          .collection('categoryList').doc(this.categoryId)
-          .collection('taskList').ref.get().then(catSnap => {
-
-            this.afs.collection('boards').doc(this.boardId)
-            .collection('categoryList').doc(this.categoryId)
-            .collection('taskList').doc(this.afs.createId())
-            .set({categoryId: this.categoryId, name: task.name, description: task.description,
-                  authorId: task.authorId, creationDate: task.creationDate, lastEditorId: task.lastEditorId,
-                  lastEditDate: task.lastEditDate, dueDate: task.dueDate, isApproved: task.isApproved, todoList: task.todoList,
-                  points: task.points, completitorId: null, completitionDate: null,
-                  position: catSnap.size - event.currentIndex + 1});
-
-            this.taskList.forEach((tsk: Task, index) => {
-
-              if (index < event.currentIndex) {
-                this.afs.collection('boards').doc(this.boardId)
-                .collection('categoryList').doc(this.categoryId)
-                .collection<Task>('taskList').doc(tsk.id)
-                .update({position: tsk.position + 1});
-              }
-            });
-          });
-          this.afs.collection('boards').doc(this.boardId)
-          .collection('categoryList').doc(previousCategoryId)
+          .collection('categoryList').doc(document.categoryId)
           .collection('taskList').doc(document.id).delete();
-          this.updatePositionsAtCategory(previousCategoryId);
+
+          this.updatePositionsAtCategory(document.categoryId);
         }
+        return taskSubscription.unsubscribe();
       });
       } else {
         this.snackbarService.openSnack('You cannot reorganize items');
@@ -312,9 +247,40 @@ export class TaskComponent implements OnInit, OnDestroy {
     }
   }
 
+  doTask(task: Task): void {
+    let taskApproved = false;
+    if (this.userAccessLevel >= 3) {
+      taskApproved = true;
+    }
+    const taskSubscription = this.afs.collection('boards').doc(this.boardId)
+    .collection('categoryList').doc(this.categoryId)
+    .collection('taskList').doc(task.id)
+    .valueChanges().subscribe((tsk: Task) => {
+      if (tsk) {
+        this.afs.collection('boards').doc(this.boardId)
+        .collection('categoryList').doc('doneList')
+        .collection('taskList').ref.get().then(doneSnap => {
+          this.afs.collection('boards').doc(this.boardId)
+          .collection('categoryList').doc('doneList')
+          .collection('taskList').doc(task.id)
+          .set({categoryId: tsk.categoryId, name: tsk.name, description: tsk.description,
+                authorId: tsk.authorId, creationDate: tsk.creationDate, lastEditorId: tsk.lastEditorId,
+                lastEditDate: tsk.lastEditDate, isApproved: taskApproved, todoList: tsk.todoList, dueDate: tsk.dueDate,
+                points: tsk.points, completitorId: this.userId, completitionDate: new Date(), position: doneSnap.size + 1});
+          this.updateTaskPositions();
+        });
+        this.afs.collection('boards').doc(this.boardId)
+        .collection('categoryList').doc(this.categoryId)
+        .collection('taskList').doc(task.id).delete();
+      }
+      this.snackbarService.openSnack('Task completed');
+      return taskSubscription.unsubscribe();
+    });
+  }
+
   undoTask(event: CdkDragDrop<string[]>): void {
     const document: any = event.previousContainer.data[event.previousIndex];
-    this.afs.collection('boards').doc(this.boardId)
+    const taskSubscription = this.afs.collection('boards').doc(this.boardId)
     .collection('categoryList').doc('doneList')
     .collection('taskList').doc(document.id)
     .valueChanges().subscribe((task: Task) => {
@@ -324,28 +290,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                             event.container.data,
                             event.previousIndex,
                             event.currentIndex);
-          const id = this.afs.createId();
-          this.afs.collection('boards').doc(this.boardId)
-          .collection('categoryList').doc(this.categoryId)
-          .collection('taskList').ref.get().then(catSnap => {
-
-            this.afs.collection('boards').doc(this.boardId)
-            .collection('categoryList').doc(this.categoryId)
-            .collection('taskList').doc(id)
-            .set({categoryId: this.categoryId, name: task.name, description: task.description, authorId: task.authorId,
-                  creationDate: task.creationDate, lastEditorId: task.lastEditorId, lastEditDate: task.lastEditDate,
-                  dueDate: task.dueDate, isApproved: true, todoList: task.todoList, points: task.points, completitorId: null,
-                  completitionDate: null, position: catSnap.size - event.currentIndex + 1});
-
-            this.taskList.forEach((tsk: Task, index) => {
-              if (index < event.currentIndex) {
-                this.afs.collection('boards').doc(this.boardId)
-                .collection('categoryList').doc(this.categoryId)
-                .collection<Task>('taskList').doc(tsk.id)
-                .update({position: tsk.position + 1});
-              }
-            });
-          });
+          this.addTaskAfterDrop(task, event.currentIndex);
           this.afs.collection('boards').doc(this.boardId)
           .collection('categoryList').doc('doneList')
           .collection('taskList').doc(document.id).delete();
@@ -355,6 +300,24 @@ export class TaskComponent implements OnInit, OnDestroy {
           this.snackbarService.openSnack('You cannot reorganize items');
         }
       }
+      return taskSubscription.unsubscribe();
+    });
+  }
+
+
+  addTaskAfterDrop(task: Task, currentIndex: number): void {
+    this.updateTaskPositionsAfterDrop(currentIndex);
+    this.afs.collection('boards').doc(this.boardId)
+    .collection('categoryList').doc(this.categoryId)
+    .collection('taskList').ref.get().then(catSnap => {
+      this.afs.collection('boards').doc(this.boardId)
+      .collection('categoryList').doc(this.categoryId)
+      .collection('taskList').doc(this.afs.createId())
+      .set({categoryId: this.categoryId, name: task.name, description: task.description,
+            authorId: task.authorId, creationDate: task.creationDate, lastEditorId: task.lastEditorId,
+            lastEditDate: task.lastEditDate, dueDate: task.dueDate, isApproved: task.isApproved, todoList: task.todoList,
+            points: task.points, completitorId: null, completitionDate: null,
+            position: catSnap.size - currentIndex + 1});
     });
   }
 
@@ -371,37 +334,56 @@ export class TaskComponent implements OnInit, OnDestroy {
     });
   }
 
+  updateTaskPositionsAfterDrop(i: number): void {
+    const subscription = this.afs.collection('boards').doc(this.boardId)
+    .collection('categoryList').doc(this.categoryId)
+    .collection<Task>('taskList', ref => ref.orderBy('position', 'desc'))
+    .snapshotChanges().pipe(
+      map(actions => {
+        return actions.map( a => {
+          const data = a.payload.doc.data() as Task;
+          const id = a.payload.doc.id;
+          return {id, ...data};
+        });
+      })
+    ).subscribe(taskList => {
+      taskList.forEach((task: Task, index) => {
+        if (i > index) {
+          this.afs.collection('boards').doc(this.boardId)
+          .collection('categoryList').doc(this.categoryId)
+          .collection<Task>('taskList').doc(task.id)
+          .update({position: task.position + 1});
+        }
+      });
+      return subscription.unsubscribe();
+    });
+  }
+
   updatePositionsAtCategory(categoryId: string): void {
-    let previousCategorySubscription: Subscription;
+
     this.afs.collection('boards').doc(this.boardId)
     .collection('categoryList').doc(categoryId)
     .collection('taskList').ref.get().then(doneSnap => {
       let count = doneSnap.size;
-      const previousCatObs = this.afs.collection('boards').doc(this.boardId)
+      const previousCategorySubscription = this.afs.collection('boards').doc(this.boardId)
       .collection('categoryList').doc(categoryId)
       .collection<Task>('taskList', ref => ref.orderBy('position', 'desc'))
       .snapshotChanges().pipe(
         map(actions => {
           return actions.map(action => {
-            const id = action.payload.doc.id;
-            return id;
+            return action.payload.doc.id;
           });
-        })) as Observable<string[]>;
-      previousCategorySubscription = previousCatObs.subscribe(previousTasks => {
+        })).subscribe(previousTasks => {
         previousTasks.forEach(tid => {
-          if (count > 0) {
             this.afs.collection('boards').doc(this.boardId)
             .collection('categoryList').doc(categoryId)
             .collection<Task>('taskList').doc(tid)
             .update({position: count});
             count--;
-          }
         });
+        return previousCategorySubscription.unsubscribe();
       });
     });
-    if (previousCategorySubscription) {
-      previousCategorySubscription.unsubscribe();
-    }
   }
 
 }

@@ -42,8 +42,6 @@ export class RewardListComponent implements OnInit, OnDestroy {
               public dialogRef: MatDialogRef<RewardListComponent>,
               private snackbarService: SnackBarProviderService) {
 
-    this.userId = 'XQAA';
-
     this.userSubscription = this.auth.user$.subscribe(user => {
       if (user) {
         this.userId = user.uid;
@@ -217,6 +215,11 @@ export class RewardListComponent implements OnInit, OnDestroy {
       moveItemInArray(event.container.data,
                       event.previousIndex,
                       event.currentIndex);
+      if (event.previousContainer.id === 'cdk-reward-drop-list') {
+        this.updatePositions('rewardList');
+      } else {
+        this.updatePositions('rewardHistoryList');
+      }
     } else {
       this.snackbarService.openSnack('Sorry, you cannot reorganize items');
     }
@@ -237,7 +240,7 @@ export class RewardListComponent implements OnInit, OnDestroy {
     }
 
     if (to) {
-      this.afs.collection('boards').doc(this.boardId)
+      const rewardSubscription = this.afs.collection('boards').doc(this.boardId)
       .collection<Reward>(from).doc(id)
       .valueChanges().subscribe((reward: Reward) => {
         if (reward) {
@@ -255,6 +258,7 @@ export class RewardListComponent implements OnInit, OnDestroy {
           this.afs.collection('boards').doc(this.boardId)
           .collection(from).doc(id).delete();
         }
+        rewardSubscription.unsubscribe();
       });
     }
   }

@@ -63,8 +63,7 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
     .collection<Category>('categoryList').snapshotChanges().pipe(
       map(actions => {
         return actions.map(action => {
-          const id = action.payload.doc.id;
-          return id;
+          return action.payload.doc.id;
         });
       })) as Observable<string[]>;
     this.categoryListSubscription = this.categoryListObs.subscribe(categories => {
@@ -106,60 +105,30 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
     .collection('taskList').doc(taskId).update({todoList: todos});
   }
 
-  onClickTaskUndo(document: Task): void {
-    if (document.completitorId === this.userId || this.userAccessLevel >= 3) {
+  onClickTaskUndo(task: Task): void {
+    if (task.completitorId === this.userId || this.userAccessLevel >= 3) {
       if (this.userAccessLevel >= 3) {
         const dialogRef = this.dialog.open(UndoOptionsComponent, {
-          data: { document, detailsService: this.usersDetailProvider }
+          data: { document: task, detailsService: this.usersDetailProvider }
         });
         dialogRef.afterClosed().subscribe(result => {
-          if (result === 'changePoints' || result === 'leavePoints') {
-            if (result === 'changePoints') {
-              this.afs.collection('boards').doc(this.boardId)
-              .collection<BoardUser>('userList').doc(document.completitorId)
-              .ref.get().then(user => {
-                if (user.exists) {
-                  this.afs.collection('boards').doc(this.boardId)
-                  .collection('userList').doc(document.completitorId)
-                  .update({points: user.data().points - document.points});
-                }
-              });
-            }
-            // Subscribing to original document to get data
+          if (result === 'changePoints') {
             this.afs.collection('boards').doc(this.boardId)
-            .collection('categoryList').doc('doneList')
-            .collection('taskList').doc(document.id)
-            .valueChanges().subscribe((task: Task) => {
-              if (task) {
-                // Getting snap for collection size value to use as position field
+            .collection<BoardUser>('userList').doc(task.completitorId)
+            .ref.get().then(user => {
+              if (user.exists) {
                 this.afs.collection('boards').doc(this.boardId)
-                .collection('categoryList').doc(task.categoryId)
-                .collection('taskList').ref.get().then(snap => {
-                  // Adding a copy of document into desired category
-                  this.afs.collection('boards').doc(this.boardId)
-                  .collection('categoryList').doc(task.categoryId)
-                  .collection('taskList').doc(this.afs.createId())
-                  .set({categoryId: task.categoryId, name: task.name, description: task.description,
-                        authorId: task.authorId, creationDate: task.creationDate, lastEditorId: task.lastEditorId,
-                        lastEditDate: task.lastEditDate, isApproved: true, todoList: task.todoList, dueDate: task.dueDate,
-                        points: task.points, completitorId: null, completitionDate: null, position: snap.size + 1});
-
-                  this.updateTaskPositions();
-                });
+                .collection('userList').doc(task.completitorId)
+                .update({points: user.data().points - task.points});
               }
             });
-            // Deleting task in original category
-            this.afs.collection('boards').doc(this.boardId)
-            .collection('categoryList').doc('doneList')
-            .collection('taskList').doc(document.id).delete();
-            this.snackbarService.openSnack('Task undone');
+            this.undoTask(task);
+          } else if (result === 'leavePoints') {
+            this.undoTask(task);
           }
         });
       }
-    } else {
-      this.snackbarService.openSnack('Cannot undo approved task');
     }
-
   }
 
   onClickTaskSettings(task: Task): void {
@@ -168,11 +137,11 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.action === 'delete') {
+        this.doneTaskList.splice(this.doneTaskList.indexOf(result.task), 1);
         this.afs.collection('boards').doc(this.boardId)
         .collection('categoryList').doc(this.categoryId)
         .collection<Task>('taskList').doc(result.task.id)
         .delete();
-        this.doneTaskList.splice(this.doneTaskList.indexOf(result.task), 1);
         this.updateTaskPositions();
         this.snackbarService.openSnack('Task deleted');
       } else if (result && result.action === 'edit') {
@@ -203,33 +172,7 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
 
   onClickUnapprovedTaskUndo(document: Task): void {
     if (this.userAccessLevel >= 3 || document.completitorId === this.userId && !document.isApproved) {
-      // Subscribing to original document to get data
-      this.afs.collection('boards').doc(this.boardId)
-      .collection('categoryList').doc('doneList')
-      .collection('taskList').doc(document.id)
-      .valueChanges().subscribe((task: Task) => {
-        if (task) {
-          // Getting snap for collection size value to use as position field
-          this.afs.collection('boards').doc(this.boardId)
-          .collection('categoryList').doc(task.categoryId)
-          .collection('taskList').ref.get().then(snap => {
-            // Adding a copy of document into desired category
-            this.afs.collection('boards').doc(this.boardId)
-            .collection('categoryList').doc(task.categoryId)
-            .collection('taskList').doc(this.afs.createId())
-            .set({categoryId: task.categoryId, name: task.name, description: task.description,
-                  authorId: task.authorId, creationDate: task.creationDate, lastEditorId: task.lastEditorId,
-                  lastEditDate: task.lastEditDate, isApproved: true, todoList: task.todoList, dueDate: task.dueDate,
-                  points: task.points, completitorId: null, completitionDate: null, position: snap.size + 1});
-          });
-        }
-      });
-      // Deleting task in original category
-      this.afs.collection('boards').doc(this.boardId)
-      .collection('categoryList').doc('doneList')
-      .collection('taskList').doc(document.id).delete();
-      this.snackbarService.openSnack('Task undone');
-
+      this.undoTask(document);
     } else {
       this.snackbarService.openSnack('Cannot undo this task');
     }
@@ -243,33 +186,37 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.doneTaskList.splice(this.doneTaskList.indexOf(result.task), 1);
-        this.snackbarService.openSnack('Task deleted');
         this.afs.collection('boards').doc(this.boardId)
         .collection('categoryList').doc('doneList')
         .collection<Task>('taskList').doc(id)
         .delete();
+        this.snackbarService.openSnack('Task deleted');
         this.updateTaskPositions();
       }
     });
   }
 
   onDrop(event: CdkDragDrop<string[]>): void {
+
+    // Case (1 of 2): change position on done list
     if (event.previousContainer === event.container) {
       if (this.userAccessLevel >= 3) {
-        moveItemInArray(event.container.data,
-                        event.previousIndex,
-                        event.currentIndex);
+        // moveItemInArray(event.container.data,
+        //                 event.previousIndex,
+        //                 event.currentIndex);
         this.updateTaskPositions();
       } else {
         this.snackbarService.openSnack('You cannot reorganize items');
       }
+
+    // Case (2 of 2): task dropped on done list
     } else {
       const document: any = event.previousContainer.data[event.previousIndex];
       if (document.isApproved) {
-        transferArrayItem(event.previousContainer.data,
-                          event.container.data,
-                          event.previousIndex,
-                          event.currentIndex);
+        // transferArrayItem(event.previousContainer.data,
+        //                   event.container.data,
+        //                   event.previousIndex,
+        //                   event.currentIndex);
         let approved = false;
         if (this.userAccessLevel >= 3) {
           approved = true;
@@ -283,71 +230,65 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
             }
           });
         }
-
-        this.afs.collection('boards').doc(this.boardId)
-        .collection('categoryList').doc(document.categoryId)
-        .collection('taskList').doc(document.id)
-        .valueChanges().subscribe((task: Task) => {
-        if (task) {
-          this.afs.collection('boards').doc(this.boardId)
-          .collection('categoryList').doc(this.categoryId)
-          .collection('taskList').ref.get().then(catSnap => {
-            this.afs.collection('boards').doc(this.boardId)
-            .collection('categoryList').doc(this.categoryId)
-            .collection('taskList').doc(this.afs.createId())
-            .set({categoryId: task.categoryId, name: task.name, description: task.description,
-                  authorId: task.authorId, creationDate: task.creationDate, lastEditorId: task.lastEditorId,
-                  lastEditDate: task.lastEditDate, dueDate: task.dueDate, isApproved: approved, todoList: task.todoList,
-                  points: task.points, completitorId: this.userId, completitionDate: new Date(),
-                  position: catSnap.size - event.currentIndex + 1});
-
-            this.doneTaskList.forEach((tsk: Task, index) => {
-              if (index < event.currentIndex) {
-                this.afs.collection('boards').doc(this.boardId)
-                .collection('categoryList').doc(this.categoryId)
-                .collection<Task>('taskList').doc(tsk.id)
-                .update({position: tsk.position + 1});
-              }
-            });
-          });
-          // Deleting task from previous category
-          this.afs.collection('boards').doc(this.boardId)
-          .collection('categoryList').doc(document.categoryId)
-          .collection('taskList').doc(document.id).delete();
-
-          // Update positions at previous category
-          this.afs.collection('boards').doc(this.boardId)
-          .collection('categoryList').doc(document.categoryId)
-          .collection('taskList').ref.get().then(oldCatSnap => {
-            let count = oldCatSnap.size;
-            const previousCatObs = this.afs.collection('boards').doc(this.boardId)
-            .collection('categoryList').doc(document.categoryId)
-            .collection<Task>('taskList', ref => ref.orderBy('position', 'desc'))
-            .snapshotChanges().pipe(
-              map(actions => {
-                return actions.map(action => {
-                  const id = action.payload.doc.id;
-                  return id;
-                });
-              })) as Observable<string[]>;
-            previousCatObs.subscribe(previousTasks => {
-              previousTasks.forEach(tid => {
-                if (count > 0) {
-                  this.afs.collection('boards').doc(this.boardId)
-                  .collection('categoryList').doc(document.categoryId)
-                  .collection<Task>('taskList').doc(tid)
-                  .update({position: count});
-                  count--;
-                }
-              });
-            });
-          });
-        }
-      });
-        this.snackbarService.openSnack('Task completed');
+        this.doTask(document, event.currentIndex);
       } else {
         this.snackbarService.openSnack('You cannot complete unapproved task');
       }
+    }
+  }
+
+  doTask(document: Task, currentIndex: number): void {
+    let approved = false;
+    if (this.userAccessLevel >= 3) {
+      approved = true;
+    }
+    const taskSubscription = this.afs.collection('boards').doc(this.boardId)
+    .collection('categoryList').doc(document.categoryId)
+    .collection('taskList').doc(document.id)
+    .valueChanges().subscribe((task: Task) => {
+      if (task) {
+        this.afs.collection('boards').doc(this.boardId)
+        .collection('categoryList').doc(this.categoryId)
+        .collection('taskList').ref.get().then(catSnap => {
+          this.afs.collection('boards').doc(this.boardId)
+          .collection('categoryList').doc(this.categoryId)
+          .collection('taskList').doc(this.afs.createId())
+          .set({categoryId: task.categoryId, name: task.name, description: task.description,
+                authorId: task.authorId, creationDate: task.creationDate, lastEditorId: task.lastEditorId,
+                lastEditDate: task.lastEditDate, dueDate: task.dueDate, isApproved: approved, todoList: task.todoList,
+                points: task.points, completitorId: this.userId, completitionDate: new Date(),
+                position: catSnap.size - currentIndex + 1});
+          this.updateTaskPositionsAfterDrop(currentIndex);
+        });
+        this.afs.collection('boards').doc(this.boardId)
+        .collection('categoryList').doc(document.categoryId)
+        .collection('taskList').doc(document.id).delete();
+        this.updatePositionsAtCategory(document.categoryId);
+      }
+      this.snackbarService.openSnack('Task completed');
+      return taskSubscription.unsubscribe();
+    });
+  }
+
+  undoTask(task: Task): void {
+    if (task) {
+      this.afs.collection('boards').doc(this.boardId)
+      .collection('categoryList').doc(task.categoryId)
+      .collection('taskList').ref.get().then(snap => {
+        this.afs.collection('boards').doc(this.boardId)
+        .collection('categoryList').doc(task.categoryId)
+        .collection('taskList').doc(this.afs.createId())
+        .set({categoryId: task.categoryId, name: task.name, description: task.description,
+              authorId: task.authorId, creationDate: task.creationDate, lastEditorId: task.lastEditorId,
+              lastEditDate: task.lastEditDate, isApproved: true, todoList: task.todoList, dueDate: task.dueDate,
+              points: task.points, completitorId: null, completitionDate: null, position: snap.size + 1});
+        this.doneTaskList.splice(this.doneTaskList.indexOf(task), 1);
+        this.afs.collection('boards').doc(this.boardId)
+        .collection('categoryList').doc('doneList')
+        .collection('taskList').doc(task.id).delete();
+        this.snackbarService.openSnack('Task undone');
+        this.updateTaskPositions();
+      });
     }
   }
 
@@ -361,6 +302,46 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
         .update({position: count});
         count--;
       }
+    });
+  }
+
+  updateTaskPositionsAfterDrop(i: number): void {
+    this.doneTaskList.forEach((tsk: Task, index) => {
+      if (index < i) {
+        this.afs.collection('boards').doc(this.boardId)
+        .collection('categoryList').doc(this.categoryId)
+        .collection<Task>('taskList').doc(tsk.id)
+        .update({position: tsk.position + 1});
+      }
+    });
+  }
+
+  updatePositionsAtCategory(categoryId: string): void {
+    this.afs.collection('boards').doc(this.boardId)
+    .collection('categoryList').doc(categoryId)
+    .collection('taskList').ref.get().then(oldCatSnap => {
+      let count = oldCatSnap.size;
+      const previousCatObs = this.afs.collection('boards').doc(this.boardId)
+      .collection('categoryList').doc(categoryId)
+      .collection<Task>('taskList', ref => ref.orderBy('position', 'desc'))
+      .snapshotChanges().pipe(
+        map(actions => {
+          return actions.map(action => {
+            return action.payload.doc.id;
+          });
+        })) as Observable<string[]>;
+      const categorySubscription = previousCatObs.subscribe(previousTasks => {
+        previousTasks.forEach(tid => {
+          if (count > 0) {
+            this.afs.collection('boards').doc(this.boardId)
+            .collection('categoryList').doc(categoryId)
+            .collection<Task>('taskList').doc(tid)
+            .update({position: count});
+            count--;
+          }
+        });
+        categorySubscription.unsubscribe();
+      });
     });
   }
 

@@ -21,9 +21,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
-  providers: [AuthGuard,
-              LoginPageGuard]
+  exports: [RouterModule]
 })
 export class AppRoutingModule { }
 export const routingComponents = [BoardsComponent,

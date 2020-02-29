@@ -43,7 +43,7 @@
         <div class="title">
             <h2>Reward History</h2>
         </div>
-        <div class="rewardHistoryList" cdkDropList id="cdk-reward-drop-list" [cdkDropListData]="rewardHistoryList"
+        <div class="rewardHistoryList" cdkDropList id="cdk-reward-history-drop-list" [cdkDropListData]="rewardHistoryList"
         (cdkDropListDropped)="onDrop($event)">
         <div *ngFor="let reward of rewardHistoryList; let i = index" cdkDrag>
             <div class="placeholder" *cdkDragPlaceholder></div>

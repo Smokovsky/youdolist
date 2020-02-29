@@ -37,7 +37,6 @@ export class BoardComponent implements OnInit, OnDestroy {
               private usersDetailProvider: UsersDetailProviderService) {
 
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
-    this.usersDetailProvider.init(this.boardId);
 
     this.userSubscription = this.auth.user$.subscribe(user => {
       if (user) {
@@ -47,39 +46,45 @@ export class BoardComponent implements OnInit, OnDestroy {
         this.afs.collection('boards').doc(this.boardId).ref.get().then(doc => {
           if (doc.exists) {
             if (doc.data().ownerId === this.userId) {
-              this.boardAuth = true;
+              this.authorized();
             } else {
               doc.data().guestsId.forEach((element: any) => {
                 if (this.userId === element) {
-                  this.boardAuth = true;
-                } else {
-                  this.router.navigate(['/access-denied']);
+                  this.authorized();
                 }
               });
+              if (!this.boardAuth) { this.router.navigate(['/access-denied']); }
             }
-          } else {
-            this.router.navigate(['/not-found']);
-          }
+          } else { this.router.navigate(['/not-found']); }
         }).catch(error => {
-          console.log('Error :', error);
-        });
-
-        this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
-        .collection<BoardUser>('userList').doc(this.userId)
-        .valueChanges().subscribe((boardUser: BoardUser) => {
-          this.userPoints = boardUser.points;
-          this.userAccessLevel = boardUser.accessLevel;
+          this.router.navigate(['/access-denied']);
+          // console.log('Error :', error);
         });
       }
     });
 
   }
 
+  authorized(): void {
+    this.boardAuth = true;
+    this.usersDetailProvider.init(this.boardId);
+    this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
+    .collection<BoardUser>('userList').doc(this.userId)
+    .valueChanges().subscribe((boardUser: BoardUser) => {
+      this.userPoints = boardUser.points;
+      this.userAccessLevel = boardUser.accessLevel;
+    });
+  }
+
   ngOnInit() { }
 
   ngOnDestroy() {
-    this.boardUserSubscription.unsubscribe();
-    this.userSubscription.unsubscribe();
+    if (this.boardUserSubscription) {
+      this.boardUserSubscription.unsubscribe();
+    }
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   onClickUserOptions(): void {

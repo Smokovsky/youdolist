@@ -16,7 +16,7 @@ export class UsersDetailProviderService implements OnDestroy{
 
   userListSubscription: Subscription;
 
-  userList: User[];
+  userList: User[] = [];
 
   constructor(private afs: AngularFirestore) { }
 
@@ -47,8 +47,12 @@ export class UsersDetailProviderService implements OnDestroy{
   }
 
   ngOnDestroy() {
-    this.userListSubscription.unsubscribe();
-    this.boardUserListSubscription.unsubscribe();
+    if (this.userListSubscription) {
+      this.userListSubscription.unsubscribe();
+    }
+    if (this.boardUserListSubscription) {
+      this.boardUserListSubscription.unsubscribe();
+    }
   }
 
   getDisplayName(id: string): string {
