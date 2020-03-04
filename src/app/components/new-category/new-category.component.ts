@@ -31,12 +31,19 @@ export class NewCategoryComponent implements OnInit {
   }
 
   onClickSubmitNewCategory(): void {
+    let categoryName = 'Unnamed';
     this.newCategoryFieldActive = false;
-    // this.categoryListProviderService.add(new Category(this.newCategoryName, new Array<Task>()));
-    this.afs.collection('boards').doc(this.boardId).collection<Category>('categoryList')
-    .doc(this.afs.createId()).set({name: this.newCategoryName, timeStamp: new Date()});
-    this.newCategoryName = '';
-    this.snackbarService.openSnack('New category created');
+    if (this.newCategoryName) {
+      categoryName = this.newCategoryName;
+    }
+    this.afs.collection('boards').doc(this.boardId).collection('categoryList').ref.get().then(snap => {
+      const pos = snap.size;
+      this.afs.collection('boards').doc(this.boardId).collection('categoryList')
+      .doc(this.afs.createId()).set({name: categoryName, position: pos});
+      this.newCategoryName = '';
+      this.snackbarService.openSnack('New category created');
+    });
+
   }
 
   onClickCancelNewCategory(): void {

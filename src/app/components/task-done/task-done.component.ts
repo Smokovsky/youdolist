@@ -26,7 +26,7 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
   boardId: string;
 
   categoryId = 'doneList';
-  categoryListObs: Observable<string[]>;
+
   categoryListSubscription: Subscription;
   categoryIdList = new Array<string>();
 
@@ -35,7 +35,6 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
   boardUserSubscription: Subscription;
   userAccessLevel: number;
 
-  doneTaskListObs: Observable<Task[]>;
   doneTaskListSubscription: Subscription;
   doneTaskList = Array<Task>();
 
@@ -59,14 +58,13 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.categoryListObs = this.afs.collection('boards').doc(this.boardId)
+    this.categoryListSubscription = this.afs.collection('boards').doc(this.boardId)
     .collection<Category>('categoryList').snapshotChanges().pipe(
       map(actions => {
         return actions.map(action => {
           return action.payload.doc.id;
         });
-      })) as Observable<string[]>;
-    this.categoryListSubscription = this.categoryListObs.subscribe(categories => {
+      })).subscribe(categories => {
       categories.forEach(category => {
         this.categoryIdList.push('cdk-task-drop-list-' + category);
       });
@@ -75,7 +73,7 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.doneTaskListObs = this.afs.collection('boards').doc(this.boardId)
+    this.doneTaskListSubscription = this.afs.collection('boards').doc(this.boardId)
     .collection('categoryList').doc('doneList')
     .collection<Task>('taskList', ref => ref.orderBy('position', 'desc'))
     .snapshotChanges().pipe(
@@ -85,8 +83,7 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
           const id = action.payload.doc.id;
           return {id, ...data};
         });
-      })) as Observable<Task[]>;
-    this.doneTaskListSubscription = this.doneTaskListObs.subscribe(doneTasks => {
+      })).subscribe(doneTasks => {
       this.doneTaskList = doneTasks;
     });
   }
@@ -109,6 +106,9 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
     if (task.completitorId === this.userId || this.userAccessLevel >= 3) {
       if (this.userAccessLevel >= 3) {
         const dialogRef = this.dialog.open(UndoOptionsComponent, {
+          maxWidth: '90vw',
+          width: '400px',
+          panelClass: 'confirmationBackground',
           data: { document: task, detailsService: this.usersDetailProvider }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -133,6 +133,9 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
 
   onClickTaskSettings(task: Task): void {
     const dialogRef = this.dialog.open(EditTaskComponent, {
+      width: '450px',
+      maxWidth: '96vw',
+      panelClass: 'editTaskBackground',
       data: { boardId: this.boardId, task, detailsService: this.usersDetailProvider }
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -181,6 +184,7 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
   onClickUnapprovedTaskDelete(id: string): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
+      panelClass: 'confirmationBackground',
       data: 'Are you sure you want to delete this task? You won\'t be able to get it back.'
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -201,9 +205,9 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
     // Case (1 of 2): change position on done list
     if (event.previousContainer === event.container) {
       if (this.userAccessLevel >= 3) {
-        // moveItemInArray(event.container.data,
-        //                 event.previousIndex,
-        //                 event.currentIndex);
+        moveItemInArray(event.container.data,
+                        event.previousIndex,
+                        event.currentIndex);
         this.updateTaskPositions();
       } else {
         this.snackbarService.openSnack('You cannot reorganize items');
@@ -213,13 +217,12 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
     } else {
       const document: any = event.previousContainer.data[event.previousIndex];
       if (document.isApproved) {
-        // transferArrayItem(event.previousContainer.data,
-        //                   event.container.data,
-        //                   event.previousIndex,
-        //                   event.currentIndex);
-        let approved = false;
+        transferArrayItem(event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex);
+        // let approved = false;
         if (this.userAccessLevel >= 3) {
-          approved = true;
           this.afs.collection('boards').doc(this.boardId)
           .collection<BoardUser>('userList').doc(this.userId)
           .ref.get().then(user => {
@@ -247,19 +250,8 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
     .collection('taskList').doc(document.id)
     .valueChanges().subscribe((task: Task) => {
       if (task) {
-        this.afs.collection('boards').doc(this.boardId)
-        .collection('categoryList').doc(this.categoryId)
-        .collection('taskList').ref.get().then(catSnap => {
-          this.afs.collection('boards').doc(this.boardId)
-          .collection('categoryList').doc(this.categoryId)
-          .collection('taskList').doc(this.afs.createId())
-          .set({categoryId: task.categoryId, name: task.name, description: task.description,
-                authorId: task.authorId, creationDate: task.creationDate, lastEditorId: task.lastEditorId,
-                lastEditDate: task.lastEditDate, dueDate: task.dueDate, isApproved: approved, todoList: task.todoList,
-                points: task.points, completitorId: this.userId, completitionDate: new Date(),
-                position: catSnap.size - currentIndex + 1});
-          this.updateTaskPositionsAfterDrop(currentIndex);
-        });
+        this.updateTaskPositionsAfterDrop(currentIndex);
+        this.addTaskAfterDrop(task, currentIndex);
         this.afs.collection('boards').doc(this.boardId)
         .collection('categoryList').doc(document.categoryId)
         .collection('taskList').doc(document.id).delete();
@@ -270,26 +262,43 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
     });
   }
 
+  addTaskAfterDrop(task: Task, currentIndex: number): void {
+    let newPosition = this.doneTaskList.length - currentIndex;
+    let approved = false;
+    if (this.userAccessLevel >= 3) {
+      approved = true;
+    }
+    if (currentIndex === 0) {
+      newPosition += 1;
+    }
+    this.afs.collection('boards').doc(this.boardId)
+    .collection('categoryList').doc('doneList')
+    .collection('taskList').doc(this.afs.createId())
+    .set({categoryId: task.categoryId, name: task.name, description: task.description,
+      authorId: task.authorId, creationDate: task.creationDate, lastEditorId: task.lastEditorId,
+      lastEditDate: task.lastEditDate, dueDate: task.dueDate, isApproved: approved, todoList: task.todoList,
+      points: task.points, completitorId: this.userId, completitionDate: new Date(),
+      position: newPosition});
+}
+
   undoTask(task: Task): void {
-    if (task) {
+    this.afs.collection('boards').doc(this.boardId)
+    .collection('categoryList').doc(task.categoryId)
+    .collection('taskList').ref.get().then(snap => {
       this.afs.collection('boards').doc(this.boardId)
       .collection('categoryList').doc(task.categoryId)
-      .collection('taskList').ref.get().then(snap => {
-        this.afs.collection('boards').doc(this.boardId)
-        .collection('categoryList').doc(task.categoryId)
-        .collection('taskList').doc(this.afs.createId())
-        .set({categoryId: task.categoryId, name: task.name, description: task.description,
-              authorId: task.authorId, creationDate: task.creationDate, lastEditorId: task.lastEditorId,
-              lastEditDate: task.lastEditDate, isApproved: true, todoList: task.todoList, dueDate: task.dueDate,
-              points: task.points, completitorId: null, completitionDate: null, position: snap.size + 1});
-        this.doneTaskList.splice(this.doneTaskList.indexOf(task), 1);
-        this.afs.collection('boards').doc(this.boardId)
-        .collection('categoryList').doc('doneList')
-        .collection('taskList').doc(task.id).delete();
-        this.snackbarService.openSnack('Task undone');
-        this.updateTaskPositions();
-      });
-    }
+      .collection('taskList').doc(this.afs.createId())
+      .set({categoryId: task.categoryId, name: task.name, description: task.description,
+            authorId: task.authorId, creationDate: task.creationDate, lastEditorId: task.lastEditorId,
+            lastEditDate: task.lastEditDate, isApproved: true, todoList: task.todoList, dueDate: task.dueDate,
+            points: task.points, completitorId: null, completitionDate: null, position: snap.size + 1});
+      this.doneTaskList.splice(this.doneTaskList.indexOf(task), 1);
+      this.afs.collection('boards').doc(this.boardId)
+      .collection('categoryList').doc('doneList')
+      .collection('taskList').doc(task.id).delete();
+      this.snackbarService.openSnack('Task undone');
+      this.updateTaskPositions();
+    });
   }
 
   updateTaskPositions(): void {
@@ -306,13 +315,27 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
   }
 
   updateTaskPositionsAfterDrop(i: number): void {
-    this.doneTaskList.forEach((tsk: Task, index) => {
-      if (index < i) {
-        this.afs.collection('boards').doc(this.boardId)
-        .collection('categoryList').doc(this.categoryId)
-        .collection<Task>('taskList').doc(tsk.id)
-        .update({position: tsk.position + 1});
-      }
+    const subscription = this.afs.collection('boards').doc(this.boardId)
+    .collection('categoryList').doc(this.categoryId)
+    .collection<Task>('taskList', ref => ref.orderBy('position', 'desc'))
+    .snapshotChanges().pipe(
+      map(actions => {
+        return actions.map( a => {
+          const data = a.payload.doc.data() as Task;
+          const id = a.payload.doc.id;
+          return {id, ...data};
+        });
+      })
+    ).subscribe(taskList => {
+      taskList.forEach((task: Task, index) => {
+        if (i > index) {
+          this.afs.collection('boards').doc(this.boardId)
+          .collection('categoryList').doc(this.categoryId)
+          .collection<Task>('taskList').doc(task.id)
+          .update({position: task.position + 1});
+        }
+      });
+      return subscription.unsubscribe();
     });
   }
 

@@ -1,14 +1,12 @@
 .mat-dialog-actions{
     position: relative;
     float: right;
-    padding-bottom: 5px;
+    padding-bottom: 10px;
+    padding-top: 2px;
 }
 .mat-dialog-actions button{
     margin-left: 4px;
     margin-top: 4px;
-}
-.mat-dialog-content{
-    max-width: 500px;
 }
 input,
 textarea{
@@ -30,6 +28,12 @@ p{
     padding: 0;
     display: inline;
 }
+h2{
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    white-space: nowrap;
+}
 .input-group{
     vertical-align: middle;
 }
@@ -37,7 +41,7 @@ p{
     margin-bottom: 0.2rem;
 }
 .creationDetails{
-    padding-top: 25px;
+    padding-top: 12px;
 }
 .creationDetails p{
     width: 100%;
@@ -52,4 +56,7 @@ p{
 .deleteReward button{
     width: 100%;
     padding: 0;
+}
+.points{
+    padding-bottom: 5px;
 }

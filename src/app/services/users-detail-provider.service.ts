@@ -1,5 +1,4 @@
-import { Injectable, Optional, Inject, OnDestroy } from '@angular/core';
-import { BoardUser } from '../models/boardUser.model';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { map } from 'rxjs/operators';
@@ -8,10 +7,9 @@ import { User } from '../models/user.model';
 @Injectable({
   providedIn: 'root'
 })
-export class UsersDetailProviderService implements OnDestroy{
+export class UsersDetailProviderService implements OnDestroy {
   boardId: string;
 
-  boardUserListObs: Observable<string[]>;
   boardUserListSubscription: Subscription;
 
   userListSubscription: Subscription;
@@ -21,7 +19,7 @@ export class UsersDetailProviderService implements OnDestroy{
   constructor(private afs: AngularFirestore) { }
 
   init(boardId: string): void {
-    this.boardUserListObs = this.afs.collection('boards').doc(boardId)
+    this.boardUserListSubscription = this.afs.collection('boards').doc(boardId)
     .collection('userList')
     .snapshotChanges().pipe(
       map(actions => {
@@ -29,9 +27,8 @@ export class UsersDetailProviderService implements OnDestroy{
           const id = action.payload.doc.id as string;
           return id;
         });
-      })) as Observable<string[]>;
-    this.boardUserListSubscription = this.boardUserListObs.subscribe(boardUserList => {
-      const userListObs = this.afs.collection('users', ref => ref.where('uid', 'in', boardUserList))
+      })).subscribe(boardUserList => {
+      this.userListSubscription = this.afs.collection('users', ref => ref.where('uid', 'in', boardUserList))
       .snapshotChanges().pipe(
         map(actions => {
           return actions.map(action => {
@@ -39,8 +36,7 @@ export class UsersDetailProviderService implements OnDestroy{
             const id = action.payload.doc.id;
             return {id, ...data};
           });
-        })) as Observable<User[]>;
-      this.userListSubscription = userListObs.subscribe(userList => {
+        })).subscribe(userList => {
         this.userList = userList;
       });
     });
@@ -59,6 +55,15 @@ export class UsersDetailProviderService implements OnDestroy{
     const user = this.userList.find(u => u.uid === id);
     if (user) {
       return user.displayName;
+    }
+    return;
+    // return;
+  }
+
+  getPhotoUrl(id: string): string {
+    const user = this.userList.find(u => u.uid === id);
+    if (user) {
+      return user.photoURL;
     }
     return;
   }

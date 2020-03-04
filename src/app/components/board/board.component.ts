@@ -9,6 +9,7 @@ import { BoardUser } from 'src/app/models/boardUser.model';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { UsersDetailProviderService } from 'src/app/services/users-detail-provider.service';
+import { DisplayDialogComponent } from '../shared/display-dialog/display-dialog.component';
 
 @Component({
   selector: 'app-board',
@@ -87,16 +88,35 @@ export class BoardComponent implements OnInit, OnDestroy {
     }
   }
 
+  onClickShowId(): void {
+    this.dialog.open(DisplayDialogComponent, {
+      width: '450px',
+      maxWidth: '80vw',
+      panelClass: 'showUid',
+      data: 'Your ID: ' + this.userId
+    });
+  }
+
   onClickUserOptions(): void {
     this.dialog.open(UserOptionsComponent, {
+      width: '500px',
+      maxWidth: '96vw',
+      panelClass: 'userListBackground',
       data: { boardId: this.boardId, usersDetailProvider: this.usersDetailProvider }
     });
   }
 
   onClickRewardList(): void {
-    this.dialog.open(RewardListComponent, {
-      data: {boardId: this.boardId}
+    this.dialog.open(RewardListComponent,  {
+      width: '400px',
+      maxWidth: '96vw',
+      panelClass: 'rewardListBackground',
+      data: {boardId: this.boardId, detailsService: this.usersDetailProvider}
     });
+  }
+
+  onClickShowUid(): void {
+
   }
 
   onClickBack(): void {

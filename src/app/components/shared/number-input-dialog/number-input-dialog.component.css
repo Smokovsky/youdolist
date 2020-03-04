@@ -8,8 +8,6 @@
     margin-left: 4px;
     margin-top: 4px;
 }
-
-button{
-    margin-left: 4px;
-    margin-top: 4px;
+.form-group {
+    margin: 2px 0 8px 0;
 }

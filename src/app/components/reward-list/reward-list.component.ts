@@ -10,6 +10,7 @@ import { BoardUser } from 'src/app/models/boardUser.model';
 import { map } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { UsersDetailProviderService } from 'src/app/services/users-detail-provider.service';
 
 @Component({
   selector: 'app-reward-list',
@@ -18,6 +19,8 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class RewardListComponent implements OnInit, OnDestroy {
 
+  detailsService: UsersDetailProviderService = this.data.detailsService;
+
   boardId = this.data.boardId;
   userId: string;
   userSubscription: Subscription;
@@ -25,11 +28,9 @@ export class RewardListComponent implements OnInit, OnDestroy {
   userAccessLevel: number;
   userPoints: number;
 
-  rewardListObs: Observable<Reward[]>;
   rewardListSubscribtion: Subscription;
   rewardList: Array<Reward>;
 
-  rewardHistoryListObs: Observable<Reward[]>;
   rewardHistoryListSubscription: Subscription;
   rewardHistoryList: Array<Reward>;
 
@@ -55,7 +56,7 @@ export class RewardListComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.rewardListObs = this.afs.collection('boards').doc(this.boardId)
+    this.rewardListSubscribtion = this.afs.collection('boards').doc(this.boardId)
     .collection<Reward>('rewardList', ref => ref.orderBy('position', 'desc'))
     .snapshotChanges().pipe(
       map(actions => {
@@ -64,12 +65,11 @@ export class RewardListComponent implements OnInit, OnDestroy {
           const id = action.payload.doc.id;
           return {id, ...d};
         });
-      })) as Observable<Reward[]>;
-    this.rewardListSubscribtion = this.rewardListObs.subscribe(rewardList => {
+      })).subscribe(rewardList => {
       this.rewardList = rewardList;
     });
 
-    this.rewardHistoryListObs = this.afs.collection('boards').doc(this.boardId)
+    this.rewardHistoryListSubscription = this.afs.collection('boards').doc(this.boardId)
     .collection<Reward>('rewardHistoryList', ref => ref.orderBy('position', 'desc'))
     .snapshotChanges().pipe(
       map(actions => {
@@ -78,8 +78,7 @@ export class RewardListComponent implements OnInit, OnDestroy {
           const id = action.payload.doc.id;
           return {id, ...d};
         });
-      })) as Observable<Reward[]>;
-    this.rewardHistoryListSubscription = this.rewardHistoryListObs.subscribe(rewardHistoryList => {
+      })).subscribe(rewardHistoryList => {
       this.rewardHistoryList = rewardHistoryList;
     });
 
@@ -96,6 +95,9 @@ export class RewardListComponent implements OnInit, OnDestroy {
 
   onClickAddReward(): void {
     const dialogRef = this.dialog.open(EditRewardComponent, {
+      maxWidth: '92vw',
+      width: '380px',
+      panelClass: 'editRewardBackground',
       data: { boardId: this.boardId }
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -110,21 +112,29 @@ export class RewardListComponent implements OnInit, OnDestroy {
     }});
   }
 
-  onClickRewardSettings(reward: Reward): void {
+  onClickRewardSettings(reward: Reward, inHistory: boolean): void {
     const dialogRef = this.dialog.open(EditRewardComponent, {
-      data: { boardId: this.boardId, reward }
+      maxWidth: '92vw',
+      width: '380px',
+      panelClass: 'editRewardBackground',
+      data: { boardId: this.boardId, reward, detailsService: this.detailsService }
     });
     dialogRef.afterClosed().subscribe(result => {
+      let to: string;
+      if (inHistory) {
+        to = 'rewardHistoryList';
+      } else {
+        to = 'rewardList';
+      }
       if (result && result.action === 'delete') {
         this.afs.collection('boards').doc(this.boardId)
-        .collection<Reward>('rewardList').doc(result.reward.id)
+        .collection<Reward>(to).doc(result.reward.id)
         .delete();
-        this.rewardList.splice(this.rewardList.indexOf(result.reward), 1);
-        this.updatePositions('rewardList');
+        this.updatePositions(to);
         this.snackbarService.openSnack('Reward deleted');
       } else if (result && result.action === 'edit') {
         this.afs.collection('boards').doc(this.boardId)
-        .collection<Reward>('rewardList').doc(result.reward.id)
+        .collection<Reward>(to).doc(result.reward.id)
         .update(result.reward);
       }
     });
@@ -133,6 +143,7 @@ export class RewardListComponent implements OnInit, OnDestroy {
   onClickRewardDelete(id: string): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
+      panelClass: 'confirmationBackground',
       data: 'Are you sure you want to delete this reward? You won\'t be able to get it back.'
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -150,6 +161,7 @@ export class RewardListComponent implements OnInit, OnDestroy {
   onClickRewardHistoryDelete(id: string): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
+      panelClass: 'confirmationBackground',
       data: 'Are you sure you want to delete this reward? You won\'t be able to get it back.'
     });
     dialogRef.afterClosed().subscribe(result => {

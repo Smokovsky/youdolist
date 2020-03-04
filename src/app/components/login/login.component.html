@@ -2,10 +2,17 @@
     <div class="center-screen">
         <div class="container">
             <h2>Welcome to Youdolist!</h2>
-            <button (click)="auth.googleSignIn()">
-                <img src="/assets/images/btn_google_signin_dark_normal_web@2x.png" alt="Sign in with Google">
-                <img src="/assets/images/btn_google_signin_dark_pressed_web@2x.png" class="hoverButton" alt="">
+            <button class="d-none d-md-inline" (click)="auth.googleSignInPopup()">
+                <img src="/assets/images/btn_google_signin_dark_normal_web@2x.png"  alt="Sign in with Google">
+                <img src="/assets/images/btn_google_signin_dark_pressed_web@2x.png" class="hoverButton" alt="Sign in with Google">
+            </button>
+            <button class="d-inline d-md-none" (click)="auth.googleSignInRedirect()">
+                <img src="/assets/images/btn_google_signin_dark_normal_web@2x.png"  alt="Sign in with Google">
+                <img src="/assets/images/btn_google_signin_dark_pressed_web@2x.png" class="hoverButton" alt="Sign in with Google">
             </button>
         </div>
     </div>
+</div>
+<div class="version">
+    <p>v: 1.0.0-a</p>
 </div>

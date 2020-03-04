@@ -32,7 +32,11 @@ export class EditBoardComponent implements OnInit {
   }
 
   onClickSaveButton(): void {
-    this.board.name = this.boardName;
+    if (this.boardName) {
+      this.board.name = this.boardName;
+    } else {
+      this.board.name = 'Unnamed';
+    }
     this.dialogRef.close(this.board);
   }
 

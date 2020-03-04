@@ -5,7 +5,7 @@
     padding: 3px;
     white-space: normal;
     border-radius: 0.25rem;
-    background: #DDD;
+    background: linear-gradient(50deg, #a8c1c3, #dacde2);
     -webkit-box-shadow: 0 4px 5px 0px rgba(0,0,0,0.32); 
     box-shadow: 0 4px 5px 0px rgba(0,0,0,0.32);
 }
@@ -51,7 +51,7 @@
     color: #4A4A4A;
 }
 a.newCategoryContent:hover{
-    background: #EAEAEA;
+    background: linear-gradient(50deg, #c2d2d4, #c7cdce);
     cursor: pointer; 
 }
 .newCategoryContent:hover .fa{
@@ -59,4 +59,20 @@ a.newCategoryContent:hover{
 }
 .newCategoryContent:hover .fa p{
     color: #777;
+}
+button.btn{
+    outline:none;
+    box-shadow: none;
+}
+.accept i{
+    font-size: 1.2em;
+    color: #02c17b;
+}
+.cancel i{
+    font-size: 1.2em;
+    color: #a53615;
+}
+button.btn.cancel,
+button.btn.accept{
+    vertical-align: text-bottom;
 }

@@ -7,7 +7,7 @@ import { Category } from 'src/app/models/category.model';
 import { UndoOptionsComponent } from '../undo-options/undo-options.component';
 import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
 import { AngularFirestore } from 'angularfire2/firestore';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BoardUser } from 'src/app/models/boardUser.model';
 import { ActivatedRoute } from '@angular/router';
@@ -24,11 +24,11 @@ import { UsersDetailProviderService } from 'src/app/services/users-detail-provid
 export class TaskComponent implements OnInit, OnDestroy {
 
   boardId: string;
+  datenow: Date = new Date();
 
   @Input()
   categoryId: string;
 
-  categoryListObs: Observable<string[]>;
   categoryListSubscription: Subscription;
   categoryIdList = new Array<string>();
 
@@ -37,7 +37,6 @@ export class TaskComponent implements OnInit, OnDestroy {
   boardUserSubscription: Subscription;
   userAccessLevel: number;
 
-  taskListObs: Observable<Task[]>;
   taskListSubscription: Subscription;
   taskList: Array<Task>;
 
@@ -62,15 +61,14 @@ export class TaskComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.categoryListObs = this.afs.collection('boards').doc(this.boardId)
+    this.categoryListSubscription = this.afs.collection('boards').doc(this.boardId)
     .collection<Category>('categoryList').snapshotChanges().pipe(
       map(actions => {
         return actions.map(action => {
           const id = action.payload.doc.id;
           return id;
         });
-      })) as Observable<string[]>;
-    this.categoryListSubscription = this.categoryListObs.subscribe(categories => {
+      })).subscribe(categories => {
       categories.forEach(category => {
         this.categoryIdList.push('cdk-task-drop-list-' + category);
       });
@@ -79,7 +77,7 @@ export class TaskComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.taskListObs = this.afs.collection('boards').doc(this.boardId)
+    this.taskListSubscription = this.afs.collection('boards').doc(this.boardId)
     .collection('categoryList').doc(this.categoryId)
     .collection<Task>('taskList', ref => ref.orderBy('position', 'desc'))
     .snapshotChanges().pipe(
@@ -89,8 +87,7 @@ export class TaskComponent implements OnInit, OnDestroy {
           const id = action.payload.doc.id;
           return {id, ...data};
         });
-      })) as Observable<Task[]>;
-    this.taskListSubscription = this.taskListObs.subscribe(tasks => {
+      })).subscribe(tasks => {
       this.taskList = tasks;
     });
   }
@@ -98,7 +95,9 @@ export class TaskComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.taskListSubscription.unsubscribe();
     this.categoryListSubscription.unsubscribe();
-    this.boardUserSubscription.unsubscribe();
+    if (this.boardUserSubscription) {
+      this.boardUserSubscription.unsubscribe();
+    }
     this.userSubscription.unsubscribe();
   }
 
@@ -113,6 +112,7 @@ export class TaskComponent implements OnInit, OnDestroy {
   onClickTaskDelete(id: string): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
+      panelClass: 'confirmationBackground',
       data: 'Are you sure you want to delete this task? You won\'t be able to get it back.'
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -151,9 +151,11 @@ export class TaskComponent implements OnInit, OnDestroy {
   }
 
   onClickTaskSettings(task: Task): void {
-    const boardId = this.boardId;
     const dialogRef = this.dialog.open(EditTaskComponent, {
-      data: { boardId, task, detailsService: this.usersDetailProvider }
+      width: '450px',
+      maxWidth: '96vw',
+      panelClass: 'editTaskBackground',
+      data: { boardId: this.boardId, task, detailsService: this.usersDetailProvider }
     });
     dialogRef.afterClosed().subscribe(result => {
 
@@ -183,6 +185,8 @@ export class TaskComponent implements OnInit, OnDestroy {
       document = event.previousContainer.data[event.previousIndex];
       if (this.userAccessLevel >= 3) {
         const dialogRef = this.dialog.open(UndoOptionsComponent, {
+          maxWidth: '90vw',
+          width: '400px',
           data: { document, detailsService: this.usersDetailProvider }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -196,14 +200,14 @@ export class TaskComponent implements OnInit, OnDestroy {
                 .update({points: user.data().points - document.points});
               }
             });
-            this.undoTask(event);
+            this.undoTask(document, event);
           } else if (result === 'leavePoints') {
-            this.undoTask(event);
+            this.undoTask(document, event);
           }
         });
       } else if (document.completitorId === this.userId) {
         if (!document.isApproved) {
-          this.undoTask(event);
+          this.undoTask(document, event);
         }
       }
 
@@ -232,6 +236,7 @@ export class TaskComponent implements OnInit, OnDestroy {
         .valueChanges().subscribe((task: Task) => {
 
         if (task) {
+          this.updateTaskPositionsAfterDrop(event.currentIndex);
           this.addTaskAfterDrop(task, event.currentIndex);
           this.afs.collection('boards').doc(this.boardId)
           .collection('categoryList').doc(document.categoryId)
@@ -278,46 +283,31 @@ export class TaskComponent implements OnInit, OnDestroy {
     });
   }
 
-  undoTask(event: CdkDragDrop<string[]>): void {
-    const document: any = event.previousContainer.data[event.previousIndex];
+  undoTask(document: Task, event: CdkDragDrop<string[]>): void {
     const taskSubscription = this.afs.collection('boards').doc(this.boardId)
     .collection('categoryList').doc('doneList')
     .collection('taskList').doc(document.id)
     .valueChanges().subscribe((task: Task) => {
       if (task) {
+        task.isApproved = true;
         if (task.categoryId === this.categoryId || this.userAccessLevel >= 3) {
-          transferArrayItem(event.previousContainer.data,
-                            event.container.data,
-                            event.previousIndex,
-                            event.currentIndex);
+          task.isApproved = true;
+          this.updateTaskPositionsAfterDrop(event.currentIndex);
           this.addTaskAfterDrop(task, event.currentIndex);
           this.afs.collection('boards').doc(this.boardId)
           .collection('categoryList').doc('doneList')
           .collection('taskList').doc(document.id).delete();
           this.updatePositionsAtCategory('doneList');
           this.snackbarService.openSnack('Task undone');
+          transferArrayItem(event.previousContainer.data,
+                            event.container.data,
+                            event.previousIndex,
+                            event.currentIndex);
         } else {
           this.snackbarService.openSnack('You cannot reorganize items');
         }
       }
       return taskSubscription.unsubscribe();
-    });
-  }
-
-
-  addTaskAfterDrop(task: Task, currentIndex: number): void {
-    this.updateTaskPositionsAfterDrop(currentIndex);
-    this.afs.collection('boards').doc(this.boardId)
-    .collection('categoryList').doc(this.categoryId)
-    .collection('taskList').ref.get().then(catSnap => {
-      this.afs.collection('boards').doc(this.boardId)
-      .collection('categoryList').doc(this.categoryId)
-      .collection('taskList').doc(this.afs.createId())
-      .set({categoryId: this.categoryId, name: task.name, description: task.description,
-            authorId: task.authorId, creationDate: task.creationDate, lastEditorId: task.lastEditorId,
-            lastEditDate: task.lastEditDate, dueDate: task.dueDate, isApproved: task.isApproved, todoList: task.todoList,
-            points: task.points, completitorId: null, completitionDate: null,
-            position: catSnap.size - currentIndex + 1});
     });
   }
 
@@ -332,6 +322,21 @@ export class TaskComponent implements OnInit, OnDestroy {
         count--;
       }
     });
+  }
+
+  addTaskAfterDrop(task: Task, currentIndex: number): void {
+      let newPosition = this.taskList.length - currentIndex;
+      if (currentIndex === 0) {
+        newPosition += 1;
+      }
+      this.afs.collection('boards').doc(this.boardId)
+      .collection('categoryList').doc(this.categoryId)
+      .collection('taskList').doc(this.afs.createId())
+      .set({categoryId: this.categoryId, name: task.name, description: task.description,
+            authorId: task.authorId, creationDate: task.creationDate, lastEditorId: task.lastEditorId,
+            lastEditDate: task.lastEditDate, dueDate: task.dueDate, isApproved: task.isApproved, todoList: task.todoList,
+            points: task.points, completitorId: null, completitionDate: null,
+            position: newPosition});
   }
 
   updateTaskPositionsAfterDrop(i: number): void {

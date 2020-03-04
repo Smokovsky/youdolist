@@ -1,45 +1,141 @@
+.mat-dialog-content{
+    display: flex;
+    flex-flow: column;
+}
 .mat-dialog-actions{
     position: relative;
-    float: right;
+    padding-bottom: 10px;
+    padding-top: 2px;
+    justify-content: end;
+}
+.mat-dialog-actions button{
+    margin-left: 4px;
+    margin-top: 4px;
+}
+.actionsFlex{
+    flex: 1 1 auto;
 }
 .title h2{
     text-align: center;
     font-size: 1.8em;
-}
-table#usersTable{
-    width: 100%;
-}
-th {
-    padding: 0 15px;
-}
-.userTh{
-    text-align: left;
-    padding-left: 0;
-}
-.pointsTh{
-    text-align: center;
-}
-.pointOptionsTh{
-    text-align: center;
-}
-.pointOptionsTd{
-    text-align: center;
-    width: 145px;
-}
-.levelOptionsTd{
-    text-align: center;
-}
-.pointsTd{
-    min-width: 1px;
-    text-align: center;
-}
-.points{
-    display: inline-flex;
-}
-.points .fa{
-    margin-top: 3px;
-    margin-left: 3px;
+    font-weight: bold;
+    white-space: nowrap;
 }
 button{
     display: inline;
+}
+
+
+.title{
+    display: inline-flex;
+    position: relative;
+    flex: 0 0 auto;
+    flex-flow: column;
+    padding: 3px;
+}
+.title span{
+    color: inherit;
+    display: inline-flex;
+    margin: 0 auto;
+    width: 190px;
+}
+img.titleImg{
+    display: inline;
+    max-height: 35px;
+    margin-right: 10px;
+}
+.userList{
+    flex: 1 1 auto;
+    flex-flow: column;
+    padding: 0 4px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+}
+.user{
+    position: relative;
+    border-top: 1px solid rgb(59, 59, 59);
+    width: 100%;
+    min-height: 40px;
+    padding: 5px;
+    margin-bottom: 7px;
+}
+.deleteBtn{
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1.7em!important;
+    color: rgb(161, 29, 29);
+    background: none!important;
+    border: none;
+    outline: none!important;
+}
+
+table{
+    width: 100%;
+}
+th,
+td{
+    width: 50%;
+    text-align: center;
+}
+th p{
+    display: inline;
+    display: block;
+    margin: 0;
+}
+th:first-child {
+    border-right: 1px solid #333;
+}
+tbody{
+    text-align: middle;
+    font-weight: bold;
+}
+.displayName{
+    margin-top: 7px;
+}
+.displayName p{
+    display: inline;
+    vertical-align: inherit;
+    font-size: 1.3em;
+    margin: 0;
+}
+img.userPhoto{
+    display: inline;
+    max-height: 35px;
+    border-radius: 50%;
+    margin-right: 7px;
+}
+.optionsBtn{
+    display: inline-grid;
+    font-size: 1.65em!important;
+    background: none!important;
+    border: none;
+    padding: 0!important;
+    margin: 0 5px;
+    outline: none!important;
+}
+.optionsBtn .fa {
+    border-radius: 50%;
+    height: 1em;
+    width: 1em;
+}
+i.fa.fa-chevron-circle-up,
+i.fa.fa-plus-circle{
+    background: #89bd09;
+    vertical-align: sub;
+    width: 23px!important;
+    height: 23px!important;
+    line-height: 0.85em;
+}
+i.fa.fa-chevron-circle-down,
+i.fa.fa-minus-circle{
+    background: #d82715;
+    vertical-align: sub;
+    width: 23px!important;
+    height: 23px!important;
+    line-height: 0.85em;
+}
+.pointsTd{
+    padding-left: 8px;
 }

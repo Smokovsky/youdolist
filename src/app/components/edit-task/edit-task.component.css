@@ -1,14 +1,14 @@
 .mat-dialog-actions{
     position: relative;
     float: right;
-    padding-bottom: 5px;
+    padding-bottom: 10px;
+    padding-top: 2px;
 }
 .mat-dialog-actions button{
     margin-left: 4px;
     margin-top: 4px;
 }
 .mat-dialog-content{
-    min-width: 300px;
     padding: 0 20px 10px 20px;
 }
 input,
@@ -22,6 +22,21 @@ ul{
     padding: 0;
     margin: 0;
     list-style: none;
+}
+li p{
+    display: inline-block;
+    cursor: grab;
+    margin: 0;
+}
+.cdk-drop-list-dragging{
+    cursor: grabbing;
+}
+.cdk-drag{
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+.cdk-drag-preview{
+    cursor: grabbing;
+    transition: none;
 }
 input[type=checkbox]{
     margin-right: 3px;
@@ -39,10 +54,20 @@ p{
     padding: 0;
     display: inline;
 }
+h2{
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    white-space: nowrap;
+}
 .active{
     text-decoration: line-through;
 }
+.placeholder{
+    height: 1.5em;
+}
 .done{
+    word-break: break-word;
     text-decoration: none;
 }
 .deleteTodo .fa{
@@ -51,7 +76,7 @@ p{
     font-size: 1.2em;
 }
 .creationDetails{
-    padding-top: 25px;
+    padding-top: 12px;
 }
 .creationDetails p{
     width: 100%;
@@ -74,11 +99,15 @@ input.newTodoName{
 .addNewTodo{
     width: 25px;
     height: 25px;
-    vertical-align: sub;
+    vertical-align: top;
 }
 button.addNewTodo{
     padding: 0;
     margin: 0;
+    margin-top: -1px;
+}
+button:focus{
+    box-shadow: none;
 }
 .addNewTodo .fa{
     vertical-align: initial;
@@ -94,12 +123,16 @@ button.addNewTodo{
 .dueDate{
     margin-top: 5px;
 }
+a.cancelDueDate{
+    display: flex;
+	margin-top: -1px;
+}
 .cancelDueDate .fa{
     color: #FF0000;
     font-size: 1.5em;
     margin: 0;
     margin-left: 3px;
-    vertical-align: middle;
+    vertical-align: top;
 }
 input.dueDateField,
 input.pointsField,
@@ -113,3 +146,14 @@ input.nameField
     height: 25px!important;
     line-height: 25px!important;
 }
+.dueDateLine{
+    display: inline-flex;
+	width: 100%;
+}
+::ng-deep button.mat-icon-button.mat-button-base{
+    vertical-align: text-bottom!important;
+  }
+  ::ng-deep svg.mat-datepicker-toggle-default-icon{
+    color: #4864b3!important;
+  }
+

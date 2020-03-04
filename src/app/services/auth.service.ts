@@ -25,13 +25,25 @@ export class AuthService {
         }
       })
     );
+
+    this.afAuth.auth.getRedirectResult().then(result => {
+      if (result.credential) {
+        this.updateUserData(result.user);
+        return this.router.navigate(['/boards']);
+      }
+    });
   }
 
   getUserObs(): Observable<User> {
     return this.user$;
   }
 
-  async googleSignIn() {
+  async googleSignInRedirect() {
+    const provider = new auth.GoogleAuthProvider();
+    this.afAuth.auth.signInWithRedirect(provider);
+  }
+
+  async googleSignInPopup() {
     const provider = new auth.GoogleAuthProvider();
     const credential = await this.afAuth.auth.signInWithPopup(provider);
     this.updateUserData(credential.user);

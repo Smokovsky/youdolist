@@ -26,7 +26,7 @@ import { AccessDeniedComponent } from './components/access-denied/access-denied.
 import { TaskDoneComponent } from './components/task-done/task-done.component';
 import { UndoOptionsComponent } from './components/undo-options/undo-options.component';
 import { UserOptionsComponent } from './components/user-options/user-options.component';
-import { ValueInputDialogComponent } from './components/shared/value-input-dialog/value-input-dialog.component';
+import { NumberInputDialogComponent } from './components/shared/number-input-dialog/number-input-dialog.component';
 import { RewardListComponent } from './components/reward-list/reward-list.component';
 import { EditRewardComponent } from './components/edit-reward/edit-reward.component';
 
@@ -36,6 +36,8 @@ import { environment } from '../environments/environment';
 import { LoginComponent } from './components/login/login.component';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
+import { StringInputDialogComponent } from './components/shared/string-input-dialog/string-input-dialog.component';
+import { DisplayDialogComponent } from './components/shared/display-dialog/display-dialog.component';
 
 @NgModule({
   declarations: [
@@ -54,10 +56,12 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
     TaskDoneComponent,
     UndoOptionsComponent,
     UserOptionsComponent,
-    ValueInputDialogComponent,
+    NumberInputDialogComponent,
     RewardListComponent,
     EditRewardComponent,
-    LoginComponent
+    LoginComponent,
+    StringInputDialogComponent,
+    DisplayDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -74,7 +78,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireDatabaseModule,
     AngularFireAuthModule,
-    AngularFirestoreModule
+    AngularFirestoreModule,
   ],
   entryComponents: [
     EditTaskComponent,
@@ -82,7 +86,9 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
     UndoOptionsComponent,
     UserOptionsComponent,
     ConfirmationDialogComponent,
-    ValueInputDialogComponent,
+    NumberInputDialogComponent,
+    StringInputDialogComponent,
+    DisplayDialogComponent,
     RewardListComponent,
     EditRewardComponent
   ],

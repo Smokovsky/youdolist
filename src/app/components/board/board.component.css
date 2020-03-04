@@ -12,27 +12,61 @@
     background: #282828;
     color: #FFF;
 }
+.navbar{
+    padding: 0;
+}
 .navbar a{
 	font-size: 1.5em;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
     color: #FFF;
     cursor: pointer;
     padding: 3px;
-    margin: 4px;
+    margin: 2px;
+    text-align: center;
+}
+.logo{
+    max-height: 25px;
+    vertical-align: bottom;
+    margin: 0;
+    padding: 0;
+}
+.navbar-brand{
+    margin-left: 8px!important;
+}
+.microLogo{
+    padding-bottom: 15px!important; 
+}
+p.microP{
+    font-size: 7px;
+    margin: 0;
 }
 .userAvatar{
-	max-height: 32px;
-	border-radius: 30px;
+    max-height: 34px;
+    padding: 2px;
+    border-radius: 30px;
+    background: linear-gradient(45deg, #bb5aa2, #1f59da);
+}
+img.userAvatar{
+    vertical-align: bottom!important;
 }
 .userOptionsBtn{
 	padding: 0;
     box-shadow: none;
     margin-left: 5px;
-    margin-top: 4px;
+}
+.userOptionsMenu{
+	background: linear-gradient(35deg, #c9c7e8, #aeefdd)!important;
 }
 .dropdown{
     display: inline-grid;
+}
+button.dropdown-item:hover{
+	background: linear-gradient(65deg, #c6cce4, #d5eaea);
+}
+.dropdown-item:active{
+    color: inherit;
+    background: inherit;
 }
 .dropdown-toggle::after{
     content: none;
@@ -42,17 +76,48 @@
 }
 .navbarRight p{
     display: inline;
-    vertical-align: super;
+    margin-right: 4px;
+    line-height: 1.8em;
+    vertical-align: text-bottom;
 }
 .navbarRight p i{
     margin-left: 3px;
 }
-.navbarRight img{
-    vertical-align: sub;
-}
 .points{
     display: inline-block;
-    height: 100%;
-    margin-right: 10px;
-    font-size: 0.9em;
+    margin-right: 6px;
+    font-size: 1em;
+    vertical-align: sub;
+    height: 40px;
+}
+
+i.fa.fa-diamond{
+    font-size: 1.1em;
+    font-weight: bold;
+    background: -webkit-linear-gradient(60deg, #2df386, #6b76fb);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+i.fa.fa-address-card {
+    font-size: 0.7em;
+}
+.colorUser {
+    margin-bottom: 10px;
+    background: -webkit-linear-gradient(60deg, #d6be12, #ca56a5);
+    -webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+.colorGift {
+    background: -webkit-linear-gradient(45deg, #5ebd4c, #f2ff35);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+@media screen and (max-width: 767px) {
+    .userOptionsBtn{
+        margin-top: 2px!important;
+    }
 }

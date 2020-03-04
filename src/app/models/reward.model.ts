@@ -1,12 +1,12 @@
 export interface Reward {
   id?: string;
-  name?: string;
+  name: string;
   description?: string;
   points?: number;
   isApproved?: boolean;
   position?: number;
 
-  authorId?: string;
+  authorId: string;
   creationDate?: any;
   lastEditorId?: string;
   lastEditDate?: any;

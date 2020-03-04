@@ -1,19 +1,27 @@
 <ng-container *ngIf="boardAuth">
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-        <a href="/boards">YouDoList</a>
+        <a class="navbar-brand d-none d-sm-block" href="/boards">YouDoList</a>
+        <a class="navbar-brand d-block d-sm-none microLogo" href="/boards">
+            <img class="logo" src="/assets/images/logo.png" alt="">
+            <p class="microP">YouDoList</p>
+        </a>
         <div class="ml-auto navbarRight">
-            <div class="points"><p>{{ userPoints }}<i class="fa fa-diamond"></i></p></div>
-            <ng-container *ngIf="userAccessLevel >= 3">
-                <a class="" (click)="onClickUserOptions()"><i class="fa fa-user"></i></a>
-            </ng-container>
-            <a class="" (click)="onClickRewardList()"><i class="fa fa-gift"></i></a>
-            <div ngbDropdown placement="bottom-right" display="dynamic" class="">
-                <button ngbDropdownToggle class="btn userOptionsBtn" id="userOptions">
-                    <img class="userAvatar" src="{{userPhotoURL}}" alt="User">
-                </button>
-                <div ngbDropdownMenu aria-labelledby="userOptions" class="ngbDropdownToggle">
-                    <button ngbDropdownItem (click)="onClickBack()"><i class="fa fa-arrow-circle-left"></i> Back to boards</button>
-                    <button ngbDropdownItem (click)="onClickLogout()"><i class="fa fa-sign-out"></i> Logout</button>
+            <div class="points"><p>{{ userPoints }}<i class="fa fa-diamond"></i></p>
+                <ng-container *ngIf="userAccessLevel >= 3">
+                    <a class="d-none d-md-inline" (click)="onClickUserOptions()"><i class="fa fa-user colorUser"></i></a>
+                </ng-container>
+                <a class="d-none d-md-inline" (click)="onClickRewardList()"><i class="fa fa-gift colorGift"></i></a>
+                <div ngbDropdown placement="bottom-right" display="dynamic">
+                    <button ngbDropdownToggle class="btn userOptionsBtn" id="userOptions">
+                        <img class="userAvatar" src="{{userPhotoURL}}" alt="User">
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="userOptions" class="ngbDropdownToggle userOptionsMenu">
+                        <button class="d-block d-md-none" ngbDropdownItem (click)="onClickRewardList()"><i class="fa fa-gift"></i> Reward list</button>
+                        <button class="d-block d-md-none" ngbDropdownItem (click)="onClickUserOptions()"><i class="fa fa-user"></i> User options</button>
+                        <button ngbDropdownItem (click)="onClickShowId()"><i class="fa fa-address-card"></i> Show my ID</button>
+                        <button ngbDropdownItem (click)="onClickBack()"><i class="fa fa-arrow-circle-left"></i> Back to boards</button>
+                        <button ngbDropdownItem (click)="onClickLogout()"><i class="fa fa-sign-out"></i> Logout</button>
+                    </div>
                 </div>
             </div>
         </div>

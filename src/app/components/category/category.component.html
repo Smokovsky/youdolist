@@ -1,19 +1,21 @@
-<ng-container *ngIf="userId">
-    <ng-container *ngFor="let category of categoryList; let i = index">
+<div *ngIf="userId" cdkDropList cdkDropListOrientation="horizontal" id="cdk-category-drop-list" [cdkDropListData]="categoryList"
+[cdkDropListConnectedTo]="cdk-category-drop-list" (cdkDropListDropped)="onDrop($event)">
+    <div class="category" *ngFor="let category of categoryList; let i = index" cdkDrag [cdkDragStartDelay]="10" [cdkDragDisabled]="i == editCategoryIdActive">
+        <div class="cdk-drag-placeholder"></div>
         <div class="categoryWrapper rounded">
             <div class="categoryContent">
                 <div class="categoryHeader">
                     <ng-template [ngIf]="i != editCategoryIdActive" #categoryHeader>
-                        <div class="categoryTitle">
+                        <div class="categoryTitle" cdkDragHandle>
                             <h2>{{ category.name }}</h2>
                         </div>
                         <ng-container *ngIf="userAccessLevel >= 3">
-                            <div ngbDropdown class="ngbDropdown">
+                            <div ngbDropdown placement="bottom-right" display="dynamic" class="ngbDropdown">
                                 <button ngbDropdownToggle class="btn categoryMenuBtn" id="categoryOptions">
                                     <i class="fa fa-cogs"></i>
                                 </button>
                                 <div ngbDropdownMenu aria-labelledby="categoryOptions" class="ngbDropdownToggle">
-                                    <button ngbDropdownItem (click)="onClickDelete(category.id)"><i class="fa fa-times"></i> Delete</button>
+                                    <button ngbDropdownItem (click)="onClickDelete(category)"><i class="fa fa-times"></i> Delete</button>
                                     <button ngbDropdownItem (click)="onClickEdit(i)"><i class="fa fa-edit"></i> Edit</button>
                                 </div>
                             </div>
@@ -25,8 +27,8 @@
                             <input #newCategoryNameField autofocus class="form-control width100 editCategoryName" 
                             value="{{ category.name }}" type="text" [(ngModel)]="tempNewCategoryName">
                             <span class="input-group-btn editCategoryButtons">
-                                <button class="btn" (click)="onClickSubmitEdit(category.id)"><i class="fa fa-check"></i></button>
-                                <button class="btn" (click)="onClickCancelEdit()"><i class="fa fa-times"></i></button>
+                                <button class="btn accept" (click)="onClickSubmitEdit(category.id)"><i class="fa fa-check"></i></button>
+                                <button class="btn cancel" (click)="onClickCancelEdit()"><i class="fa fa-times"></i></button>
                             </span>
                         </div>
                     </ng-template>
@@ -47,7 +49,7 @@
                 </a>
             </div>
         </div>
-    </ng-container>
+    </div>
 
     <div class="categoryWrapper newCategoryWrapper rounded" *ngIf="userAccessLevel >= 3">
         <app-new-category></app-new-category>
@@ -55,4 +57,4 @@
     <div class="categoryWrapper newCategoryWrapper rounded">
         <app-done-list></app-done-list>
     </div>
-</ng-container>
+</div>

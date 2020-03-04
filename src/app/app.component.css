@@ -7,3 +7,27 @@ span.mat-button-wrapper {
 span,simple-snack-bar.mat-simple-snackbar.ng-star-inserted {
     color: #FFF;
 }
+.userListBackground .mat-dialog-container{
+    background: linear-gradient(50deg, #fffad4, #efdbff);
+}
+.rewardListBackground .mat-dialog-container{
+    background: linear-gradient(20deg, #d3e4bc, #f3f9ef);
+}
+.editRewardBackground .mat-dialog-container{
+    background: linear-gradient(20deg, #cedabf, #f2f7ee);
+}
+.editTaskBackground .mat-dialog-container{
+    background: linear-gradient(50deg, #e0e8e8, #e8e1ef);
+}
+.confirmationBackground .mat-dialog-container{
+    background: linear-gradient(50deg, #ffcbcb, #fff3eb);
+}
+.positiveBackground .mat-dialog-container{
+    background: linear-gradient(50deg, #c3d4a3, #edf1db);
+}
+.negativeBackground .mat-dialog-container{
+    background: linear-gradient(50deg, #f1bdbd, #f1e1db);
+}
+.showUid .mat-dialog-container{
+    background: linear-gradient(50deg, #d9caea, #b7e2ef);
+}

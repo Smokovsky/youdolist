@@ -9,6 +9,7 @@ import { BoardUser } from 'src/app/models/boardUser.model';
 import { Subscription } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { UsersDetailProviderService } from 'src/app/services/users-detail-provider.service';
+import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-edit-task',
@@ -17,7 +18,7 @@ import { UsersDetailProviderService } from 'src/app/services/users-detail-provid
 })
 export class EditTaskComponent implements OnInit, OnDestroy {
 
-  detailsService: UsersDetailProviderService = this.data.detailsService;
+  detailsService?: UsersDetailProviderService = this.data.detailsService;
 
   boardId?: string = this.data.boardId;
 
@@ -35,7 +36,7 @@ export class EditTaskComponent implements OnInit, OnDestroy {
   taskTodoList = Array<Todo>();
   taskCreationDate?: Date;
   taskEditDate?: Date;
-  taskDueDate?: any;
+  taskDueDate?: Date;
   taskCompletitionDate?: Date;
   taskCompletitorId?: string;
   taskPoints: number;
@@ -83,7 +84,7 @@ export class EditTaskComponent implements OnInit, OnDestroy {
         this.taskEditDate = this.task.lastEditDate.toDate();
       }
       if (this.task.dueDate) {
-        this.taskDueDate = this.task.dueDate;
+        this.taskDueDate = this.task.dueDate.toDate();
       }
       if (this.task.completitionDate) {
         this.taskCompletitionDate = this.task.completitionDate.toDate();
@@ -100,6 +101,7 @@ export class EditTaskComponent implements OnInit, OnDestroy {
   onClickTaskDelete(): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
+      panelClass: 'confirmationBackground',
       data: 'Are you sure you want to delete this task? You won\'t be able to get it back.'
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -162,17 +164,17 @@ export class EditTaskComponent implements OnInit, OnDestroy {
       this.task.lastEditDate = null;
       this.task.lastEditorId = null;
     }
-    if (this.taskDueDate) {
-      this.task.dueDate = this.taskDueDate;
-    } else {
-      this.task.dueDate = null;
-    }
+
     if (this.taskPoints) {
       this.task.points = this.taskPoints;
     } else {
       this.task.points = 0;
     }
-
+    if (this.taskDueDate) {
+      this.task.dueDate = this.taskDueDate;
+    } else {
+      this.task.dueDate = null;
+    }
     if (this.action !== 'new') {
       this.task.lastEditorId = this.userId;
       this.task.lastEditDate = new Date();
@@ -183,6 +185,12 @@ export class EditTaskComponent implements OnInit, OnDestroy {
     }
 
     this.dialogRef.close({task: this.task, action: this.action});
+  }
+
+  onDrop(event: CdkDragDrop<string[]>): void {
+    moveItemInArray(event.container.data,
+                    event.previousIndex,
+                    event.currentIndex);
   }
 
 }

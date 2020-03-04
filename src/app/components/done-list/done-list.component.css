@@ -13,7 +13,7 @@
     padding-bottom: 0;
     white-space: normal;
     border-radius: 0.25rem;
-    background: rgb(158, 209, 128);
+    background: linear-gradient(35deg, #55b110, #94ca4d);
     -webkit-box-shadow: 0 4px 5px 0px rgba(0,0,0,0.32); 
     box-shadow: 0 4px 5px 0px rgba(0,0,0,0.32);
 }
@@ -35,7 +35,7 @@ button.categoryMenuBtn{
     right: 3px;
     top: 2px;
     vertical-align: top;
-    background: rgb(218, 226, 211);
+    background: #cce299;
     -webkit-box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
     box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
 }
@@ -91,7 +91,10 @@ button.categoryMenuBtn{
     content: none;
 }
 .ngbDropdownToggle{
-    background: #F5F5F5;
+    background: linear-gradient(35deg, #c9dea8, #e6ecdf);
+}
+button.dropdown-item:hover{
+    background: linear-gradient(35deg, #d2e0bb, #e7eae3);
 }
 .tasksFlexWrap{
     flex: 1 1 auto;

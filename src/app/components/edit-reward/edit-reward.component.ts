@@ -6,6 +6,7 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { BoardUser } from 'src/app/models/boardUser.model';
 import { Subscription } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { UsersDetailProviderService } from 'src/app/services/users-detail-provider.service';
 
 @Component({
   selector: 'app-edit-reward',
@@ -13,6 +14,8 @@ import { AngularFireAuth } from '@angular/fire/auth';
   styleUrls: ['./edit-reward.component.css']
 })
 export class EditRewardComponent implements OnInit, OnDestroy {
+
+  detailsService?: UsersDetailProviderService = this.data.detailsService;
 
   boardId?: string = this.data.boardId;
 
@@ -26,11 +29,11 @@ export class EditRewardComponent implements OnInit, OnDestroy {
   rewardDescription: string;
   rewardPoints: number;
   authorId?: string;
-  creationDate?: any;
+  creationDate?: Date;
   lastEditorId?: string;
-  lastEditDate?: any;
+  lastEditDate?: Date;
   completitorId?: string;
-  completitionDate?: any;
+  completitionDate?: Date;
 
   action: string;
 
@@ -40,8 +43,6 @@ export class EditRewardComponent implements OnInit, OnDestroy {
               public dialogRef: MatDialogRef<EditRewardComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
               private snackbarService: SnackBarProviderService) {
-
-    this.userId = 'XQAA';
 
     this.userSubscription = this.afAuth.user.subscribe(user => {
       if (user) {
@@ -67,17 +68,17 @@ export class EditRewardComponent implements OnInit, OnDestroy {
       this.rewardDescription = this.reward.description;
       this.rewardPoints = this.reward.points;
       this.authorId = this.reward.authorId;
-      this.creationDate = this.reward.creationDate;
+      this.creationDate = this.reward.creationDate.toDate();
       if (this.reward.lastEditorId) {
         this.lastEditorId = this.reward.lastEditorId;
-        this.lastEditDate = this.reward.lastEditDate;
+        this.lastEditDate = this.reward.lastEditDate.toDate();
       } else {
-        this.lastEditorId = this.reward.lastEditorId;
-        this.lastEditDate = this.reward.lastEditDate;
+        this.lastEditorId = null;
+        this.lastEditDate = null;
       }
       if (this.reward.completitorId) {
         this.completitorId = this.reward.completitorId;
-        this.completitionDate = this.reward.completitionDate;
+        this.completitionDate = this.reward.completitionDate.toDate();
       } else {
         this.completitorId = null;
         this.completitionDate = null;
@@ -93,6 +94,7 @@ export class EditRewardComponent implements OnInit, OnDestroy {
   onClickRewardDelete(): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       width: '350px',
+      panelClass: 'confirmationBackground',
       data: 'Are you sure you want to delete this reward? You won\'t be able to get it back.'
     });
     dialogRef.afterClosed().subscribe(result => {

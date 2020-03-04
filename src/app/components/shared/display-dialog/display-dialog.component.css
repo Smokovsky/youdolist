@@ -1,3 +1,6 @@
+.mat-dialog-content{
+    text-align: center;
+}
 .mat-dialog-actions{
     position: relative;
     float: right;
@@ -5,11 +8,6 @@
     padding-top: 2px;
 }
 .mat-dialog-actions button{
-    margin-left: 4px;
-    margin-top: 4px;
-}
-
-button{
     margin-left: 4px;
     margin-top: 4px;
 }

@@ -48,7 +48,6 @@ export class DoneListComponent implements OnInit, OnDestroy {
       this.doneListName = doneList.name;
     });
 
-
   }
 
   ngOnInit() { }
@@ -65,9 +64,15 @@ export class DoneListComponent implements OnInit, OnDestroy {
   }
 
   onClickSubmit(): void {
+    let doneListName: string;
+    if (this.tempNewDoneName !== '') {
+      doneListName = this.tempNewDoneName;
+    } else {
+      doneListName = 'Done list';
+    }
     this.afs.collection('boards').doc(this.boardId)
     .collection('categoryList').doc('doneList')
-    .update({name: this.tempNewDoneName});
+    .update({name: doneListName});
     this.editNameActive = false;
   }
 

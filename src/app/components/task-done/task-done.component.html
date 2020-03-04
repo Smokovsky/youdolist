@@ -1,13 +1,14 @@
 <div class="taskList" cdkDropList id="{{ 'cdk-task-drop-list-' + categoryId }}" [cdkDropListData]="doneTaskList"
 [cdkDropListConnectedTo]="categoryIdList" (cdkDropListDropped)="onDrop($event)">
     <div *ngFor="let task of doneTaskList; let i = index" cdkDrag [cdkDragStartDelay]="10"> 
-        <div class="placeholder" *cdkDragPlaceholder></div>
         <div class="task" [ngClass]="(task.isApproved)?'task':'unapproved'">
-            <div class="taskName">
-                <h3>{{ task.name }}</h3>
-            </div>
-            <div class="taskDescription">
-                <p>{{ task.description }}</p>
+            <div class="dragHandle" cdkDragHandle>
+                <div class="taskName">
+                    <h3>{{ task.name }}</h3>
+                </div>
+                <div class="taskDescription">
+                    <p>{{ task.description }}</p>
+                </div>
             </div>
             <div class="todoList">
                 <ul *ngFor="let todo of task.todoList; let j = index">
@@ -31,6 +32,7 @@
                         <button *ngIf="userAccessLevel >= 3" class="btn deleteBtn" (click)="onClickUnapprovedTaskDelete(task.id)"><i class="fa fa-times"></i></button>
                         <button *ngIf="task.completitorId === userId || userAccessLevel >= 3" class="btn unapproveUndoBtn" (click)="onClickUnapprovedTaskUndo(task)"><i class="fa fa-undo"></i></button>
                         <button *ngIf="userAccessLevel >= 3" class="btn approveBtn" (click)="onClickApprove(task)"><i class="fa fa-check"></i></button>
+                        <div class="spacer" *ngIf="3 > userAccessLevel && task.completitorId !== userId"></div>
                     </ng-template>
                 </div>
             </div>

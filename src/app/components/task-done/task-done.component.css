@@ -1,6 +1,7 @@
 .taskList{
     min-height: 15px;
     touch-action: none;
+    padding-bottom: 1px;
 }
 .task{
     width: 100%;
@@ -9,13 +10,13 @@
     margin-top: 7px;
     margin-bottom: 7px;
     border-radius: 0.25rem;
-    background: rgb(218, 226, 211);
+    background: linear-gradient(35deg, #a0d27c, #dff3b1);
     -webkit-box-shadow: 0 2px 5px 0px rgba(0,0,0,0.3); 
     box-shadow: 0 2px 5px 0px rgba(0,0,0,0.3);
-    cursor: grab;
+    z-index: 100;
 }
 .unapproved{
-    background: rgb(255, 245, 155);
+    background: linear-gradient(65deg, #ead87ee8, #ece9bf);
 }
 .task:first-child{
     margin-top: 0;
@@ -28,13 +29,16 @@
 }
 .todoList{
     padding: 0 10px;
-    margin-top: 8px;
+    margin-bottom: 10px;
     font-size: 0.8rem;
+}
+.dragHandle{
+    padding-bottom: 8px;
+    cursor: grab;
 }
 .taskControls{
     position: relative;
     min-height: 52px;
-    margin-top: 10px;
 }
 .buttons {
     position: absolute;
@@ -46,6 +50,9 @@
     font-size: 0.8em;
     margin: 0;
     padding: 0;
+}
+.spacer{
+    height:30px;
 }
 button{
     float: right;
@@ -60,8 +67,12 @@ button{
     -webkit-box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
     box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3);   
 }
+button:focus{
+    -webkit-box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
+    box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3);
+}
 .taskUndoBtn{
-    background: #b4b4b4;
+    background: #907fab;
 }
 .taskUndoBtn:hover{
     color: #eef0b4;
@@ -127,14 +138,26 @@ button{
 .cdk-drop-list-dragging{
     cursor: grabbing;
 }
-
-.placeholder{
-    background: rgb(226, 226, 226);
-    border: dotted 3px rgb(196, 196, 196);
-    margin-top: 3px; 
-    margin-bottom: 5px;
-    min-height: 70px;
+.cdk-drag{
     transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+.cdk-drag-preview{
+    transition: none;
+}
+.cdk-drag-placeholder .task{
+    background: linear-gradient(0deg, #0000007e, #0000005e);
+    z-index: -100!important;
+}	
+.cdk-drag-placeholder .dragHandle,
+.cdk-drag-placeholder .todoList,
+.cdk-drag-placeholder .taskControls{
+    visibility: hidden;
+}
+.cdk-drag-preview .task{
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 
+                0 8px 10px 1px rgba(0, 0, 0, 0.14), 
+                0 3px 14px 2px rgba(0, 0, 0, 0.12)!important;
+    transform: rotate(1deg);
 }
 .todoList ul{
     padding: 0;
