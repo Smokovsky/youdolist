@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Board } from 'src/app/models/board.model';
+import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
 
 @Component({
   selector: 'app-edit-board',
@@ -17,6 +18,7 @@ export class EditBoardComponent implements OnInit {
 
   constructor(public dialog: MatDialog,
               public dialogRef: MatDialogRef<EditBoardComponent>,
+              private snackbarService: SnackBarProviderService,
               @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
@@ -32,12 +34,17 @@ export class EditBoardComponent implements OnInit {
   }
 
   onClickSaveButton(): void {
-    if (this.boardName) {
-      this.board.name = this.boardName;
+    if (this.boardName.length < 150) {
+      if (this.boardName !== '') {
+        this.board.name = this.boardName;
+        this.dialogRef.close(this.board);
+
+      } else {
+        this.snackbarService.openSnack('Please enter board name');
+      }
     } else {
-      this.board.name = 'Unnamed';
+      this.snackbarService.openSnack('Board name can be maximum 150 characters long');
     }
-    this.dialogRef.close(this.board);
   }
 
 }

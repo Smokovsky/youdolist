@@ -62,8 +62,8 @@
     width: 87.5px;
 }
 .loadingScreenBackground{
-    width:100vw;
-    height:100vh;
+    width: 100vw;
+    height: 100vh;
     background: linear-gradient(45deg, #cbd0d8, #c2ebdf)!important;
     position: absolute;
     z-index: -100;

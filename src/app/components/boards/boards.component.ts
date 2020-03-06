@@ -12,6 +12,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { User } from 'src/app/models/user.model';
 import { DisplayDialogComponent } from '../shared/display-dialog/display-dialog.component';
 import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
+import { OperationsIntervalService } from 'src/app/services/operations-interval.service';
 
 @Component({
   selector: 'app-boards',
@@ -39,6 +40,7 @@ export class BoardsComponent implements OnInit, OnDestroy {
               private router: Router,
               private afs: AngularFirestore,
               private auth: AuthService,
+              private operationsInterval: OperationsIntervalService,
               private snackbarService: SnackBarProviderService) {
 
     this.userSubscription = this.auth.user$.subscribe(user => {
@@ -143,7 +145,6 @@ export class BoardsComponent implements OnInit, OnDestroy {
         });
       }
     });
-
   }
 
   onClickBoard(board: Board): void {
@@ -151,33 +152,37 @@ export class BoardsComponent implements OnInit, OnDestroy {
   }
 
   onClickNewBoard(): void {
-    const dialogRef = this.dialog.open(EditBoardComponent, {
-      data: { }
-    });
-    dialogRef.afterClosed().subscribe((board: Board) => {
-      if (board) {
-        board.ownerId = this.userId;
-        board.position = this.userBoards.length + 1;
-        const pushkey = this.afs.createId();
-        const newDoc = { ...board };
-        this.afs.collection('boards').doc(pushkey)
-        .set(newDoc);
-        this.afs.collection('boards').doc(pushkey)
-        .collection('userList').doc(this.userId)
-        .set({accessLevel: 4, points: 0});
-        this.afs.collection('boards').doc(pushkey)
-        .collection('categoryList').doc('doneList')
-        .set({name: 'Done list'});
-        this.snackbarService.openSnack('New board created');
-      }
-    });
+    if (this.operationsInterval.longInterval()) {
+      const dialogRef = this.dialog.open(EditBoardComponent, {
+        data: { }
+      });
+      dialogRef.afterClosed().subscribe((board: Board) => {
+        if (board) {
+          board.ownerId = this.userId;
+          board.position = this.userBoards.length + 1;
+          const pushkey = this.afs.createId();
+          const newDoc = { ...board };
+          this.afs.collection('boards').doc(pushkey)
+          .set(newDoc);
+          this.afs.collection('boards').doc(pushkey)
+          .collection('userList').doc(this.userId)
+          .set({accessLevel: 4, points: 0});
+          this.afs.collection('boards').doc(pushkey)
+          .collection('categoryList').doc('doneList')
+          .set({name: 'Done list'});
+          this.snackbarService.openSnack('New board created');
+        }
+      });
+    }
   }
 
   onDrop(event: CdkDragDrop<string[]>): void {
-    moveItemInArray(event.container.data,
-                    event.previousIndex,
-                    event.currentIndex);
-    this.updateBoardPositions();
+    if (this.operationsInterval.shortInterval()) {
+      moveItemInArray(event.container.data,
+                      event.previousIndex,
+                      event.currentIndex);
+      this.updateBoardPositions();
+    }
   }
 
   onClickDelete(board: Board): void {
@@ -206,16 +211,18 @@ export class BoardsComponent implements OnInit, OnDestroy {
   }
 
   onClickEdit(board: Board): void {
-    const dialogRef = this.dialog.open(EditBoardComponent, {
-      data: { board }
-    });
-    dialogRef.afterClosed().subscribe((b: Board) => {
-      if (b) {
-        this.afs.collection('boards').doc<Board>(b.id)
-        .update(b);
-        this.snackbarService.openSnack('Board saved');
-      }
-    });
+    if (this.operationsInterval.longInterval()) {
+      const dialogRef = this.dialog.open(EditBoardComponent, {
+        data: { board }
+      });
+      dialogRef.afterClosed().subscribe((b: Board) => {
+        if (b) {
+          this.afs.collection('boards').doc<Board>(b.id)
+          .update(b);
+          this.snackbarService.openSnack('Board saved');
+        }
+      });
+    }
   }
 
   getBoardAuthorName(id: string): string {
@@ -317,8 +324,11 @@ export class BoardsComponent implements OnInit, OnDestroy {
       })
     ).subscribe(userCollection => {
       userCollection.forEach((userId: string) => {
-        this.afs.collection('boards').doc(id).collection('userList').doc(userId).delete();
+        if (userId !== this.userId) {
+          this.afs.collection('boards').doc(id).collection('userList').doc(userId).delete();
+        }
       });
+      this.afs.collection('boards').doc(id).collection('userList').doc(this.userId).delete();
       return subscription.unsubscribe();
     });
   }

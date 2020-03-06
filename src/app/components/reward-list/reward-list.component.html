@@ -5,7 +5,7 @@
         </div>
         <div class="rewardList" cdkDropList id="cdk-reward-drop-list" [cdkDropListData]="rewardList"
         (cdkDropListDropped)="onDrop($event)">
-            <div *ngFor="let reward of rewardList; let i = index" cdkDrag>
+            <div *ngFor="let reward of rewardList; let i = index" cdkDrag cdkDragStartDelay="10">
                 <div class="reward" [ngClass]="(reward.isApproved)?'reward':'unapproved'">
                     <div class="rewardName">
                         <h3>{{ reward.name }}</h3>
@@ -29,7 +29,7 @@
                                     <button class="btn rewardApproveBtn" (click)="onClickRewardApprove(reward.id)"><i class="fa fa-check"></i></button>
                                     <button class="btn rewardApprovalSettingsBtn" (click)="onClickRewardSettings(reward)"><i class="fa fa-cog"></i></button>
                                 </ng-container>
-                                <button class="btn rewardDeleteBtn" (click)="onClickRewardDelete(reward.id)"><i class="fa fa-times"></i></button>
+                                <button class="btn rewardDeleteBtn" (click)="onClickRewardDelete(reward)"><i class="fa fa-times"></i></button>
                             </ng-template>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
         </div>
         <div class="rewardHistoryList" cdkDropList id="cdk-reward-history-drop-list" [cdkDropListData]="rewardHistoryList"
         (cdkDropListDropped)="onDrop($event)">
-        <div *ngFor="let reward of rewardHistoryList; let i = index" cdkDrag>
+        <div *ngFor="let reward of rewardHistoryList; let i = index" cdkDrag cdkDragStartDelay="100">
             <div *ngIf="reward.completitorId == userId || userAccessLevel >= 3" class="reward" [ngClass]="(reward.isApproved)?'reward':'unapproved'">
                 <div class="rewardName">
                     <h3>{{ reward.name }} - {{ reward.points }}<i class="fa fa-diamond"></i></h3>
@@ -68,7 +68,7 @@
                                 <button class="btn rewardApproveBtn" (click)="onClickRewardHistoryApprove(reward.id)"><i class="fa fa-check"></i></button>
                             </ng-container>
                             <button class="btn rewardApprovalSettingsBtn" (click)="onClickUndoReward(reward)"><i class="fa fa-undo"></i></button>
-                            <button *ngIf="userAccessLevel >= 3" class="btn rewardDeleteBtn" (click)="onClickRewardHistoryDelete(reward.id)"><i class="fa fa-times"></i></button>
+                            <button *ngIf="userAccessLevel >= 3" class="btn rewardDeleteBtn" (click)="onClickRewardHistoryDelete(reward)"><i class="fa fa-times"></i></button>
                         </ng-template>
                     </div>
                 </div>

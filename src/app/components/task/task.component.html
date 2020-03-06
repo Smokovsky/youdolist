@@ -1,20 +1,22 @@
 <div class="taskList" cdkDropList id="{{ 'cdk-task-drop-list-' + categoryId }}" [cdkDropListData]="taskList"
 [cdkDropListConnectedTo]="categoryIdList" (cdkDropListDropped)="onDrop($event)">
-    <div class="taskImage" *ngFor="let task of taskList" cdkDrag>
+    <div class="taskImage" *ngFor="let task of taskList" cdkDrag cdkDragStartDelay="10">
         <ng-container *ngIf="task.isApproved || task.authorId===userId || userAccessLevel >= 3">
             <div class="task" [ngClass]="(task.isApproved)?'task':'unapproved'">
                 <div class="dragHandle" cdkDragHandle>
                     <div class="taskName">
                         <h3>{{ task.name }}</h3>
                     </div>
-                    <div class="taskDescription">
-                        <p>{{ task.description }}</p>
-                    </div>
+                </div>
+                <div class="taskDescription">
+                    <p>{{ task.description }}</p>
                 </div>
                 <div class="todoList">
-                    <ul *ngFor="let todo of task.todoList; let j = index">
-                        <li><input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(task.todoList, task.id, j)"> 
-                        <p [ngClass]="{'done': todo.isDone }">{{ todo.name }}</p></li>
+                    <ul>
+                        <li *ngFor="let todo of task.todoList; let j = index">
+                            <input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(task.todoList, task.id, j)">
+                            <p [ngClass]="{'done': todo.isDone }">{{ todo.name }}</p>
+                        </li>
                     </ul>
                 </div>
                 <div class="taskControls">

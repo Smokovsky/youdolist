@@ -1,10 +1,14 @@
 .appBackground{
+    position: fixed;
 	height: calc(100vh - 42px);
 	padding: 15px;
     margin: 0;
     overflow: auto;
     white-space: nowrap;
     background: linear-gradient(65deg, #689bc7, #1ca982);
+}
+::ng-deep div#cdk-category-drop-list {
+    position: absolute!important;
 }
 .navbar-dark{
     height: 42px;

@@ -31,8 +31,8 @@ export class EditTaskComponent implements OnInit, OnDestroy {
   taskId: string;
   taskAuthorId: string;
   taskEditorId: string;
-  taskName: string ;
-  taskDescription?: string;
+  taskName = '';
+  taskDescription = '';
   taskTodoList = Array<Todo>();
   taskCreationDate?: Date;
   taskEditDate?: Date;
@@ -41,7 +41,7 @@ export class EditTaskComponent implements OnInit, OnDestroy {
   taskCompletitorId?: string;
   taskPoints: number;
 
-  newTodoName: string;
+  newTodoName = '';
   datepicker: Date;
   action: string;
 
@@ -112,8 +112,21 @@ export class EditTaskComponent implements OnInit, OnDestroy {
   }
 
   onClickAddTodo(): void {
-    this.taskTodoList.push({name: this.newTodoName, isDone: false});
-    this.newTodoName = '';
+    if (this.newTodoName.length > 0) {
+      if (this.taskTodoList.length < 10) {
+        if (this.newTodoName.length < 50) {
+          this.taskTodoList.push({name: this.newTodoName, isDone: false});
+          this.newTodoName = '';
+
+        } else {
+          this.snackbarService.openSnack('Todo can be maximum 50 characters long');
+        }
+      } else {
+        this.snackbarService.openSnack('Task can have maximum of 10 todos');
+      }
+    } else {
+      this.snackbarService.openSnack('Please enter reward name');
+    }
   }
 
   onClickDeleteTodo(i: number): void {
@@ -134,57 +147,60 @@ export class EditTaskComponent implements OnInit, OnDestroy {
   }
 
   onClickSaveButton(): void {
-    this.task.todoList = this.taskTodoList;
-    if (this.userAccessLevel >= 3) {
-      this.task.isApproved = true;
-    } else {
-      this.task.isApproved = false;
-    }
-    if (this.taskName) {
-      this.task.name = this.taskName;
-    } else {
-      this.task.name = 'Unnamed';
-    }
-    if (this.taskDescription) {
-      this.task.description = this.taskDescription;
-    } else {
-      this.task.description = '';
-    }
-    if (this.taskCompletitionDate) {
-      this.task.completitionDate = this.taskCompletitionDate;
-      this.task.completitorId = this.taskCompletitorId;
-    } else {
-      this.task.completitionDate = null;
-      this.task.completitorId = null;
-    }
-    if (this.taskEditDate) {
-      this.task.lastEditDate = this.taskEditDate;
-      this.task.lastEditorId = this.taskEditorId;
-    } else {
-      this.task.lastEditDate = null;
-      this.task.lastEditorId = null;
-    }
+    if (this.taskName.length > 0) {
+      if (this.taskName.length < 100) {
+        if (this.taskDescription.length < 300) {
+          this.task.todoList = this.taskTodoList;
+          if (this.userAccessLevel >= 3) {
+            this.task.isApproved = true;
+          } else {
+            this.task.isApproved = false;
+          }
+          this.task.name = this.taskName;
+          this.task.description = this.taskDescription;
+          if (this.taskCompletitionDate) {
+            this.task.completitionDate = this.taskCompletitionDate;
+            this.task.completitorId = this.taskCompletitorId;
+          } else {
+            this.task.completitionDate = null;
+            this.task.completitorId = null;
+          }
+          if (this.taskEditDate) {
+            this.task.lastEditDate = this.taskEditDate;
+            this.task.lastEditorId = this.taskEditorId;
+          } else {
+            this.task.lastEditDate = null;
+            this.task.lastEditorId = null;
+          }
+          if (this.taskPoints) {
+            this.task.points = this.taskPoints;
+          } else {
+            this.task.points = 0;
+          }
+          if (this.taskDueDate) {
+            this.task.dueDate = this.taskDueDate;
+          } else {
+            this.task.dueDate = null;
+          }
+          if (this.action !== 'new') {
+            this.task.lastEditorId = this.userId;
+            this.task.lastEditDate = new Date();
+            this.snackbarService.openSnack('Task saved');
+          } else {
+            this.task.creationDate = new Date();
+            this.task.authorId = this.userId;
+          }
+          this.dialogRef.close({task: this.task, action: this.action});
 
-    if (this.taskPoints) {
-      this.task.points = this.taskPoints;
+        } else {
+          this.snackbarService.openSnack('Task description can be maximum 300 characters long');
+        }
+      } else {
+        this.snackbarService.openSnack('Task name can be maximum 100 characters long');
+      }
     } else {
-      this.task.points = 0;
+      this.snackbarService.openSnack('Please enter task name');
     }
-    if (this.taskDueDate) {
-      this.task.dueDate = this.taskDueDate;
-    } else {
-      this.task.dueDate = null;
-    }
-    if (this.action !== 'new') {
-      this.task.lastEditorId = this.userId;
-      this.task.lastEditDate = new Date();
-      this.snackbarService.openSnack('Task saved');
-    } else {
-      this.task.creationDate = new Date();
-      this.task.authorId = this.userId;
-    }
-
-    this.dialogRef.close({task: this.task, action: this.action});
   }
 
   onDrop(event: CdkDragDrop<string[]>): void {

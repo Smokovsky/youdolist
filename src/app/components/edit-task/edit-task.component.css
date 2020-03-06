@@ -24,7 +24,7 @@ ul{
     list-style: none;
 }
 li p{
-    display: inline-block;
+    display: inline;
     cursor: grab;
     margin: 0;
 }
@@ -157,3 +157,17 @@ input.nameField
     color: #4864b3!important;
   }
 
+::ng-deep button.mat-calendar-next-button.mat-icon-button.mat-button-base{
+    margin-right: 15px;
+}
+::ng-deep button.mat-calendar-next-button.mat-icon-button.mat-button-base:after,
+::ng-deep button.mat-calendar-previous-button.mat-icon-button.mat-button-base:after{
+    display: none;
+}
+
+::ng-deep button.mat-calendar-previous-button.mat-icon-button.mat-button-base .mat-button-ripple.mat-ripple.mat-button-ripple-round:after{
+	content: '\25BC';
+}
+::ng-deep button.mat-calendar-next-button.mat-icon-button.mat-button-base .mat-button-ripple.mat-ripple.mat-button-ripple-round:after{
+	content: '\25B2';
+}

@@ -25,8 +25,8 @@ export class EditRewardComponent implements OnInit, OnDestroy {
   userAccessLevel: number;
 
   reward?: any = this.data.reward;
-  rewardName: string;
-  rewardDescription: string;
+  rewardName = '';
+  rewardDescription = '';
   rewardPoints: number;
   authorId?: string;
   creationDate?: Date;
@@ -111,50 +111,55 @@ export class EditRewardComponent implements OnInit, OnDestroy {
   }
 
   onClickSaveButton(): void {
-    if (this.userAccessLevel >= 3) {
-      this.reward.isApproved = true;
+    if (this.rewardName.length > 0) {
+      if (this.rewardName.length < 100) {
+        if (this.rewardDescription.length < 200) {
+          if (this.userAccessLevel >= 3) {
+            this.reward.isApproved = true;
+          } else {
+            this.reward.isApproved = false;
+          }
+          this.reward.name = this.rewardName;
+          this.reward.description = this.rewardDescription;
+          if (this.rewardPoints) {
+            this.reward.points = this.rewardPoints;
+          } else {
+            this.reward.points = 0;
+          }
+          if (this.lastEditorId) {
+            this.reward.lastEditorId = this.lastEditorId;
+            this.reward.lastEditDate = this.lastEditDate;
+          } else {
+            this.reward.lastEditorId = null;
+            this.reward.lastEditDate = null;
+          }
+          if (this.completitorId) {
+            this.reward.completitorId = this.completitorId;
+            this.reward.completitionDate = this.completitionDate;
+          } else {
+            this.reward.completitorId = null;
+            this.reward.completitionDate = null;
+          }
+          if (this.action !== 'new') {
+            this.reward.lastEditorId = this.userId;
+            this.reward.lastEditDate = new Date();
+            this.snackbarService.openSnack('Reward saved');
+          } else {
+            this.reward.authorId = this.userId;
+            this.reward.creationDate = new Date();
+            this.snackbarService.openSnack('New reward created');
+          }
+          this.dialogRef.close({reward: this.reward, action: this.action});
+
+        } else {
+          this.snackbarService.openSnack('Reward description can be maximum 200 characters long');
+        }
+      } else {
+        this.snackbarService.openSnack('Reward name can be maximum 100 characters long');
+      }
     } else {
-      this.reward.isApproved = false;
+      this.snackbarService.openSnack('Please enter reward name');
     }
-    if (this.rewardName) {
-      this.reward.name = this.rewardName;
-    } else {
-      this.reward.name = 'Unnamed';
-    }
-    if (this.rewardDescription) {
-      this.reward.description = this.rewardDescription;
-    } else {
-      this.reward.description = '';
-    }
-    if (this.rewardPoints) {
-      this.reward.points = this.rewardPoints;
-    } else {
-      this.reward.points = 0;
-    }
-    if (this.lastEditorId) {
-      this.reward.lastEditorId = this.lastEditorId;
-      this.reward.lastEditDate = this.lastEditDate;
-    } else {
-      this.reward.lastEditorId = null;
-      this.reward.lastEditDate = null;
-    }
-    if (this.completitorId) {
-      this.reward.completitorId = this.completitorId;
-      this.reward.completitionDate = this.completitionDate;
-    } else {
-      this.reward.completitorId = null;
-      this.reward.completitionDate = null;
-    }
-    if (this.action !== 'new') {
-      this.reward.lastEditorId = this.userId;
-      this.reward.lastEditDate = new Date();
-      this.snackbarService.openSnack('Reward saved');
-    } else {
-      this.reward.authorId = this.userId;
-      this.reward.creationDate = new Date();
-      this.snackbarService.openSnack('New reward created');
-    }
-    this.dialogRef.close({reward: this.reward, action: this.action});
   }
 
 }

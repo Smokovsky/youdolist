@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskComponent } from '../edit-task/edit-task.component';
 import { Category } from 'src/app/models/category.model';
@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
-import { typeWithParameters } from '@angular/compiler/src/render3/util';
+import { OperationsIntervalService } from 'src/app/services/operations-interval.service';
 
 @Component({
   selector: 'app-category',
@@ -29,6 +29,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   categoryListSubscription: Subscription;
   categoryList: Category[] = Array<Category>();
+
   editCategoryName: string;
   editCategoryIdActive = -1;
   tempNewCategoryName: string;
@@ -37,6 +38,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
               private afs: AngularFirestore,
               private auth: AuthService,
               private activatedRoute: ActivatedRoute,
+              private operationsInterval: OperationsIntervalService,
               private snackbarService: SnackBarProviderService) {
 
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
@@ -117,17 +119,21 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   onClickSubmitEdit(id: string): void {
-    let categoryName: string;
-    if (this.tempNewCategoryName !== '') {
-      categoryName = this.tempNewCategoryName;
+    if (this.tempNewCategoryName.length <= 120) {
+      if (this.tempNewCategoryName !== '') {
+        this.afs.collection('boards').doc(this.boardId)
+        .collection<Category>('categoryList').doc(id)
+        .update({name: this.tempNewCategoryName});
+        this.editCategoryIdActive = -1;
+        this.snackbarService.openSnack('Category saved');
+
+      } else {
+        this.snackbarService.openSnack('Please enter category name');
+      }
     } else {
-      categoryName = 'Unnamed';
+      this.snackbarService.openSnack('Category name can be maximum 120 characters long');
     }
-    this.afs.collection('boards').doc(this.boardId)
-    .collection<Category>('categoryList').doc(id)
-    .update({name: categoryName});
-    this.editCategoryIdActive = -1;
-    this.snackbarService.openSnack('Category saved');
+
   }
 
   onClickCancelEdit(): void {
@@ -135,53 +141,56 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   onClickAddNewTask(id: string): void {
-    const boardId = this.boardId;
-    const dialogRef = this.dialog.open(EditTaskComponent, {
-      width: '450px',
-      maxWidth: '96vw',
-      panelClass: 'editTaskBackground',
-      data: { boardId }
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && result.action === 'new') {
-        this.afs.collection('boards').doc(this.boardId)
-        .collection('categoryList').doc(id)
-        .collection('taskList').ref.get().then(snap => {
-          const pushkey = this.afs.createId();
-          result.task.categoryId = id;
-          result.task.position = snap.size + 1;
-          const newDoc = { ...result.task };
+    if (this.operationsInterval.longInterval()) {
+      const boardId = this.boardId;
+      const dialogRef = this.dialog.open(EditTaskComponent, {
+        width: '450px',
+        maxWidth: '96vw',
+        panelClass: 'editTaskBackground',
+        data: { boardId }
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result && result.action === 'new') {
           this.afs.collection('boards').doc(this.boardId)
           .collection('categoryList').doc(id)
-          .collection('taskList').doc(pushkey)
-          .set(newDoc);
-        });
-        this.snackbarService.openSnack('New task created');
-      }
-    });
+          .collection('taskList').ref.get().then(snap => {
+            const pushkey = this.afs.createId();
+            result.task.categoryId = id;
+            result.task.position = snap.size + 1;
+            const newDoc = { ...result.task };
+            this.afs.collection('boards').doc(this.boardId)
+            .collection('categoryList').doc(id)
+            .collection('taskList').doc(pushkey)
+            .set(newDoc);
+          });
+          this.snackbarService.openSnack('New task created');
+        }
+      });
+    }
   }
 
   onDrop(event: CdkDragDrop<string[]>): void {
-    if (this.userAccessLevel >= 3) {
-      moveItemInArray(event.container.data,
-        event.previousIndex,
-        event.currentIndex);
-      if (this.editCategoryIdActive >= 0) {
-        if (!(this.editCategoryIdActive > event.previousIndex && this.editCategoryIdActive > event.currentIndex)) {
-          if (this.editCategoryIdActive > event.previousIndex) {
-            this.editCategoryIdActive -= 1;
-          } else if (!(this.editCategoryIdActive < event.previousIndex && this.editCategoryIdActive < event.currentIndex)) {
-            if (this.editCategoryIdActive < event.previousIndex) {
-              this.editCategoryIdActive += 1;
+    if (this.operationsInterval.shortInterval()) {
+      if (this.userAccessLevel >= 3) {
+        moveItemInArray(event.container.data,
+          event.previousIndex,
+          event.currentIndex);
+        if (this.editCategoryIdActive >= 0) {
+          if (!(this.editCategoryIdActive > event.previousIndex && this.editCategoryIdActive > event.currentIndex)) {
+            if (this.editCategoryIdActive > event.previousIndex) {
+              this.editCategoryIdActive -= 1;
+            } else if (!(this.editCategoryIdActive < event.previousIndex && this.editCategoryIdActive < event.currentIndex)) {
+              if (this.editCategoryIdActive < event.previousIndex) {
+                this.editCategoryIdActive += 1;
+              }
             }
           }
         }
+        this.updateCategoryPositions();
+      } else {
+        this.snackbarService.openSnack('You cannot reorganize categories');
       }
-      this.updateCategoryPositions();
-    } else {
-      this.snackbarService.openSnack('You cannot reorganize categories');
     }
-
   }
 
   updateCategoryPositions(): void {

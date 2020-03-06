@@ -33,20 +33,24 @@ p.dueDate{
     min-height: 20px;
 }
 .taskDescription{
-    padding: 0 3px;
+    padding-left: 4px;
+    padding-bottom: 2px;
+    overflow: auto;
 }
 .dragHandle{
-    padding-bottom: 8px;
+    padding-bottom: 2px;
     cursor: grab;
 }
 .todoList{
     padding: 0 10px;
     margin-bottom: 10px;
     font-size: 0.8rem;
+    overflow: auto;
 }
 .taskControls{
     position: relative;
     min-height: 38px;
+    overflow: auto;
 }
 .buttons {
     position: absolute;
@@ -108,6 +112,9 @@ button:focus{
 .taskApprovalSettingsBtn:hover{
     color: #eef0b4;
 }
+.taskScrollableContent::-webkit-scrollbar{
+    width: 3px;
+}
 .taskName h3{
     word-break: break-word;
     margin: 0;
@@ -155,7 +162,8 @@ button:focus{
 }	
 .cdk-drag-placeholder .dragHandle,
 .cdk-drag-placeholder .todoList,
-.cdk-drag-placeholder .taskControls{
+.cdk-drag-placeholder .taskControls,
+.cdk-drag-placeholder .taskDescription{
     visibility: hidden;
 }
 .cdk-drag-preview .task{

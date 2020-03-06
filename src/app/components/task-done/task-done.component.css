@@ -25,15 +25,18 @@
     min-height: 20px;
 }
 .taskDescription{
-    padding: 0 3px;
+    padding-left: 4px;
+    padding-bottom: 2px;
+    overflow: auto;
 }
 .todoList{
     padding: 0 10px;
     margin-bottom: 10px;
     font-size: 0.8rem;
+    overflow: auto;
 }
 .dragHandle{
-    padding-bottom: 8px;
+    padding-bottom: 2px;
     cursor: grab;
 }
 .taskControls{
@@ -103,6 +106,9 @@ button:focus{
 .deleteBtn:hover{
     color: rgb(250, 209, 209);
 }
+.taskScrollableContent::-webkit-scrollbar{
+    width: 3px;
+}
 .taskName h3{
     word-break: break-word;
     margin: 0;
@@ -150,7 +156,8 @@ button:focus{
 }	
 .cdk-drag-placeholder .dragHandle,
 .cdk-drag-placeholder .todoList,
-.cdk-drag-placeholder .taskControls{
+.cdk-drag-placeholder .taskControls,
+.cdk-drag-placeholder .taskDescription{
     visibility: hidden;
 }
 .cdk-drag-preview .task{

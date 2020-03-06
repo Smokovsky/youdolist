@@ -137,5 +137,6 @@ i.fa.fa-minus-circle{
     line-height: 0.85em;
 }
 .pointsTd{
+    white-space: pre;
     padding-left: 8px;
 }

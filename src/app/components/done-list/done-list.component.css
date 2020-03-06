@@ -8,7 +8,7 @@
 .categoryContent{
     display: flex;
     flex-flow: column;
-    max-height: 100%;
+    max-height: calc(100vh - 80px);
     padding: 3px;
     padding-bottom: 0;
     white-space: normal;
@@ -30,7 +30,8 @@
 }
 button.categoryMenuBtn{
     position: absolute;
-    width: 25px;
+    width: 24px;
+    height: 24px;
     padding: 0;
     right: 3px;
     top: 2px;
@@ -38,6 +39,10 @@ button.categoryMenuBtn{
     background: #cce299;
     -webkit-box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
     box-shadow: 0 1px 3px 0px rgba(0,0,0,0.3); 
+}
+.categoryMenuBtn i.fa.fa-cogs {
+    display: block;
+    font-size: .9em;
 }
 .categoryHeader h2{
     word-break: break-word;
@@ -80,6 +85,10 @@ button.categoryMenuBtn{
 .editCategoryInput button{
     vertical-align: top;
 }
+.editCategoryButtons button.btn:focus {
+    box-shadow: none;
+}
+
 .pointer{
     cursor: pointer;
 }
@@ -102,4 +111,8 @@ button.dropdown-item:hover{
     padding: 0 4px;
     overflow-x: hidden;
     overflow-y: auto;
+    margin-bottom: 7px;
+}
+.tasksFlexWrap::-webkit-scrollbar{
+    width: 5px;
 }

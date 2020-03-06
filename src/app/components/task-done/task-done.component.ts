@@ -15,6 +15,8 @@ import { map } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 import { UsersDetailProviderService } from 'src/app/services/users-detail-provider.service';
 import { Todo } from 'src/app/models/todo.model';
+import * as firebase from 'firebase/app';
+import { OperationsIntervalService } from 'src/app/services/operations-interval.service';
 
 @Component({
   selector: 'app-task-done',
@@ -42,6 +44,7 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
               private afs: AngularFirestore,
               private auth: AuthService,
               private activatedRoute: ActivatedRoute,
+              private operationsInterval: OperationsIntervalService,
               private usersDetailProvider: UsersDetailProviderService,
               private snackbarService: SnackBarProviderService) {
 
@@ -103,57 +106,71 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
   }
 
   onClickTaskUndo(task: Task): void {
-    if (task.completitorId === this.userId || this.userAccessLevel >= 3) {
-      if (this.userAccessLevel >= 3) {
-        const dialogRef = this.dialog.open(UndoOptionsComponent, {
-          maxWidth: '90vw',
-          width: '400px',
-          panelClass: 'confirmationBackground',
-          data: { document: task, detailsService: this.usersDetailProvider }
-        });
-        dialogRef.afterClosed().subscribe(result => {
-          if (result === 'changePoints') {
-            this.afs.collection('boards').doc(this.boardId)
-            .collection<BoardUser>('userList').doc(task.completitorId)
-            .ref.get().then(user => {
-              if (user.exists) {
-                this.afs.collection('boards').doc(this.boardId)
-                .collection('userList').doc(task.completitorId)
-                .update({points: user.data().points - task.points});
+    if (this.operationsInterval.shortInterval()) {
+      if (task.completitorId === this.userId || this.userAccessLevel >= 3) {
+        if (this.userAccessLevel >= 3) {
+          const dialogRef = this.dialog.open(UndoOptionsComponent, {
+            maxWidth: '90vw',
+            width: '400px',
+            panelClass: 'confirmationBackground',
+            data: { document: task, detailsService: this.usersDetailProvider }
+          });
+          dialogRef.afterClosed().subscribe(result => {
+            const subscription = this.afs.collection('boards').doc(this.boardId)
+            .collection('categoryList', ref =>
+            ref.where(firebase.firestore.FieldPath.documentId(), '==', task.categoryId))
+            .snapshotChanges().subscribe(res => {
+              if (res.length > 0) {
+                if (result === 'changePoints') {
+                  this.afs.collection('boards').doc(this.boardId)
+                  .collection<BoardUser>('userList').doc(task.completitorId)
+                  .ref.get().then(user => {
+                    if (user.exists) {
+                      this.afs.collection('boards').doc(this.boardId)
+                      .collection('userList').doc(task.completitorId)
+                      .update({points: user.data().points - task.points});
+                    }
+                  });
+                  this.undoTask(task);
+                } else if (result === 'leavePoints') {
+                  this.undoTask(task);
+                }
+              } else {
+                this.snackbarService.openSnack('Task\'s category no longer exists');
               }
+              subscription.unsubscribe();
             });
-            this.undoTask(task);
-          } else if (result === 'leavePoints') {
-            this.undoTask(task);
-          }
-        });
+          });
+        }
       }
     }
   }
 
   onClickTaskSettings(task: Task): void {
-    const dialogRef = this.dialog.open(EditTaskComponent, {
-      width: '450px',
-      maxWidth: '96vw',
-      panelClass: 'editTaskBackground',
-      data: { boardId: this.boardId, task, detailsService: this.usersDetailProvider }
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && result.action === 'delete') {
-        this.doneTaskList.splice(this.doneTaskList.indexOf(result.task), 1);
-        this.afs.collection('boards').doc(this.boardId)
-        .collection('categoryList').doc(this.categoryId)
-        .collection<Task>('taskList').doc(result.task.id)
-        .delete();
-        this.updateTaskPositions();
-        this.snackbarService.openSnack('Task deleted');
-      } else if (result && result.action === 'edit') {
-        this.afs.collection('boards').doc(this.boardId)
-        .collection('categoryList').doc(this.categoryId)
-        .collection<Task>('taskList').doc(result.task.id)
-        .update(result.task);
-      }
-    });
+    if (this.operationsInterval.longInterval()) {
+      const dialogRef = this.dialog.open(EditTaskComponent, {
+        width: '450px',
+        maxWidth: '96vw',
+        panelClass: 'editTaskBackground',
+        data: { boardId: this.boardId, task, detailsService: this.usersDetailProvider }
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result && result.action === 'delete') {
+          this.doneTaskList.splice(this.doneTaskList.indexOf(result.task), 1);
+          this.afs.collection('boards').doc(this.boardId)
+          .collection('categoryList').doc(this.categoryId)
+          .collection<Task>('taskList').doc(result.task.id)
+          .delete();
+          this.updateTaskPositions();
+          this.snackbarService.openSnack('Task deleted');
+        } else if (result && result.action === 'edit') {
+          this.afs.collection('boards').doc(this.boardId)
+          .collection('categoryList').doc(this.categoryId)
+          .collection<Task>('taskList').doc(result.task.id)
+          .update(result.task);
+        }
+      });
+    }
   }
 
   onClickApprove(task: Task): void {
@@ -201,41 +218,42 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
   }
 
   onDrop(event: CdkDragDrop<string[]>): void {
+    if (this.operationsInterval.shortInterval()) {
 
-    // Case (1 of 2): change position on done list
-    if (event.previousContainer === event.container) {
-      if (this.userAccessLevel >= 3) {
-        moveItemInArray(event.container.data,
-                        event.previousIndex,
-                        event.currentIndex);
-        this.updateTaskPositions();
-      } else {
-        this.snackbarService.openSnack('You cannot reorganize items');
-      }
-
-    // Case (2 of 2): task dropped on done list
-    } else {
-      const document: any = event.previousContainer.data[event.previousIndex];
-      if (document.isApproved) {
-        transferArrayItem(event.previousContainer.data,
-          event.container.data,
-          event.previousIndex,
-          event.currentIndex);
-        // let approved = false;
+      // Case (1 of 2): change position on done list
+      if (event.previousContainer === event.container) {
         if (this.userAccessLevel >= 3) {
-          this.afs.collection('boards').doc(this.boardId)
-          .collection<BoardUser>('userList').doc(this.userId)
-          .ref.get().then(user => {
-            if (user.exists) {
-              this.afs.collection('boards').doc(this.boardId)
-              .collection('userList').doc(this.userId)
-              .update({points: user.data().points + document.points});
-            }
-          });
+          moveItemInArray(event.container.data,
+                          event.previousIndex,
+                          event.currentIndex);
+          this.updateTaskPositions();
+        } else {
+          this.snackbarService.openSnack('You cannot reorganize items');
         }
-        this.doTask(document, event.currentIndex);
+
+      // Case (2 of 2): task dropped on done list
       } else {
-        this.snackbarService.openSnack('You cannot complete unapproved task');
+        const document: any = event.previousContainer.data[event.previousIndex];
+        if (document.isApproved) {
+          transferArrayItem(event.previousContainer.data,
+            event.container.data,
+            event.previousIndex,
+            event.currentIndex);
+          if (this.userAccessLevel >= 3) {
+            this.afs.collection('boards').doc(this.boardId)
+            .collection<BoardUser>('userList').doc(this.userId)
+            .ref.get().then(user => {
+              if (user.exists) {
+                this.afs.collection('boards').doc(this.boardId)
+                .collection('userList').doc(this.userId)
+                .update({points: user.data().points + document.points});
+              }
+            });
+          }
+          this.doTask(document, event.currentIndex);
+        } else {
+          this.snackbarService.openSnack('You cannot complete unapproved task');
+        }
       }
     }
   }

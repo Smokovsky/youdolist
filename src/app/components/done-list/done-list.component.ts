@@ -5,6 +5,7 @@ import { BoardUser } from 'src/app/models/boardUser.model';
 import { Category } from 'src/app/models/category.model';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { SnackBarProviderService } from 'src/app/services/snack-bar-provider.service';
 
 @Component({
   selector: 'app-done-list',
@@ -26,7 +27,8 @@ export class DoneListComponent implements OnInit, OnDestroy {
 
   constructor(private afs: AngularFirestore,
               private auth: AuthService,
-              private activatedRoute: ActivatedRoute) {
+              private activatedRoute: ActivatedRoute,
+              private snackbarService: SnackBarProviderService) {
 
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
 
@@ -64,16 +66,18 @@ export class DoneListComponent implements OnInit, OnDestroy {
   }
 
   onClickSubmit(): void {
-    let doneListName: string;
-    if (this.tempNewDoneName !== '') {
-      doneListName = this.tempNewDoneName;
+    if (this.tempNewDoneName.length <= 140) {
+      if (this.tempNewDoneName !== '') {
+        this.afs.collection('boards').doc(this.boardId)
+        .collection('categoryList').doc('doneList')
+        .update({name: this.tempNewDoneName});
+        this.editNameActive = false;
+      } else {
+        this.snackbarService.openSnack('Please enter done list name');
+      }
     } else {
-      doneListName = 'Done list';
+      this.snackbarService.openSnack('Done list name can be maximum 140 characters long');
     }
-    this.afs.collection('boards').doc(this.boardId)
-    .collection('categoryList').doc('doneList')
-    .update({name: doneListName});
-    this.editNameActive = false;
   }
 
   onClickCancel(): void {
