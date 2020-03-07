@@ -248,4 +248,7 @@ button.dropdown-item:hover{
 	.userBoardsWrapper{
 		width: 90vw;
 	}
+	.navbar-right{
+        padding-top: 4px;
+	}
 }

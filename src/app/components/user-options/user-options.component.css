@@ -54,7 +54,7 @@ img.titleImg{
 }
 .user{
     position: relative;
-    border-top: 1px solid rgb(59, 59, 59);
+    border-top: 1px solid rgb(212, 212, 212);
     width: 100%;
     min-height: 40px;
     padding: 5px;
@@ -74,23 +74,29 @@ img.titleImg{
 table{
     width: 100%;
 }
-th,
-td{
-    width: 50%;
+td.pointsTd,
+td.accessLevelTd{
     text-align: center;
+    min-width: 85px;
+    width: 85px;
+    max-width: 85px;
 }
-th p{
-    display: inline;
-    display: block;
+td.pointsTd p,
+td.accessLevelTd p{
     margin: 0;
+    white-space: nowrap;
+    font-size: .85em;
 }
-th:first-child {
-    border-right: 1px solid #333;
-}
-tbody{
-    text-align: middle;
+.valueTd{
+    text-align: center;
+    font-size: .9em;
     font-weight: bold;
 }
+.valueTd p{
+    margin: 0;
+    white-space: nowrap;
+}
+
 .displayName{
     margin-top: 7px;
 }
@@ -117,8 +123,8 @@ img.userPhoto{
 }
 .optionsBtn .fa {
     border-radius: 50%;
-    height: 1em;
-    width: 1em;
+    height: .8em;
+    width: .8em;
 }
 i.fa.fa-chevron-circle-up,
 i.fa.fa-plus-circle{
@@ -135,8 +141,4 @@ i.fa.fa-minus-circle{
     width: 23px!important;
     height: 23px!important;
     line-height: 0.85em;
-}
-.pointsTd{
-    white-space: pre;
-    padding-left: 8px;
 }

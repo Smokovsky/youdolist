@@ -21,27 +21,25 @@
 .task:first-child{
     margin-top: 0;
 }
-.taskName{
-    min-height: 20px;
-}
 .taskDescription{
     padding-left: 4px;
-    padding-bottom: 2px;
     overflow: auto;
+    padding-bottom: 2px;
 }
 .todoList{
     padding: 0 10px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     font-size: 0.8rem;
     overflow: auto;
 }
 .dragHandle{
-    padding-bottom: 2px;
     cursor: grab;
 }
 .taskControls{
     position: relative;
-    min-height: 52px;
+    min-height: 58px;
+    overflow: auto;
+    margin-top: 5px;
 }
 .buttons {
     position: absolute;
@@ -125,6 +123,7 @@ button:focus{
 }
 .taskDate{
     position: absolute;
+    bottom: 0;
 }
 .taskDate p{
     margin: 0;

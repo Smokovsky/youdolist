@@ -6,11 +6,11 @@
                 <div class="taskName">
                     <h3>{{ task.name }}</h3>
                 </div>
-                <div class="taskDescription">
-                    <p>{{ task.description }}</p>
-                </div>
             </div>
-            <div class="todoList">
+            <div *ngIf="task.description" class="taskDescription">
+                <p>{{ task.description }}</p>
+            </div>
+            <div *ngIf="task.todoList.length > 0" class="todoList">
                 <ul *ngFor="let todo of task.todoList; let j = index">
                     <li><input type="checkbox" [checked]="todo.isDone" (change)="onTodoCheck(task.todoList, task.id, j)"> 
                     <p [ngClass]="{'done': todo.isDone }">{{ todo.name }}</p></li>

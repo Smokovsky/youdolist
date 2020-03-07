@@ -188,7 +188,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
         }
         this.updateCategoryPositions();
       } else {
-        this.snackbarService.openSnack('You cannot reorganize categories');
+        if (event.previousIndex !== event.currentIndex) {
+          this.snackbarService.openSnack('You cannot reorganize categories');
+        }
       }
     }
   }

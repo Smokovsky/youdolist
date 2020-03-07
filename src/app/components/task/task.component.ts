@@ -215,6 +215,8 @@ export class TaskComponent implements OnInit, OnDestroy {
           if (!document.isApproved) {
             this.undoTask(document, event);
           }
+        } else {
+          this.snackbarService.openSnack('You cannot undo this task');
         }
 
       // Case (2 of 3): position in category change
@@ -225,7 +227,9 @@ export class TaskComponent implements OnInit, OnDestroy {
                           event.currentIndex);
           this.updateTaskPositions();
         } else {
-          this.snackbarService.openSnack('You cannot reorganize items');
+          if (event.previousIndex !== event.currentIndex) {
+            this.snackbarService.openSnack('You cannot reorganize tasks');
+          }
         }
 
       // Case (3 of 3): category change
@@ -252,7 +256,7 @@ export class TaskComponent implements OnInit, OnDestroy {
             return taskSubscription.unsubscribe();
           });
         } else {
-          this.snackbarService.openSnack('You cannot reorganize items');
+          this.snackbarService.openSnack('You cannot reorganize tasks');
         }
       }
     }
@@ -311,7 +315,7 @@ export class TaskComponent implements OnInit, OnDestroy {
                             event.previousIndex,
                             event.currentIndex);
         } else {
-          this.snackbarService.openSnack('You cannot reorganize items');
+          this.snackbarService.openSnack('You cannot undo this task');
         }
       }
       return taskSubscription.unsubscribe();

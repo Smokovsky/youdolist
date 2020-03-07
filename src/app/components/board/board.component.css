@@ -79,19 +79,18 @@ button.dropdown-item:hover{
     background: #F5F5F5;
 }
 .navbarRight p{
-    display: inline;
+    display: inline-block;
     margin-right: 4px;
-    line-height: 1.8em;
-    vertical-align: text-bottom;
+    line-height: 1em;
+    vertical-align: text-top;
 }
 .navbarRight p i{
     margin-left: 3px;
 }
 .points{
-    display: inline-block;
     margin-right: 6px;
     font-size: 1em;
-    vertical-align: sub;
+    vertical-align: text-bottom;
     height: 40px;
 }
 
@@ -125,3 +124,8 @@ i.fa.fa-address-card {
         margin-top: 2px!important;
     }
 }
+/* @media screen and (max-width: 600px) {
+    .navbar-right{
+        padding-top: 4px;
+    }
+} */

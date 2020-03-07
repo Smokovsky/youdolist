@@ -29,28 +29,25 @@ p.dueDate{
 .task:first-child{
     margin-top: 0;
 }
-.taskName{
-    min-height: 20px;
-}
 .taskDescription{
     padding-left: 4px;
     padding-bottom: 2px;
     overflow: auto;
 }
 .dragHandle{
-    padding-bottom: 2px;
     cursor: grab;
 }
 .todoList{
     padding: 0 10px;
-    margin-bottom: 10px;
+    margin-bottom: 2px;
     font-size: 0.8rem;
     overflow: auto;
 }
 .taskControls{
     position: relative;
-    min-height: 38px;
+    min-height: 51px;
     overflow: auto;
+    margin-top: -5px;
 }
 .buttons {
     position: absolute;
@@ -131,6 +128,7 @@ button:focus{
 }
 .taskDate{
     position: absolute;
+    bottom: 0;
 }
 .taskDate p{
     margin: 0;

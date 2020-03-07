@@ -228,7 +228,9 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
                           event.currentIndex);
           this.updateTaskPositions();
         } else {
-          this.snackbarService.openSnack('You cannot reorganize items');
+          if (event.previousIndex !== event.currentIndex) {
+            this.snackbarService.openSnack('You cannot reorganize tasks');
+          }
         }
 
       // Case (2 of 2): task dropped on done list

@@ -27,9 +27,9 @@
                                 <p>This reward requires approval</p>
                                 <ng-container *ngIf="userAccessLevel >= 3">
                                     <button class="btn rewardApproveBtn" (click)="onClickRewardApprove(reward.id)"><i class="fa fa-check"></i></button>
-                                    <button class="btn rewardApprovalSettingsBtn" (click)="onClickRewardSettings(reward)"><i class="fa fa-cog"></i></button>
                                 </ng-container>
                                 <button class="btn rewardDeleteBtn" (click)="onClickRewardDelete(reward)"><i class="fa fa-times"></i></button>
+                                <button class="btn rewardApprovalSettingsBtn" (click)="onClickRewardSettings(reward)"><i class="fa fa-cog"></i></button>
                             </ng-template>
                         </div>
                     </div>

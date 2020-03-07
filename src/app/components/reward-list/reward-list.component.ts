@@ -249,7 +249,9 @@ export class RewardListComponent implements OnInit, OnDestroy {
           this.updatePositions('rewardHistoryList');
         }
       } else {
-        this.snackbarService.openSnack('Sorry, you cannot reorganize items');
+        if (event.previousIndex !== event.currentIndex) {
+          this.snackbarService.openSnack('Sorry, you cannot reorganize rewards');
+        }
       }
     }
   }
