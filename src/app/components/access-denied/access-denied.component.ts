@@ -10,7 +10,7 @@ export class AccessDeniedComponent implements OnInit {
 
   constructor(private router: Router) { }
 
-  ngOnInit() { }
+  ngOnInit() { return 0; }
 
   onClickBackBtn(): void {
     this.router.navigate(['/']);

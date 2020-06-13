@@ -50,57 +50,67 @@ export class TaskComponent implements OnInit, OnDestroy {
               private usersDetailProvider: UsersDetailProviderService) {
 
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
+    
+    if (this.boardId) {
+      this.userSubscription = this.auth.user$.subscribe(user => {
+        if (user) {
+          this.userId = user.uid;
 
-    this.userSubscription = this.auth.user$.subscribe(user => {
-      if (user) {
-        this.userId = user.uid;
-
-        this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
-        .collection<BoardUser>('userList').doc(this.userId)
-        .valueChanges().subscribe((boardUser: BoardUser) => {
-          this.userAccessLevel = boardUser.accessLevel;
-        });
-      }
-    });
-
-    this.categoryListSubscription = this.afs.collection('boards').doc(this.boardId)
-    .collection<Category>('categoryList').snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(action => {
-          const id = action.payload.doc.id;
-          return id;
-        });
-      })).subscribe(categories => {
-      categories.forEach(category => {
-        this.categoryIdList.push('cdk-task-drop-list-' + category);
+          this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
+          .collection<BoardUser>('userList').doc(this.userId)
+          .valueChanges().subscribe((boardUser: BoardUser) => {
+            this.userAccessLevel = boardUser.accessLevel;
+          });
+        }
       });
-    });
+
+      this.categoryListSubscription = this.afs.collection('boards').doc(this.boardId)
+      .collection<Category>('categoryList').snapshotChanges().pipe(
+        map(actions => {
+          return actions.map(action => {
+            const id = action.payload.doc.id;
+            return id;
+          });
+        })).subscribe(categories => {
+        categories.forEach(category => {
+          this.categoryIdList.push('cdk-task-drop-list-' + category);
+        });
+      });
+    }
 
   }
 
   ngOnInit() {
-    this.taskListSubscription = this.afs.collection('boards').doc(this.boardId)
-    .collection('categoryList').doc(this.categoryId)
-    .collection<Task>('taskList', ref => ref.orderBy('position', 'desc'))
-    .snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(action => {
-          const data = action.payload.doc.data() as Task;
-          const id = action.payload.doc.id;
-          return {id, ...data};
-        });
-      })).subscribe(tasks => {
-      this.taskList = tasks;
-    });
+    if (this.boardId) {
+      this.taskListSubscription = this.afs.collection('boards').doc(this.boardId)
+      .collection('categoryList').doc(this.categoryId)
+      .collection<Task>('taskList', ref => ref.orderBy('position', 'desc'))
+      .snapshotChanges().pipe(
+        map(actions => {
+          return actions.map(action => {
+            const data = action.payload.doc.data() as Task;
+            const id = action.payload.doc.id;
+            return {id, ...data};
+          });
+        })).subscribe(tasks => {
+        this.taskList = tasks;
+      });
+    }
   }
 
   ngOnDestroy() {
-    this.taskListSubscription.unsubscribe();
-    this.categoryListSubscription.unsubscribe();
+    if (this.taskListSubscription) {
+      this.taskListSubscription.unsubscribe();
+    }
+    if (this.categoryListSubscription) {
+      this.categoryListSubscription.unsubscribe();
+    }
     if (this.boardUserSubscription) {
       this.boardUserSubscription.unsubscribe();
     }
-    this.userSubscription.unsubscribe();
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   onClickTaskApprove(id: string): void {

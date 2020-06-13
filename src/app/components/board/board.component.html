@@ -8,9 +8,9 @@
         <div class="ml-auto navbarRight">
             <div class="points"><p>{{ userPoints }}<i class="fa fa-diamond"></i></p>
                 <ng-container *ngIf="userAccessLevel >= 3">
-                    <a class="d-none d-md-inline" (click)="onClickUserOptions()"><i class="fa fa-user colorUser"></i></a>
+                    <a class="d-none d-md-inline" (click)="onClickUserOptions()" placement="bottom" ngbTooltip="User options"><i class="fa fa-user colorUser"></i></a>
                 </ng-container>
-                <a class="d-none d-md-inline" (click)="onClickRewardList()"><i class="fa fa-gift colorGift"></i></a>
+                <a class="d-none d-md-inline" (click)="onClickRewardList()" placement="bottom" ngbTooltip="Reward list"><i class="fa fa-gift colorGift"></i></a>
                 <div ngbDropdown placement="bottom-right" display="dynamic">
                     <button ngbDropdownToggle class="btn userOptionsBtn" id="userOptions">
                         <img class="userAvatar" src="{{userPhotoURL}}" alt="User">

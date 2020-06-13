@@ -124,8 +124,10 @@ i.fa.fa-address-card {
         margin-top: 2px!important;
     }
 }
-/* @media screen and (max-width: 600px) {
-    .navbar-right{
-        padding-top: 4px;
-    }
-} */
+
+::ng-deep .arrow:before{
+    border-bottom-color: #343a40!important;
+}
+::ng-deep .tooltip-inner{
+    background-color: #343a40;
+}

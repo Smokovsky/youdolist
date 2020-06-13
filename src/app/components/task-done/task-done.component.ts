@@ -14,7 +14,6 @@ import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 import { UsersDetailProviderService } from 'src/app/services/users-detail-provider.service';
-import { Todo } from 'src/app/models/todo.model';
 import * as firebase from 'firebase/app';
 import { OperationsIntervalService } from 'src/app/services/operations-interval.service';
 
@@ -49,60 +48,66 @@ export class TaskDoneComponent implements OnInit, OnDestroy {
               private snackbarService: SnackBarProviderService) {
 
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
-    this.userSubscription = this.auth.user$.subscribe(user => {
-      if (user) {
-        this.userId = user.uid;
 
-        this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
-        .collection<BoardUser>('userList').doc(this.userId)
-        .valueChanges().subscribe((boardUser: BoardUser) => {
-          this.userAccessLevel = boardUser.accessLevel;
-        });
-      }
-    });
+    if (this.boardId) {
+      this.userSubscription = this.auth.user$.subscribe(user => {
+        if (user) {
+          this.userId = user.uid;
 
-    this.categoryListSubscription = this.afs.collection('boards').doc(this.boardId)
-    .collection<Category>('categoryList').snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(action => {
-          return action.payload.doc.id;
-        });
-      })).subscribe(categories => {
-      categories.forEach(category => {
-        this.categoryIdList.push('cdk-task-drop-list-' + category);
+          this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
+          .collection<BoardUser>('userList').doc(this.userId)
+          .valueChanges().subscribe((boardUser: BoardUser) => {
+            this.userAccessLevel = boardUser.accessLevel;
+          });
+        }
       });
-    });
+
+      this.categoryListSubscription = this.afs.collection('boards').doc(this.boardId)
+      .collection<Category>('categoryList').snapshotChanges().pipe(
+        map(actions => {
+          return actions.map(action => {
+            return action.payload.doc.id;
+          });
+        })).subscribe(categories => {
+        categories.forEach(category => {
+          this.categoryIdList.push('cdk-task-drop-list-' + category);
+        });
+      });
+    }
 
   }
 
   ngOnInit() {
-    this.doneTaskListSubscription = this.afs.collection('boards').doc(this.boardId)
-    .collection('categoryList').doc('doneList')
-    .collection<Task>('taskList', ref => ref.orderBy('position', 'desc'))
-    .snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(action => {
-          const data = action.payload.doc.data() as Task;
-          const id = action.payload.doc.id;
-          return {id, ...data};
-        });
-      })).subscribe(doneTasks => {
-      this.doneTaskList = doneTasks;
-    });
+    if (this.boardId) {
+      this.doneTaskListSubscription = this.afs.collection('boards').doc(this.boardId)
+      .collection('categoryList').doc('doneList')
+      .collection<Task>('taskList', ref => ref.orderBy('position', 'desc'))
+      .snapshotChanges().pipe(
+        map(actions => {
+          return actions.map(action => {
+            const data = action.payload.doc.data() as Task;
+            const id = action.payload.doc.id;
+            return {id, ...data};
+          });
+        })).subscribe(doneTasks => {
+        this.doneTaskList = doneTasks;
+      });
+    }
   }
 
   ngOnDestroy() {
-    this.doneTaskListSubscription.unsubscribe();
-    this.categoryListSubscription.unsubscribe();
-    this.boardUserSubscription.unsubscribe();
-    this.userSubscription.unsubscribe();
-  }
-
-  onTodoCheck(todos: Array<Todo>, taskId: string, i: number): void {
-    todos[i].isDone = !todos[i].isDone;
-    this.afs.collection('boards').doc(this.boardId)
-    .collection('categoryList').doc(this.categoryId)
-    .collection('taskList').doc(taskId).update({todoList: todos});
+    if (this.doneTaskListSubscription) {
+      this.doneTaskListSubscription.unsubscribe();
+    }
+    if (this.categoryListSubscription) {
+      this.categoryListSubscription.unsubscribe();
+    }
+    if (this.boardUserSubscription) {
+      this.boardUserSubscription.unsubscribe();
+    }
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   onClickTaskUndo(task: Task): void {

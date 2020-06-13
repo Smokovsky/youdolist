@@ -32,32 +32,40 @@ export class DoneListComponent implements OnInit, OnDestroy {
 
     this.boardId = this.activatedRoute.snapshot.paramMap.get('id');
 
-    this.userSubscription = this.auth.user$.subscribe(user => {
-      if (user) {
-        this.userId = user.uid;
+    if (this.boardId) {
+      this.userSubscription = this.auth.user$.subscribe(user => {
+        if (user) {
+          this.userId = user.uid;
 
-        this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
-        .collection<BoardUser>('userList').doc(this.userId)
-        .valueChanges().subscribe((boardUser: BoardUser) => {
-          this.userAccessLevel = boardUser.accessLevel;
-        });
-      }
-    });
+          this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
+          .collection<BoardUser>('userList').doc(this.userId)
+          .valueChanges().subscribe((boardUser: BoardUser) => {
+            this.userAccessLevel = boardUser.accessLevel;
+          });
+        }
+      });
 
-    this.doneListNameSubscription = this.afs.collection('boards').doc(this.boardId)
-    .collection('categoryList').doc('doneList')
-    .valueChanges().subscribe((doneList: Category) => {
-      this.doneListName = doneList.name;
-    });
+      this.doneListNameSubscription = this.afs.collection('boards').doc(this.boardId)
+      .collection('categoryList').doc('doneList')
+      .valueChanges().subscribe((doneList: Category) => {
+        this.doneListName = doneList.name;
+      });
+    }
 
   }
 
   ngOnInit() { }
 
   ngOnDestroy() {
-    this.doneListNameSubscription.unsubscribe();
-    this.boardUserSubscription.unsubscribe();
-    this.userSubscription.unsubscribe();
+    if (this.doneListNameSubscription) {
+      this.doneListNameSubscription.unsubscribe();
+    }
+    if (this.boardUserSubscription) {
+      this.boardUserSubscription.unsubscribe();
+    }
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   onClickEdit(): void {

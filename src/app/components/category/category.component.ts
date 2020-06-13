@@ -73,9 +73,15 @@ export class CategoryComponent implements OnInit, OnDestroy {
   ngOnInit() {  }
 
   ngOnDestroy() {
-    this.categoryListSubscription.unsubscribe();
-    this.boardUserSubscription.unsubscribe();
-    this.userSubscription.unsubscribe();
+    if (this.categoryListSubscription) {
+      this.categoryListSubscription.unsubscribe();
+    }
+    if (this.boardUserSubscription) {
+      this.boardUserSubscription.unsubscribe();
+    }
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   onClickDelete(category: Category): void {

@@ -1,6 +1,6 @@
 <mat-dialog-content>
     <h3>You are about to undo task "{{ taskName }}"</h3>
-    <p>Completed by: {{ detailsService.getDisplayName(taskCompletitor) }}<br>
+    <p *ngIf="detailsService">Completed by: {{ detailsService.getDisplayName(taskCompletitor) }}<br>
     Worth: {{ taskPoints }} <i class="fa fa-diamond"></i></p>
 </mat-dialog-content>
 

@@ -38,6 +38,7 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { StringInputDialogComponent } from './components/shared/string-input-dialog/string-input-dialog.component';
 import { DisplayDialogComponent } from './components/shared/display-dialog/display-dialog.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { DisplayDialogComponent } from './components/shared/display-dialog/displ
   ],
   imports: [
     BrowserModule,
+    RouterModule,
     AppRoutingModule,
     FormsModule,
     BrowserAnimationsModule,
@@ -78,7 +80,7 @@ import { DisplayDialogComponent } from './components/shared/display-dialog/displ
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireDatabaseModule,
     AngularFireAuthModule,
-    AngularFirestoreModule,
+    AngularFirestoreModule
   ],
   entryComponents: [
     EditTaskComponent,

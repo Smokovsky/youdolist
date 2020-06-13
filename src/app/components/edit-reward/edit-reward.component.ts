@@ -87,8 +87,12 @@ export class EditRewardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.boardUserSubscription.unsubscribe();
-    this.userSubscription.unsubscribe();
+    if (this.boardUserSubscription) {
+      this.boardUserSubscription.unsubscribe();
+    }
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   onClickRewardDelete(): void {

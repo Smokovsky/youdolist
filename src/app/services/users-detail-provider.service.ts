@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { map } from 'rxjs/operators';
 import { User } from '../models/user.model';
@@ -56,8 +56,7 @@ export class UsersDetailProviderService implements OnDestroy {
     if (user) {
       return user.displayName;
     }
-    return;
-    // return;
+    return 'Deleted user';
   }
 
   getPhotoUrl(id: string): string {

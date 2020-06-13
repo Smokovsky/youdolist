@@ -13,7 +13,7 @@ export class NewCategoryComponent implements OnInit {
 
   categoryList = Array<Category>();
   newCategoryFieldActive = false;
-  newCategoryName: string;
+  newCategoryName = '';
 
   boardId: string;
 
@@ -31,18 +31,22 @@ export class NewCategoryComponent implements OnInit {
   }
 
   onClickSubmitNewCategory(): void {
-    let categoryName = 'Unnamed';
-    this.newCategoryFieldActive = false;
-    if (this.newCategoryName) {
-      categoryName = this.newCategoryName;
+    if (this.newCategoryName.length <= 120) {
+      if (this.newCategoryName !== '') {
+        this.afs.collection('boards').doc(this.boardId).collection('categoryList').ref.get().then(snap => {
+          const pos = snap.size;
+          this.afs.collection('boards').doc(this.boardId).collection('categoryList')
+          .doc(this.afs.createId()).set({name: this.newCategoryName, position: pos});
+          this.newCategoryName = '';
+          this.snackbarService.openSnack('New category created');
+        });
+      } else {
+        this.snackbarService.openSnack('Please enter category name');
+      }
+    } else {
+      this.snackbarService.openSnack('Category name can be maximum 120 characters long');
     }
-    this.afs.collection('boards').doc(this.boardId).collection('categoryList').ref.get().then(snap => {
-      const pos = snap.size;
-      this.afs.collection('boards').doc(this.boardId).collection('categoryList')
-      .doc(this.afs.createId()).set({name: categoryName, position: pos});
-      this.newCategoryName = '';
-      this.snackbarService.openSnack('New category created');
-    });
+
 
   }
 

@@ -10,7 +10,7 @@ import { UsersDetailProviderService } from 'src/app/services/users-detail-provid
 })
 export class UndoOptionsComponent implements OnInit {
 
-  detailsService: UsersDetailProviderService = this.data.detailsService;
+  detailsService?: UsersDetailProviderService = this.data.detailsService;
 
   task?: Task = this.data.document;
   taskName: string;
@@ -20,9 +20,12 @@ export class UndoOptionsComponent implements OnInit {
   constructor(public dialog: MatDialog,
               public dialogRef: MatDialogRef<UndoOptionsComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any) {
-    this.taskName = this.task.name;
-    this.taskPoints = this.task.points;
-    this.taskCompletitor = this.task.completitorId;
+
+    if (this.task) {
+      this.taskName = this.task.name;
+      this.taskPoints = this.task.points;
+      this.taskCompletitor = this.task.completitorId;
+    }
   }
 
   ngOnInit() { }

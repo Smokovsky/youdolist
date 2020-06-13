@@ -93,12 +93,18 @@ export class BoardsComponent implements OnInit, OnDestroy {
   ngOnInit() { }
 
   ngOnDestroy() {
-    this.friendsBoardsSubscription.unsubscribe();
-    this.userBoardsSubscription.unsubscribe();
+    if (this.friendsBoardsSubscription) {
+      this.friendsBoardsSubscription.unsubscribe();
+    }
+    if (this.userBoardsSubscription) {
+      this.userBoardsSubscription.unsubscribe();
+    }
     if (this.firendsDetailsSubscription) {
       this.firendsDetailsSubscription.unsubscribe();
     }
-    this.userSubscription.unsubscribe();
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   updateBoardPositions(): void {

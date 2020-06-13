@@ -45,54 +45,64 @@ export class RewardListComponent implements OnInit, OnDestroy {
               private operationsInterval: OperationsIntervalService,
               private snackbarService: SnackBarProviderService) {
 
-    this.userSubscription = this.auth.user$.subscribe(user => {
-      if (user) {
-        this.userId = user.uid;
+    if (this.boardId) {
+      this.userSubscription = this.auth.user$.subscribe(user => {
+        if (user) {
+          this.userId = user.uid;
 
-        this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
-        .collection<BoardUser>('userList').doc(this.userId)
-        .valueChanges().subscribe((boardUser: BoardUser) => {
-          this.userAccessLevel = boardUser.accessLevel;
-          this.userPoints = boardUser.points;
-        });
-      }
-    });
+          this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
+          .collection<BoardUser>('userList').doc(this.userId)
+          .valueChanges().subscribe((boardUser: BoardUser) => {
+            this.userAccessLevel = boardUser.accessLevel;
+            this.userPoints = boardUser.points;
+          });
+        }
+      });
 
-    this.rewardListSubscribtion = this.afs.collection('boards').doc(this.boardId)
-    .collection<Reward>('rewardList', ref => ref.orderBy('position', 'desc'))
-    .snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(action => {
-          const d = action.payload.doc.data() as Reward;
-          const id = action.payload.doc.id;
-          return {id, ...d};
-        });
-      })).subscribe(rewardList => {
-      this.rewardList = rewardList;
-    });
+      this.rewardListSubscribtion = this.afs.collection('boards').doc(this.boardId)
+      .collection<Reward>('rewardList', ref => ref.orderBy('position', 'desc'))
+      .snapshotChanges().pipe(
+        map(actions => {
+          return actions.map(action => {
+            const d = action.payload.doc.data() as Reward;
+            const id = action.payload.doc.id;
+            return {id, ...d};
+          });
+        })).subscribe(rewardList => {
+        this.rewardList = rewardList;
+      });
 
-    this.rewardHistoryListSubscription = this.afs.collection('boards').doc(this.boardId)
-    .collection<Reward>('rewardHistoryList', ref => ref.orderBy('position', 'desc'))
-    .snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(action => {
-          const d = action.payload.doc.data() as Reward;
-          const id = action.payload.doc.id;
-          return {id, ...d};
-        });
-      })).subscribe(rewardHistoryList => {
-      this.rewardHistoryList = rewardHistoryList;
-    });
+      this.rewardHistoryListSubscription = this.afs.collection('boards').doc(this.boardId)
+      .collection<Reward>('rewardHistoryList', ref => ref.orderBy('position', 'desc'))
+      .snapshotChanges().pipe(
+        map(actions => {
+          return actions.map(action => {
+            const d = action.payload.doc.data() as Reward;
+            const id = action.payload.doc.id;
+            return {id, ...d};
+          });
+        })).subscribe(rewardHistoryList => {
+        this.rewardHistoryList = rewardHistoryList;
+      });
+    }
 
   }
 
   ngOnInit() { }
 
   ngOnDestroy() {
-    this.rewardHistoryListSubscription.unsubscribe();
-    this.rewardListSubscribtion.unsubscribe();
-    this.boardUserSubscription.unsubscribe();
-    this.userSubscription.unsubscribe();
+    if (this.rewardHistoryListSubscription) {
+      this.rewardHistoryListSubscription.unsubscribe();
+    }
+    if (this.rewardListSubscribtion) {
+      this.rewardListSubscribtion.unsubscribe();
+    }
+    if (this.boardUserSubscription) {
+      this.boardUserSubscription.unsubscribe();
+    }
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   onClickAddReward(): void {

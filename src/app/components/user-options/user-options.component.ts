@@ -40,38 +40,49 @@ export class UserOptionsComponent implements OnInit, OnDestroy {
               @Inject(MAT_DIALOG_DATA) public data: any,
               private snackbarService: SnackBarProviderService) {
 
-    this.userSubscription = this.auth.user$.subscribe(user => {
-      if (user) {
-        this.userId = user.uid;
+    if (this.boardId) {
+      this.userSubscription = this.auth.user$.subscribe(user => {
+        if (user) {
+          this.userId = user.uid;
 
-        this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
-        .collection<BoardUser>('userList').doc(this.userId)
-        .valueChanges().subscribe((boardUser: BoardUser) => {
-          this.userAccessLevel = boardUser.accessLevel;
-        });
-      }
-    });
+          this.boardUserSubscription = this.afs.collection('boards').doc(this.boardId)
+          .collection<BoardUser>('userList').doc(this.userId)
+          .valueChanges().subscribe((boardUser: BoardUser) => {
+            this.userAccessLevel = boardUser.accessLevel;
+          });
+        }
+      });
+    }
+
   }
 
   ngOnInit() {
-    this.userListSubscription = this.afs.collection('boards').doc(this.boardId)
-    .collection('userList', ref => ref.orderBy('accessLevel', 'desc'))
-    .snapshotChanges().pipe(
-      map(actions => {
-        return actions.map(action => {
-          const data = action.payload.doc.data() as BoardUser;
-          const id = action.payload.doc.id;
-          return {id, ...data};
-        });
-      })).subscribe(userList => {
-      this.userList = userList;
-    });
+    if (this.boardId) {
+      this.userListSubscription = this.afs.collection('boards').doc(this.boardId)
+      .collection('userList', ref => ref.orderBy('accessLevel', 'desc'))
+      .snapshotChanges().pipe(
+        map(actions => {
+          return actions.map(action => {
+            const data = action.payload.doc.data() as BoardUser;
+            const id = action.payload.doc.id;
+            return {id, ...data};
+          });
+        })).subscribe(userList => {
+        this.userList = userList;
+      });
+    }
   }
 
   ngOnDestroy() {
-    this.userListSubscription.unsubscribe();
-    this.boardUserSubscription.unsubscribe();
-    this.userSubscription.unsubscribe();
+    if (this.userListSubscription) {
+      this.userListSubscription.unsubscribe();
+    }
+    if (this.boardUserSubscription) {
+      this.boardUserSubscription.unsubscribe();
+    }
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   onClickInvite(): void {
